@@ -1,5 +1,7 @@
 # simple-schema
 
+IMPORTANT: WORK IN PROGRESS! DO NOT USE!
+
 ## Quick Start
 
 ### Validate an Object and Throw a ValidationError
