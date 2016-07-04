@@ -20,9 +20,7 @@
     "build": "rm -rf dist/** && babel lib --out-dir dist --ignore *.tests.js",
     "start": "node ./dist/index.js",
     "lint": "eslint .",
-    "jscs": "jscs .",
     "lint:fix": "eslint . --fix || true",
-    "jscs:fix": "jscs . --fix || true",
     "test": "mocha --compilers js:babel-core/register --recursive 'lib/**/*.tests.js'",
     "test:watch": "npm test -- --watch"
   },
@@ -45,7 +43,6 @@
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
     "expect": "^1.20.1",
-    "jscs": "^3.0.4",
     "mocha": "^2.5.3"
   }
 }
