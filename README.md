@@ -4,7 +4,7 @@ IMPORTANT: WORK IN PROGRESS! DO NOT USE!
 
 ## Quick Start
 
-### Validate an Object and Throw a ValidationError
+### Validate an Object and Throw an Error
 
 ```js
 import SimpleSchema from 'simple-schema';
@@ -14,6 +14,21 @@ new SimpleSchema({
 }).validate({
   name: 2,
 });
+```
+
+### Validate an Array of Objects and Throw an Error
+
+An error is thrown for the first invalid object found.
+
+```js
+import SimpleSchema from 'simple-schema';
+
+new SimpleSchema({
+  name: String,
+}).validate([
+  { name: 'Bill' },
+  { name: 2 },
+]);
 ```
 
 ### Validate an Object and Get the Errors
@@ -113,4 +128,39 @@ const modifier = { $set: { name: 123 } };
 mySchema.clean(modifier);
 // doc is now mutated to hopefully have a better chance of passing validation
 console.log(typeof doc.$set.name); // string
+```
+
+### Customize the Error That is Thrown
+
+```js
+SimpleSchema.defineValidationErrorTransform(error => {
+  const customError = new MyCustomErrorType(error.message);
+  customError.errorList = error.details;
+  return customError;
+});
+```
+
+### Custom Whole-Document Validators
+
+Add a validator for all schemas:
+
+```js
+SimpleSchema.addDocValidator(obj => {
+  // Must return an array, potentially empty, of objects with `name` and `type` string properties and optional `value` property.
+  return [
+    { name: 'firstName', type: 'TOO_SILLY', value: 'Reepicheep' }
+  ];
+});
+```
+
+Add a validator for one schema:
+
+```js
+const schema = new SimpleSchema({ ... });
+schema.addDocValidator(obj => {
+  // Must return an array, potentially empty, of objects with `name` and `type` string properties and optional `value` property.
+  return [
+    { name: 'firstName', type: 'TOO_SILLY', value: 'Reepicheep' }
+  ];
+});
 ```
