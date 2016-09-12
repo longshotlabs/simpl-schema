@@ -197,6 +197,10 @@ validationContext.validate({
 
 ### Automatically Clean the Object Before Validating It
 
+TO DO
+
+### Set Default Cleaning Options
+
 ```js
 import SimpleSchema from 'simpl-schema';
 
