@@ -90,7 +90,7 @@ There are also reasons not to choose this package. Because of all it does, this 
 
 SimpleSchema was first released as a Meteor package in mid-2013. Version 1.0 was released in September 2014. In mid-2016, version 2.0 was released as an NPM package, which can be used in Meteor, NodeJS, or static browser apps.
 
-If you are migrating from the Meteor package, refer to the [CHANGELOG](https://github.com/aldeed/meteor-simple-schema/blob/devel/CHANGELOG.md#200)
+If you are migrating from the Meteor package, refer to the [CHANGELOG](https://github.com/aldeed/meteor-simple-schema/blob/v2/CHANGELOG.md#200)
 
 ## Installation
 
