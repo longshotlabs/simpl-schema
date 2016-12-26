@@ -848,11 +848,11 @@ username: {
   type: String,
   regEx: /^[a-z0-9A-Z_]{3,15}$/,
   unique: true,
-  custom: function () {
+  custom () {
     if (Meteor.isClient && this.isSet) {
-      Meteor.call("accountsIsUsernameAvailable", this.value, function (error, result) {
+      Meteor.call("accountsIsUsernameAvailable", this.value, (error, result) => {
         if (!result) {
-          Meteor.users.simpleSchema().namedContext("createUserForm").addValidationErrors([{
+          this.getContext().addValidationErrors([{
             name: "username",
             type: "notUnique"
           }]);
