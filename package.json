@@ -27,7 +27,6 @@
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
-    "babel-polyfill": "^6.9.1",
     "clone": "^1.0.2",
     "message-box": "0.0.1",
     "mongo-object": "0.0.1",
