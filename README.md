@@ -780,6 +780,7 @@ Within your custom validation function, `this` provides the following properties
 * `isSet`: Does the object being validated have this key set?
 * `value`: The value to validate.
 * `operator`: The Mongo operator for which we're doing validation. Might be `null`.
+* `validationContext`: The current `ValidationContext` instance
 * `field()`: Use this method to get information about other fields. Pass a field name (non-generic schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
 * `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
 * `addValidationErrors(errors)`: Call this to add validation errors for any key. In general, you should use this to add errors for other keys. To add an error for the current key, return the error type string. If you do use this to add an error for the current key, return `false` from your custom validation function.
@@ -848,11 +849,11 @@ username: {
   type: String,
   regEx: /^[a-z0-9A-Z_]{3,15}$/,
   unique: true,
-  custom: function () {
+  custom() {
     if (Meteor.isClient && this.isSet) {
-      Meteor.call("accountsIsUsernameAvailable", this.value, function (error, result) {
+      Meteor.call("accountsIsUsernameAvailable", this.value, (error, result) => {
         if (!result) {
-          Meteor.users.simpleSchema().namedContext("createUserForm").addValidationErrors([{
+          this.validationContext.addValidationErrors([{
             name: "username",
             type: "notUnique"
           }]);
