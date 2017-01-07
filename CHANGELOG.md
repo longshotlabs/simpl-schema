@@ -1,5 +1,9 @@
 # simpl-schema CHANGELOG
 
+## 0.1.0
+
+- Added `ssInstance.getAllowedValuesForKey(key)`
+
 ## 0.0.4
 
 - Removed the `babel-polyfill` dependency. It may not cause problems, but to be safe you'll want to be sure that your app depends on and imports `babel-polyfill` or some other ES2015 polyfill package.

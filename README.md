@@ -572,6 +572,8 @@ Define the minimum or maximum array length. Used only when type is `Array`.
 
 An array of values that are allowed. A key will be invalid if its value is not one of these.
 
+You can use `schema.getAllowedValuesForKey(key)` to get the allowed values array for a key.
+
 ### regEx
 
 *Can also be a function that returns a regular expression or an array of them*
