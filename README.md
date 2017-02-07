@@ -837,7 +837,11 @@ If you use a custom string for `type`, be sure to define a message for it. (See 
 Example:
 
 ```js
-SimpleSchema.messages({wrongPassword: "Wrong password"});
+SimpleSchema.messageBox.messages({
+    en: {
+        wrongPassword: "Wrong password"
+    }
+});
 
 myValidationContext.addValidationErrors([{name: "password", type: "wrongPassword"}]);
 ```
