@@ -197,6 +197,13 @@ validationContext.validate({
 });
 ```
 
+Passing in `Tracker` causes the following functions to become reactive:
+- ValidationContext#keyIsInvalid
+- ValidationContext#keyErrorMessage
+- ValidationContext#isValid
+- ValidationContext#validationErrors
+- SimpleSchema#label
+
 ### Automatically Clean the Object Before Validating It
 
 TO DO
