@@ -1,5 +1,10 @@
 # simpl-schema CHANGELOG
 
+## 0.1.1
+- Improved error for missing `type` property
+- Use _.contains instead of Array.includes to fix some compatibility issues (thanks @DerekTBrown)
+- Various documentation and test fixes
+
 ## 0.1.0
 
 - Added `ssInstance.getAllowedValuesForKey(key)`
