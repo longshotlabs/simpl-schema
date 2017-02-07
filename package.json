@@ -23,7 +23,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix || true",
     "prepublish": "npm test && npm run build",
-    "test": "mocha --compilers js:babel-core/register --recursive 'lib/**/*.tests.js'",
+    "test": "mocha --compilers js:babel-core/register --recursive \"lib/**/*.tests.js\"",
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
