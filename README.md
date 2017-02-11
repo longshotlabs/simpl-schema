@@ -450,7 +450,9 @@ const schema = new SimpleSchema({
 
 ### Extracting Schemas
 
-Sometimes you have one large SimpleSchema object, and you need just a subset of it for some purpose. To pull out certain schema keys into a new schema, you can use the `pick` method:
+Sometimes you have one large SimpleSchema object, and you need just a subset of it for some purpose.
+
+To pull out certain schema keys into a new schema, you can use the `pick` method:
 
 ```js
 import SimpleSchema from 'simpl-schema';
@@ -462,6 +464,48 @@ const schema = new SimpleSchema({
 });
 
 const nameSchema = schema.pick('firstName', 'lastName');
+```
+
+To keep all but certain keys in a new schema, you can use the `omit` method:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+const schema = new SimpleSchema({
+  firstName: String,
+  lastName: String,
+  username: String,
+});
+
+const nameSchema = schema.omit('username');
+```
+
+To pull a subschema out of an `Object` key in a larger schema, you can use `getObjectSchema`:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+const schema = new SimpleSchema({
+  firstName: String,
+  lastName: String,
+  address: Object,
+  'address.street1': String,
+  'address.street2': { type: String, optional: true },
+  'address.city': String,
+  'address.state': String,
+  'address.postalCode': String,
+});
+
+const addressSchema = schema.getObjectSchema('address');
+
+// addressSchema is now the same as this:
+// new SimpleSchema({
+//   street1: String,
+//   street2: { type: String, optional: true },
+//   city: String,
+//   state: String,
+//   postalCode: String,
+// });
 ```
 
 ## Schema Keys
