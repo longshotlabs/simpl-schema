@@ -1,6 +1,12 @@
 # simpl-schema CHANGELOG
 
+## 0.2.0
+
+- Added `ssInstance.getQuickTypeForKey(key)`
+- Added `ssInstance.getObjectSchema(key)`
+
 ## 0.1.1
+
 - Improved error for missing `type` property
 - Use _.contains instead of Array.includes to fix some compatibility issues (thanks @DerekTBrown)
 - Various documentation and test fixes
