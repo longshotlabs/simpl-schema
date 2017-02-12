@@ -1,5 +1,9 @@
 # simpl-schema CHANGELOG
 
+## 0.2.1
+
+- It is no longer considered a validation error when a key within $unset is not defined in the schema.
+
 ## 0.2.0
 
 - Added `ssInstance.getQuickTypeForKey(key)`
