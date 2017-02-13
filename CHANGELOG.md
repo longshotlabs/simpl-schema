@@ -1,5 +1,9 @@
 # simpl-schema CHANGELOG
 
+## 0.2.2
+
+- Fixed Meteor Tracker reactivity
+
 ## 0.2.1
 
 - It is no longer considered a validation error when a key within $unset is not defined in the schema.
