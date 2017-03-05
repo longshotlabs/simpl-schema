@@ -1,5 +1,9 @@
 # simpl-schema CHANGELOG
 
+## 0.2.3
+
+- Add missing deep-extend dependency
+
 ## 0.2.2
 
 - Fixed Meteor Tracker reactivity
