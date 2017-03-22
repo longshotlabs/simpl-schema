@@ -899,6 +899,8 @@ myValidationContext.addValidationErrors([{name: "password", type: "wrongPassword
 
 ### Asynchronous Custom Validation on the Client
 
+NOTE: To use the `unique` option in this example, you need to be in a Meteor app with the `aldeed:schema-index` package added.
+
 Validation runs synchronously for many reasons, and likely always will. This makes it difficult to wait for asynchronous results as part of custom validation. Here's one example of how you might validate that a username is unique on the client, without publishing all usernames to every client:
 
 ```js
