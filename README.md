@@ -673,6 +673,8 @@ Note the following points of confusion:
 
 If you need more control, use the `autoValue` option instead.
 
+To get the defaultValue for a field, use `schema.defaultValue(fieldName)`. It is a shorthand for [`schema.get(fieldName, 'defaultValue')`](#getting-field-properties)
+
 ### autoValue
 
 *Used by the cleaning process but not by validation*
@@ -693,6 +695,20 @@ The following properties and methods are available in `this` for an `autoValue` 
 * `operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
 * `field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
 * `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+
+### Getting field properties
+To obtain field's property value, just call get method.
+```js
+const schema = new SimpleSchema({
+  friends: {
+    type: Array,
+    minCount: 0,
+    maxCount: 3,
+  }
+});
+
+schema.get('friends', 'maxCount'); // 3
+```
 
 ## Validating Data
 
