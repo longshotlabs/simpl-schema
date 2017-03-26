@@ -673,7 +673,7 @@ Note the following points of confusion:
 
 If you need more control, use the `autoValue` option instead.
 
-To get the defaultValue for a field, use `schema.defaultValue(fieldName)`. It is a shorthand for [`schema.get(fieldName, 'defaultValue')`](#getting-field-properties)
+To get the defaultValue for a field, use `schema.defaultValue(fieldName)`. It is a shorthand for [`schema.get(fieldName, 'defaultValue')`](#getting-field-properties).
 
 ### autoValue
 
