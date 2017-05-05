@@ -581,7 +581,7 @@ To get the label for a field, use `schema.label(fieldName)`, which returns a usa
 
 *Can also be a function that returns true or false*
 
-By default, all keys are required. Set `optional: true` to change that.
+By default, all keys are required. Set `optional: true` to change that for a single key. Otherwise pass the `requiredByDefault: false` option (in the second argument of `new SimpleSchema()`) to make all keys optional by default.
 
 With complex keys, it might be difficult to understand what "required" means. Here's a brief explanation of how requiredness is interpreted:
 
@@ -1075,9 +1075,6 @@ optional, and then use a custom function similar to this:
 ```
 
 Where `customCondition` is whatever should trigger it being required.
-
-Note: In the future we could make this a bit simpler by allowing `optional` to be a function that returns
-true or false. Pull request welcome.
 
 ### Validate one key against another
 
