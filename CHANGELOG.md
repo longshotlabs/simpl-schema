@@ -1,5 +1,12 @@
 # simpl-schema CHANGELOG
 
+## 0.3.0
+
+- Added human-friendly `message` to each validation error in the `details` array on a thrown ClientError (thanks @unknown4unnamed)
+- Fixed isInteger error on IE11 (thanks @lmachens)
+- Switched to duck typing for `SimpleSchema` instanceof checks to fix failures due to multiple instances of the package (thanks @dpankros)
+- Fixed multiple calls to `messages` for different schemas from affecting the other schemas (thanks @Josh-ES)
+
 ## 0.2.3
 
 - Add missing deep-extend dependency
