@@ -796,6 +796,8 @@ This method returns `true` only if all the specified schema keys and their desce
 
 #### Customize the Error That is Thrown
 
+You can `defineValidationErrorTransform` one time somewhere in your code to customize the error or change it to a more specific type.
+
 ```js
 import SimpleSchema from 'simpl-schema';
 
@@ -803,6 +805,19 @@ SimpleSchema.defineValidationErrorTransform(error => {
   const customError = new MyCustomErrorType(error.message);
   customError.errorList = error.details;
   return customError;
+});
+```
+
+For example, in a Meteor app, in order to ensure that the error details are sent back to the client when throwing an error in a server method, you can convert it to a `Meteor.Error`:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+SimpleSchema.defineValidationErrorTransform(error => {
+  const ddpError = new Meteor.Error(error.message);
+  ddpError.error = 'validation-error';
+  ddpError.details = error.details;
+  return ddpError;
 });
 ```
 
