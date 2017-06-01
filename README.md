@@ -17,72 +17,74 @@ There are also reasons not to choose this package. Because of all it does, this 
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [simple-schema](#simple-schema)
-  - [The History of SimpleSchema](#the-history-of-simpleschema)
-  - [Installation](#installation)
-  - [Lingo](#lingo)
-  - [Quick Start](#quick-start)
-    - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
-    - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
-    - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
-    - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
-    - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
-    - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
-    - [Explicitly Clean an Object](#explicitly-clean-an-object)
-  - [Defining a Schema](#defining-a-schema)
-    - [Shorthand Definitions](#shorthand-definitions)
-    - [Longhand Definitions](#longhand-definitions)
-    - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
-    - [More Shorthand](#more-shorthand)
-    - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
-    - [Extending Schemas](#extending-schemas)
-      - [Overriding When Extending](#overriding-when-extending)
-    - [Subschemas](#subschemas)
-    - [Extracting Schemas](#extracting-schemas)
-  - [Schema Keys](#schema-keys)
-  - [Schema Rules](#schema-rules)
-    - [type](#type)
-    - [label](#label)
-    - [optional](#optional)
-    - [min/max](#minmax)
-    - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
-    - [minCount/maxCount](#mincountmaxcount)
-    - [allowedValues](#allowedvalues)
-    - [regEx](#regex)
-    - [blackbox](#blackbox)
-    - [trim](#trim)
-    - [custom](#custom)
-    - [defaultValue](#defaultvalue)
-    - [autoValue](#autovalue)
-  - [Validating Data](#validating-data)
-    - [The Object to Validate](#the-object-to-validate)
-    - [Ways to Perform Validation](#ways-to-perform-validation)
-      - [Named Validation Contexts](#named-validation-contexts)
-      - [Unnamed Validation Contexts](#unnamed-validation-contexts)
-    - [Validating an Object](#validating-an-object)
-    - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
-    - [Validation Options](#validation-options)
-    - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
-      - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
-    - [Custom Field Validation](#custom-field-validation)
-    - [Custom Whole-Document Validators](#custom-whole-document-validators)
-    - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
-    - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
-    - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
-  - [Customizing Validation Messages](#customizing-validation-messages)
-  - [Other Validation Context Methods](#other-validation-context-methods)
-  - [Other SimpleSchema Methods](#other-simpleschema-methods)
-  - [Cleaning Objects](#cleaning-objects)
-  - [Dates](#dates)
-  - [Best Practice Code Examples](#best-practice-code-examples)
-    - [Make a field conditionally required](#make-a-field-conditionally-required)
-    - [Validate one key against another](#validate-one-key-against-another)
-  - [Debug Mode](#debug-mode)
-  - [Extending the Schema Options](#extending-the-schema-options)
-  - [Add On Packages](#add-on-packages)
-  - [License](#license)
-  - [Contributing](#contributing)
-    - [Thanks](#thanks)
+- [The History of SimpleSchema](#the-history-of-simpleschema)
+- [Installation](#installation)
+- [Lingo](#lingo)
+- [Quick Start](#quick-start)
+  - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
+  - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
+  - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
+  - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
+  - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
+  - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
+  - [Set Default Cleaning Options](#set-default-cleaning-options)
+  - [Explicitly Clean an Object](#explicitly-clean-an-object)
+- [Defining a Schema](#defining-a-schema)
+  - [Shorthand Definitions](#shorthand-definitions)
+  - [Longhand Definitions](#longhand-definitions)
+  - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
+  - [More Shorthand](#more-shorthand)
+  - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
+  - [Extending Schemas](#extending-schemas)
+    - [Overriding When Extending](#overriding-when-extending)
+  - [Subschemas](#subschemas)
+  - [Extracting Schemas](#extracting-schemas)
+- [Schema Keys](#schema-keys)
+- [Schema Rules](#schema-rules)
+  - [type](#type)
+  - [label](#label)
+  - [optional](#optional)
+  - [required](#required)
+  - [min/max](#minmax)
+  - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
+  - [minCount/maxCount](#mincountmaxcount)
+  - [allowedValues](#allowedvalues)
+  - [regEx](#regex)
+  - [blackbox](#blackbox)
+  - [trim](#trim)
+  - [custom](#custom)
+  - [defaultValue](#defaultvalue)
+  - [autoValue](#autovalue)
+  - [Getting field properties](#getting-field-properties)
+- [Validating Data](#validating-data)
+  - [The Object to Validate](#the-object-to-validate)
+  - [Ways to Perform Validation](#ways-to-perform-validation)
+    - [Named Validation Contexts](#named-validation-contexts)
+    - [Unnamed Validation Contexts](#unnamed-validation-contexts)
+  - [Validating an Object](#validating-an-object)
+  - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
+  - [Validation Options](#validation-options)
+  - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
+    - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
+  - [Custom Field Validation](#custom-field-validation)
+  - [Custom Whole-Document Validators](#custom-whole-document-validators)
+  - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
+  - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
+  - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
+- [Customizing Validation Messages](#customizing-validation-messages)
+- [Other Validation Context Methods](#other-validation-context-methods)
+- [Other SimpleSchema Methods](#other-simpleschema-methods)
+- [Cleaning Objects](#cleaning-objects)
+- [Dates](#dates)
+- [Best Practice Code Examples](#best-practice-code-examples)
+  - [Make a field conditionally required](#make-a-field-conditionally-required)
+  - [Validate one key against another](#validate-one-key-against-another)
+- [Debug Mode](#debug-mode)
+- [Extending the Schema Options](#extending-the-schema-options)
+- [Add On Packages](#add-on-packages)
+- [License](#license)
+- [Contributing](#contributing)
+  - [Thanks](#thanks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -581,7 +583,7 @@ To get the label for a field, use `schema.label(fieldName)`, which returns a usa
 
 *Can also be a function that returns true or false*
 
-By default, all keys are required. Set `optional: true` to change that for a single key. Otherwise pass the `requiredByDefault: false` option (in the second argument of `new SimpleSchema()`) to make all keys optional by default.
+By default, all keys are required. Set `optional: true` to change that.
 
 With complex keys, it might be difficult to understand what "required" means. Here's a brief explanation of how requiredness is interpreted:
 
@@ -594,6 +596,19 @@ That last point can be confusing, so let's look at a couple examples:
 
 * Say you have a required key "friends.address.city" but "friends.address" is optional. If "friends.address" is set in the object you're validating, but "friends.address.city" is not, there is a validation error. However, if "friends.address" is *not* set, then there is no validation error for "friends.address.city" because the object it belongs to is not present.
 * If you have a required key "friends.$.name", but the `friends` array has no objects in the object you are validating, there is no validation error for "friends.$.name". When the `friends` array *does* have objects, every present object is validated, and each object could potentially have a validation error if it is missing the `name` property. For example, when there are two objects in the friends array and both are missing the `name` property, there will be a validation error for both "friends.0.name" and "friends.1.name".
+
+### required
+
+*Can also be a function that returns true or false*
+
+If you would rather have all your schema keys be optional by default, pass the `requiredByDefault: false` option and then use `required: true` to make individual keys required.
+
+```js
+const schema = new SimpleSchema({
+  optionalProp: String,
+  requiredProp: { type: String, required: true },
+}, { requiredByDefault: false });
+```
 
 ### min/max
 
