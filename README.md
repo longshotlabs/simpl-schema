@@ -1097,26 +1097,28 @@ Here's an example of declaring one value valid or invalid based on another
 value using a custom validation function.
 
 ```js
-SimpleSchema.messages({
-  "passwordMismatch": "Passwords do not match"
+SimpleSchema.messageBox.messages({
+  en: {
+    passwordMismatch: 'Passwords do not match',
+  },
 });
 
 MySchema = new SimpleSchema({
   password: {
     type: String,
     label: "Enter a password",
-    min: 8
+    min: 8,
   },
   confirmPassword: {
     type: String,
     label: "Enter the password again",
     min: 8,
-    custom: function () {
+    custom() {
       if (this.value !== this.field('password').value) {
         return "passwordMismatch";
       }
-    }
-  }
+    },
+  },
 });
 ```
 
