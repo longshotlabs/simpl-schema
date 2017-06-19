@@ -16,6 +16,15 @@
 
 # simpl-schema CHANGELOG
 
+## 0.3.1
+
+- When calling `pick` or `omit`, the `messageBox` and all original `SimpleSchema` constructor options are now properly kept. (Thanks @plumpudding)
+- Fixed #80 (Thanks @jasonphillips)
+- `getQuickTypeForKey` may now return additional strings "object" or "objectArray"
+- Fix erroneous "Found both autoValue and defaultValue" warning (Thanks @SachaG)
+- Fix passing of clean options when extending
+- Other fixes to extending logic
+
 ## 0.3.0
 
 - Added human-friendly `message` to each validation error in the `details` array on a thrown ClientError (thanks @unknown4unnamed)
