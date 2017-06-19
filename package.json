@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "clone": "1.0.2",
-    "deep-extend": "0.4.1",
+    "extend": "3.0.1",
     "message-box": "0.0.2",
     "mongo-object": "0.0.1",
     "underscore": "1.8.3"
