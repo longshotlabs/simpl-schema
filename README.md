@@ -934,13 +934,15 @@ If you use a custom string for `type`, be sure to define a message for it. (See 
 Example:
 
 ```js
-SimpleSchema.messageBox.messages({
+SimpleSchema.setDefaultMessages({
+  messages: {
     en: {
-        wrongPassword: "Wrong password"
-    }
+      wrongPassword: 'Wrong password',
+    },
+  },
 });
 
-myValidationContext.addValidationErrors([{name: "password", type: "wrongPassword"}]);
+myValidationContext.addValidationErrors([{ name: 'password', type: 'wrongPassword' }]);
 ```
 
 ### Asynchronous Custom Validation on the Client
