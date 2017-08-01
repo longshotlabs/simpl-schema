@@ -27,11 +27,11 @@
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
-    "clone": "1.0.2",
-    "extend": "3.0.1",
-    "message-box": "0.0.2",
-    "mongo-object": "0.0.1",
-    "underscore": "1.8.3"
+    "clone": "^2.1.1",
+    "extend": "^3.0.1",
+    "message-box": "^0.1.1",
+    "mongo-object": "^0.0.2",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
