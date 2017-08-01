@@ -16,6 +16,10 @@
 
 # simpl-schema CHANGELOG
 
+## 0.3.2
+
+Bump dependencies to fix `messages` issues
+
 ## 0.3.1
 
 - When calling `pick` or `omit`, the `messageBox` and all original `SimpleSchema` constructor options are now properly kept. (Thanks @plumpudding)
