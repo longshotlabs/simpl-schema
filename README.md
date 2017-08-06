@@ -331,23 +331,6 @@ is equivalent to:
 }
 ```
 
-You can also set the schema key to an array of some type:
-
-```js
-{
-  friends: [String],
-}
-```
-
-is equivalent to:
-
-```js
-{
-  friends: { type: Array },
-  'friends.$': { type: String },
-}
-```
-
 ### Multiple Definitions For One Key
 
 You can define two or more different ways in which a key will be considered valid:
