@@ -17,72 +17,74 @@ There are also reasons not to choose this package. Because of all it does, this 
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [simple-schema](#simple-schema)
-  - [The History of SimpleSchema](#the-history-of-simpleschema)
-  - [Installation](#installation)
-  - [Lingo](#lingo)
-  - [Quick Start](#quick-start)
-    - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
-    - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
-    - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
-    - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
-    - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
-    - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
-    - [Explicitly Clean an Object](#explicitly-clean-an-object)
-  - [Defining a Schema](#defining-a-schema)
-    - [Shorthand Definitions](#shorthand-definitions)
-    - [Longhand Definitions](#longhand-definitions)
-    - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
-    - [More Shorthand](#more-shorthand)
-    - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
-    - [Extending Schemas](#extending-schemas)
-      - [Overriding When Extending](#overriding-when-extending)
-    - [Subschemas](#subschemas)
-    - [Extracting Schemas](#extracting-schemas)
-  - [Schema Keys](#schema-keys)
-  - [Schema Rules](#schema-rules)
-    - [type](#type)
-    - [label](#label)
-    - [optional](#optional)
-    - [min/max](#minmax)
-    - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
-    - [minCount/maxCount](#mincountmaxcount)
-    - [allowedValues](#allowedvalues)
-    - [regEx](#regex)
-    - [blackbox](#blackbox)
-    - [trim](#trim)
-    - [custom](#custom)
-    - [defaultValue](#defaultvalue)
-    - [autoValue](#autovalue)
-  - [Validating Data](#validating-data)
-    - [The Object to Validate](#the-object-to-validate)
-    - [Ways to Perform Validation](#ways-to-perform-validation)
-      - [Named Validation Contexts](#named-validation-contexts)
-      - [Unnamed Validation Contexts](#unnamed-validation-contexts)
-    - [Validating an Object](#validating-an-object)
-    - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
-    - [Validation Options](#validation-options)
-    - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
-      - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
-    - [Custom Field Validation](#custom-field-validation)
-    - [Custom Whole-Document Validators](#custom-whole-document-validators)
-    - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
-    - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
-    - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
-  - [Customizing Validation Messages](#customizing-validation-messages)
-  - [Other Validation Context Methods](#other-validation-context-methods)
-  - [Other SimpleSchema Methods](#other-simpleschema-methods)
-  - [Cleaning Objects](#cleaning-objects)
-  - [Dates](#dates)
-  - [Best Practice Code Examples](#best-practice-code-examples)
-    - [Make a field conditionally required](#make-a-field-conditionally-required)
-    - [Validate one key against another](#validate-one-key-against-another)
-  - [Debug Mode](#debug-mode)
-  - [Extending the Schema Options](#extending-the-schema-options)
-  - [Add On Packages](#add-on-packages)
-  - [License](#license)
-  - [Contributing](#contributing)
-    - [Thanks](#thanks)
+- [The History of SimpleSchema](#the-history-of-simpleschema)
+- [Installation](#installation)
+- [Lingo](#lingo)
+- [Quick Start](#quick-start)
+  - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
+  - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
+  - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
+  - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
+  - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
+  - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
+  - [Set Default Cleaning Options](#set-default-cleaning-options)
+  - [Explicitly Clean an Object](#explicitly-clean-an-object)
+- [Defining a Schema](#defining-a-schema)
+  - [Shorthand Definitions](#shorthand-definitions)
+  - [Longhand Definitions](#longhand-definitions)
+  - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
+  - [More Shorthand](#more-shorthand)
+  - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
+  - [Extending Schemas](#extending-schemas)
+    - [Overriding When Extending](#overriding-when-extending)
+  - [Subschemas](#subschemas)
+  - [Extracting Schemas](#extracting-schemas)
+- [Schema Keys](#schema-keys)
+- [Schema Rules](#schema-rules)
+  - [type](#type)
+  - [label](#label)
+  - [optional](#optional)
+  - [required](#required)
+  - [min/max](#minmax)
+  - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
+  - [minCount/maxCount](#mincountmaxcount)
+  - [allowedValues](#allowedvalues)
+  - [regEx](#regex)
+  - [blackbox](#blackbox)
+  - [trim](#trim)
+  - [custom](#custom)
+  - [defaultValue](#defaultvalue)
+  - [autoValue](#autovalue)
+  - [Getting field properties](#getting-field-properties)
+- [Validating Data](#validating-data)
+  - [The Object to Validate](#the-object-to-validate)
+  - [Ways to Perform Validation](#ways-to-perform-validation)
+    - [Named Validation Contexts](#named-validation-contexts)
+    - [Unnamed Validation Contexts](#unnamed-validation-contexts)
+  - [Validating an Object](#validating-an-object)
+  - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
+  - [Validation Options](#validation-options)
+  - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
+    - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
+  - [Custom Field Validation](#custom-field-validation)
+  - [Custom Whole-Document Validators](#custom-whole-document-validators)
+  - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
+  - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
+  - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
+- [Customizing Validation Messages](#customizing-validation-messages)
+- [Other Validation Context Methods](#other-validation-context-methods)
+- [Other SimpleSchema Methods](#other-simpleschema-methods)
+- [Cleaning Objects](#cleaning-objects)
+- [Dates](#dates)
+- [Best Practice Code Examples](#best-practice-code-examples)
+  - [Make a field conditionally required](#make-a-field-conditionally-required)
+  - [Validate one key against another](#validate-one-key-against-another)
+- [Debug Mode](#debug-mode)
+- [Extending the Schema Options](#extending-the-schema-options)
+- [Add On Packages](#add-on-packages)
+- [License](#license)
+- [Contributing](#contributing)
+  - [Thanks](#thanks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -90,7 +92,7 @@ There are also reasons not to choose this package. Because of all it does, this 
 
 SimpleSchema was first released as a Meteor package in mid-2013. Version 1.0 was released in September 2014. In mid-2016, version 2.0 was released as an NPM package, which can be used in Meteor, NodeJS, or static browser apps.
 
-If you are migrating from the Meteor package, refer to the [CHANGELOG](https://github.com/aldeed/meteor-simple-schema/blob/v2/CHANGELOG.md#200)
+If you are migrating from the Meteor package, refer to the [CHANGELOG](https://github.com/aldeed/meteor-simple-schema/blob/master/CHANGELOG.md#200)
 
 ## Installation
 
@@ -196,6 +198,13 @@ validationContext.validate({
   name: 'Joe',
 });
 ```
+
+Passing in `Tracker` causes the following functions to become reactive:
+- ValidationContext#keyIsInvalid
+- ValidationContext#keyErrorMessage
+- ValidationContext#isValid
+- ValidationContext#validationErrors
+- SimpleSchema#label
 
 ### Automatically Clean the Object Before Validating It
 
@@ -443,7 +452,9 @@ const schema = new SimpleSchema({
 
 ### Extracting Schemas
 
-Sometimes you have one large SimpleSchema object, and you need just a subset of it for some purpose. To pull out certain schema keys into a new schema, you can use the `pick` method:
+Sometimes you have one large SimpleSchema object, and you need just a subset of it for some purpose.
+
+To pull out certain schema keys into a new schema, you can use the `pick` method:
 
 ```js
 import SimpleSchema from 'simpl-schema';
@@ -455,6 +466,48 @@ const schema = new SimpleSchema({
 });
 
 const nameSchema = schema.pick('firstName', 'lastName');
+```
+
+To keep all but certain keys in a new schema, you can use the `omit` method:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+const schema = new SimpleSchema({
+  firstName: String,
+  lastName: String,
+  username: String,
+});
+
+const nameSchema = schema.omit('username');
+```
+
+To pull a subschema out of an `Object` key in a larger schema, you can use `getObjectSchema`:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+const schema = new SimpleSchema({
+  firstName: String,
+  lastName: String,
+  address: Object,
+  'address.street1': String,
+  'address.street2': { type: String, optional: true },
+  'address.city': String,
+  'address.state': String,
+  'address.postalCode': String,
+});
+
+const addressSchema = schema.getObjectSchema('address');
+
+// addressSchema is now the same as this:
+// new SimpleSchema({
+//   street1: String,
+//   street2: { type: String, optional: true },
+//   city: String,
+//   state: String,
+//   postalCode: String,
+// });
 ```
 
 ## Schema Keys
@@ -544,6 +597,19 @@ That last point can be confusing, so let's look at a couple examples:
 * Say you have a required key "friends.address.city" but "friends.address" is optional. If "friends.address" is set in the object you're validating, but "friends.address.city" is not, there is a validation error. However, if "friends.address" is *not* set, then there is no validation error for "friends.address.city" because the object it belongs to is not present.
 * If you have a required key "friends.$.name", but the `friends` array has no objects in the object you are validating, there is no validation error for "friends.$.name". When the `friends` array *does* have objects, every present object is validated, and each object could potentially have a validation error if it is missing the `name` property. For example, when there are two objects in the friends array and both are missing the `name` property, there will be a validation error for both "friends.0.name" and "friends.1.name".
 
+### required
+
+*Can also be a function that returns true or false*
+
+If you would rather have all your schema keys be optional by default, pass the `requiredByDefault: false` option and then use `required: true` to make individual keys required.
+
+```js
+const schema = new SimpleSchema({
+  optionalProp: String,
+  requiredProp: { type: String, required: true },
+}, { requiredByDefault: false });
+```
+
 ### min/max
 
 *Can also be a function that returns the min/max value*
@@ -622,6 +688,8 @@ Note the following points of confusion:
 
 If you need more control, use the `autoValue` option instead.
 
+To get the defaultValue for a field, use `schema.defaultValue(fieldName)`. It is a shorthand for [`schema.get(fieldName, 'defaultValue')`](#getting-field-properties).
+
 ### autoValue
 
 *Used by the cleaning process but not by validation*
@@ -642,6 +710,20 @@ The following properties and methods are available in `this` for an `autoValue` 
 * `operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
 * `field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
 * `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+
+### Getting field properties
+To obtain field's property value, just call get method.
+```js
+const schema = new SimpleSchema({
+  friends: {
+    type: Array,
+    minCount: 0,
+    maxCount: 3,
+  }
+});
+
+schema.get('friends', 'maxCount'); // 3
+```
 
 ## Validating Data
 
@@ -729,6 +811,8 @@ This method returns `true` only if all the specified schema keys and their desce
 
 #### Customize the Error That is Thrown
 
+You can `defineValidationErrorTransform` one time somewhere in your code to customize the error or change it to a more specific type.
+
 ```js
 import SimpleSchema from 'simpl-schema';
 
@@ -736,6 +820,19 @@ SimpleSchema.defineValidationErrorTransform(error => {
   const customError = new MyCustomErrorType(error.message);
   customError.errorList = error.details;
   return customError;
+});
+```
+
+For example, in a Meteor app, in order to ensure that the error details are sent back to the client when throwing an error in a server method, you can convert it to a `Meteor.Error`:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+SimpleSchema.defineValidationErrorTransform(error => {
+  const ddpError = new Meteor.Error(error.message);
+  ddpError.error = 'validation-error';
+  ddpError.details = error.details;
+  return ddpError;
 });
 ```
 
@@ -837,12 +934,20 @@ If you use a custom string for `type`, be sure to define a message for it. (See 
 Example:
 
 ```js
-SimpleSchema.messages({wrongPassword: "Wrong password"});
+SimpleSchema.setDefaultMessages({
+  messages: {
+    en: {
+      wrongPassword: 'Wrong password',
+    },
+  },
+});
 
-myValidationContext.addValidationErrors([{name: "password", type: "wrongPassword"}]);
+myValidationContext.addValidationErrors([{ name: 'password', type: 'wrongPassword' }]);
 ```
 
 ### Asynchronous Custom Validation on the Client
+
+NOTE: To use the `unique` option in this example, you need to be in a Meteor app with the `aldeed:schema-index` package added.
 
 Validation runs synchronously for many reasons, and likely always will. This makes it difficult to wait for asynchronous results as part of custom validation. Here's one example of how you might validate that a username is unique on the client, without publishing all usernames to every client:
 
@@ -886,7 +991,31 @@ There may be a `message` property, but usually the error message is constructed 
 
 ## Customizing Validation Messages
 
-Error messages are managed by the [message-box](https://github.com/aldeed/node-message-box) package. You can set global defaults using `MessageBox.defaults`, and you can access the instance used by a schema at `simpleSchemaInstance.messageBox`;
+Error messages are managed by the [message-box](https://github.com/aldeed/node-message-box) package.
+
+In most cases you probably want to set default messages to be used by all `SimpleSchema` instances. Example:
+
+```js
+SimpleSchema.setDefaultMessages({
+  messages: {
+    en: {
+      "too_long": "Too long!",
+    },
+  },
+});
+```
+
+The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/node-simple-schema/blob/master/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
+
+The `MessageBox` instance for a specific schema instance is `simpleSchemaInstance.messageBox`. You can call `messages` function on this to update the messages for that schema only. Example:
+
+```js
+simpleSchemaInstance.messageBox.messages({
+  en: {
+    "too_long": "Too long!",
+  },
+});
+```
 
 ## Other Validation Context Methods
 
@@ -979,35 +1108,34 @@ optional, and then use a custom function similar to this:
 
 Where `customCondition` is whatever should trigger it being required.
 
-Note: In the future we could make this a bit simpler by allowing `optional` to be a function that returns
-true or false. Pull request welcome.
-
 ### Validate one key against another
 
 Here's an example of declaring one value valid or invalid based on another
 value using a custom validation function.
 
 ```js
-SimpleSchema.messages({
-  "passwordMismatch": "Passwords do not match"
+SimpleSchema.messageBox.messages({
+  en: {
+    passwordMismatch: 'Passwords do not match',
+  },
 });
 
 MySchema = new SimpleSchema({
   password: {
     type: String,
     label: "Enter a password",
-    min: 8
+    min: 8,
   },
   confirmPassword: {
     type: String,
     label: "Enter the password again",
     min: 8,
-    custom: function () {
+    custom() {
       if (this.value !== this.field('password').value) {
         return "passwordMismatch";
       }
-    }
-  }
+    },
+  },
 });
 ```
 
