@@ -808,6 +808,7 @@ This method returns `true` only if all the specified schema keys and their desce
 - Call `mySimpleSchema.validate(obj, options)` to validate `obj` against the schema and throw a `ValidationError` if invalid.
 - Call `SimpleSchema.validate(obj, schema, options)` static function as a shortcut for `mySimpleSchema.validate` if you don't want to create `mySimpleSchema` first. The `schema` argument can be just the schema object, in which case it will be passed to the `SimpleSchema` constructor for you. This is like `check(obj, schema)` but without the `check` dependency and with the ability to pass full schema error details back to a callback on the client.
 - Call `mySimpleSchema.validator()` to get a function that calls `mySimpleSchema.validate` for whatever object is passed to it. This means you can do `validate: mySimpleSchema.validator()` in the [mdg:validated-method](https://github.com/meteor/validated-method) package.
+- Call `mySimpleSchema.getFormValidator()` to get a function that validates whatever object is passed to it and returns a Promise that resolves with errors. The returned function is compatible with the [Composable Form Specification](http://forms.dairystatedesigns.com/user/validation/).
 
 #### Customize the Error That is Thrown
 
