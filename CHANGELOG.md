@@ -3,6 +3,9 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [0.4.0](#040)
+  - [0.3.2](#032)
+  - [0.3.1](#031)
   - [0.3.0](#030)
   - [0.2.3](#023)
   - [0.2.2](#022)
@@ -15,6 +18,12 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # simpl-schema CHANGELOG
+
+## 0.4.0
+
+- Added `getFormValidator()`, similar to `validator()` but instead of throwing an error, it returns a Promise that resolves with the errors. This can be used as a [Composable Form Specification validator](http://forms.dairystatedesigns.com/user/validation/).
+- Throw a better error when keys that conflict with Object prototype keys are used (Thanks @xavierpriour)
+- Fix the incorrect "Found both autoValue and defaultValue options" warning (Thanks @SachaG)
 
 ## 0.3.2
 
