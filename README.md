@@ -348,6 +348,8 @@ is equivalent to:
 }
 ```
 
+**Note:** This only applies to shorthand definitions, not to the longhand definition. This example will throw an error `{ friends: { type: [String] } }` even though it was valid in [the meteor-version of this package](https://github.com/aldeed/meteor-simple-schema/).
+
 ### Multiple Definitions For One Key
 
 You can define two or more different ways in which a key will be considered valid:
