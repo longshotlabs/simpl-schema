@@ -1069,7 +1069,7 @@ NOTE: The Collection2 package always calls `clean` before every insert, update, 
 
 ## Dates
 
-For consistency, if you care only about the date (year, month, date) portion and not the time, then use a `Date` object set to the desired date at midnight UTC. This goes for `min` and `max` dates, too. If you care only about the date
+For consistency, if you care only about the date (year, month, date) portion and not the time, then use a `Date` object set to the desired date at midnight UTC *(note, the clean function wont strip out time)*. This goes for `min` and `max` dates, too. If you care only about the date
 portion and you want to specify a minimum date, `min` should be set to midnight UTC on the minimum date (inclusive).
 
 Following these rules ensures maximum interoperability with HTML5 date inputs and usually just makes sense.
