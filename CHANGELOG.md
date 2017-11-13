@@ -22,6 +22,7 @@
 ## vNext
 
 - Fix to properly add defaultValues in objects that are being $pushed in an update modifier
+- Fix removeNullsFromArrays to remove only nulls
 
 ## 0.4.0
 
