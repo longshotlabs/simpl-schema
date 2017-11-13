@@ -3,6 +3,8 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [0.4.2](#042)
+  - [0.4.1](#041)
   - [0.4.0](#040)
   - [0.3.2](#032)
   - [0.3.1](#031)
@@ -19,10 +21,14 @@
 
 # simpl-schema CHANGELOG
 
-## vNext
+## 0.4.2
 
 - Fix to properly add defaultValues in objects that are being $pushed in an update modifier
 - Fix removeNullsFromArrays to remove only nulls
+
+## 0.4.1
+
+Fix cleaning an object with a `length` property
 
 ## 0.4.0
 
