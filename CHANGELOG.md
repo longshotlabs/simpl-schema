@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [0.5.0](#050)
   - [0.4.2](#042)
   - [0.4.1](#041)
   - [0.4.0](#040)
@@ -20,6 +21,10 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # simpl-schema CHANGELOG
+
+## 0.5.0
+
+- Remove underscore dependency in favor of seperated lodash modules 
 
 ## 0.4.2
 
