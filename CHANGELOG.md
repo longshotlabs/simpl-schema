@@ -19,6 +19,10 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+- Fix to properly add defaultValues in objects that are being $pushed in an update modifier
+
 ## 0.4.0
 
 - Added `getFormValidator()`, similar to `validator()` but instead of throwing an error, it returns a Promise that resolves with the errors. This can be used as a [Composable Form Specification validator](http://forms.dairystatedesigns.com/user/validation/).
