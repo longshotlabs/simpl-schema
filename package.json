@@ -31,7 +31,18 @@
     "extend": "^3.0.1",
     "message-box": "^0.1.1",
     "mongo-object": "^0.0.3",
-    "underscore": "^1.8.3"
+    "lodash.find": "^4.6.0",
+    "lodash.findwhere": "^3.1.0",
+    "lodash.foreach": "^4.5.0",
+    "lodash.every": "^4.6.0",
+    "lodash.includes": "^4.3.0",
+    "lodash.isempty": "^4.4.0",
+    "lodash.isobject": "^3.0.2",
+    "lodash.omit": "^4.5.0",
+    "lodash.without": "^4.4.0",
+    "lodash.pick": "^4.4.0",
+    "lodash.union": "^4.6.0",
+    "lodash.uniq": "^4.5.0"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
