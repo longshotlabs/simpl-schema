@@ -1179,3 +1179,5 @@ Anyone is welcome to contribute. Before submitting a pull request, make sure tha
 
 - @mquandalle
 - @Nemo64
+- @DavidSichau
+
