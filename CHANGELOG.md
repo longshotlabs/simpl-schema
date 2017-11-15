@@ -22,9 +22,13 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+- Fix regression that resulted in `_constructorOptions key is missing "type"` error reappearing in some situations
+
 ## 0.5.0
 
-- Remove underscore dependency in favor of seperated lodash modules 
+- Remove underscore dependency in favor of seperated lodash modules
 
 ## 0.4.2
 
