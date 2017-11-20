@@ -139,6 +139,33 @@ new SimpleSchema({
 ]);
 ```
 
+### Validate a Meteor Method Argument and Satisfy `audit-argument-checks`
+
+To avoid errors about not checking all arguments when you are using SimpleSchema to validate Meteor method arguments, you must pass `check` as an option when creating your SimpleSchema instance.
+
+```js
+import SimpleSchema from 'simpl-schema';
+import { check } from 'meteor/check';
+import { Meteor } from 'meteor/meteor';
+
+SimpleSchema.defineValidationErrorTransform(error => {
+  const ddpError = new Meteor.Error(error.message);
+  ddpError.error = 'validation-error';
+  ddpError.details = error.details;
+  return ddpError;
+});
+
+const myMethodObjArgSchema = new SimpleSchema({ name: String }, { check });
+
+Meteor.methods({
+  myMethod(obj) {
+    myMethodObjArgSchema.validate(obj);
+
+    // Now do other method stuff knowing that obj satisfies the schema
+  },
+});
+```
+
 ### Validate an Object and Get the Errors
 
 ```js
