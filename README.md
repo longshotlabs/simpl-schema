@@ -23,6 +23,7 @@ There are also reasons not to choose this package. Because of all it does, this 
 - [Quick Start](#quick-start)
   - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
   - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
+  - [Validate a Meteor Method Argument and Satisfy `audit-argument-checks`](#validate-a-meteor-method-argument-and-satisfy-audit-argument-checks)
   - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
   - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
   - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
@@ -708,12 +709,12 @@ Refer to the [Custom Validation](#custom-validation) section.
 
 *Used by the cleaning process but not by validation*
 
-Set this to any value that you want to be used as the default when an object does not include this field or has this field set to `undefined`. This value will be injected into the object by a call to `mySimpleSchema.clean()` with `getAutovalues: true`. Default values are set only when cleaning *non-modifier* objects.
+Set this to any value that you want to be used as the default when an object does not include this field or has this field set to `undefined`. This value will be injected into the object by a call to `mySimpleSchema.clean()` with `getAutovalues: true`.
 
 Note the following points of confusion:
 
 * A default value itself is not cleaned. So, for example, if your default value is "", it will not be removed by the `removeEmptyStrings` operation in the cleaning.
-* A default value is *always* added if there isn't a value set. Even if the property is a child of an optional object, and the optional object is not present, the object will be added and its property will be set to the default value. Effectively, this means that if you provide a default value for one property of an object, you must provide a default value for all properties of that object or risk confusing validation errors.
+* A default value is added only if there isn't a value set AND the parent object exists. Usually this is what you want, but if you need to ensure that it will always be added, you can add `defaultValue: {}` to all ancestor objects.
 
 If you need more control, use the `autoValue` option instead.
 
@@ -739,6 +740,7 @@ The following properties and methods are available in `this` for an `autoValue` 
 * `operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
 * `field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
 * `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+* `parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 
 ### Getting field properties
 To obtain field's property value, just call get method.

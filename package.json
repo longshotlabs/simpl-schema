@@ -1,6 +1,6 @@
 {
   "name": "simpl-schema",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "A schema validation package that supports direct validation of MongoDB update modifier objects.",
   "author": "Eric Dobbertin <aldeed@gmail.com>",
   "license": "MIT",
@@ -21,8 +21,7 @@
   "scripts": {
     "build": "rm -rf dist/** && babel lib --out-dir dist --ignore *.tests.js,testHelpers/*",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix || true",
-    "prepublish": "npm test && npm run build",
+    "prepare": "npm run lint && npm test && npm run build",
     "test": "mocha --compilers js:babel-core/register --recursive \"lib/**/*.tests.js\"",
     "test:watch": "npm test -- --watch"
   },

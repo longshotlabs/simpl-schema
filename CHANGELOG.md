@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [1.0.0](#100)
   - [0.5.0](#050)
   - [0.4.2](#042)
   - [0.4.1](#041)
@@ -22,9 +23,49 @@
 
 # simpl-schema CHANGELOG
 
-## vNext
+## 1.0.0
+
+*BREAKING CHANGE:* autoValue and defaultValue handling has been rewritten to fix all known issues. As part of this rewrite, the behavior has changed to address a point of common confusion.
+
+Previously, when you cleaned an object to add autoValues, a `defaultValue` would be added (and an `autoValue` function would run) even if the parent object was not present. (It would be created.)
+
+Now, an `autoValue`/`defaultValue` will run only if the object in which it appears exists. Usually this is what you want, but if you are relying on the previous behavior, you can achieve the same thing by making sure that all ancestor objects have a `defaultValue: {}`.
+
+For example, this:
+
+```js
+{
+  profile: {
+    type: Object,
+    optional: true,
+  },
+  'profile.language': {
+    type: String,
+    defaultValue: 'en',
+  },
+}
+```
+
+previously cleaned `{}` to become `{ profile: { language: 'en' } }` but now would remain `{}`. If you want cleaning to result in `{ profile: { language: 'en' } }`, add the `profile` default value like:
+
+```js
+{
+  profile: {
+    type: Object,
+    optional: true,
+    defaultValue: {},
+  },
+  'profile.language': {
+    type: String,
+    defaultValue: 'en',
+  },
+}
+```
+
+If `profile` were nested under another object, you'd have to add `defaultValue: {}` to that object definition, too, and so on.
 
 - Fix regression that resulted in `_constructorOptions key is missing "type"` error reappearing in some situations
+- Fix errors when validating an object that has a property named `length`
 
 ## 0.5.0
 
