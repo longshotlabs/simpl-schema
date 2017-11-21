@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [1.1.0](#110)
   - [1.0.0](#100)
   - [0.5.0](#050)
   - [0.4.2](#042)
@@ -22,6 +23,11 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # simpl-schema CHANGELOG
+
+## 1.1.0
+
+- The `autoConvert` cleaning now converts strings that are "true" or "false" to Boolean if the schema expects a Boolean.
+- The `autoConvert` cleaning now converts numbers to Boolean if the schema expects a Boolean, with 0 being `false` and all other numbers being `true`.
 
 ## 1.0.0
 

@@ -1080,6 +1080,8 @@ The `clean` function takes the object to be cleaned as its first argument and th
 * `autoConvert`: `true` by default. If `true`, helps eliminate unnecessary validation messages by automatically converting values where possible.
   * Non-string values are converted to a String if the schema expects a String
   * Strings that are numbers are converted to Numbers if the schema expects a Number
+  * Strings that are "true" or "false" are converted to Boolean if the schema expects a Boolean
+  * Numbers are converted to Boolean if the schema expects a Boolean, with 0 being `false` and all other numbers being `true`
   * Non-array values are converted to a one-item array if the schema expects an Array
 * `removeEmptyStrings`: Remove keys in normal object or $set where the value is an empty string? True by default.
 * `trimStrings`: Remove all leading and trailing spaces from string values? True by default.
