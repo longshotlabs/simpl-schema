@@ -1,4 +1,4 @@
-# simple-schema
+# SimpleSchema (simpl-schema NPM package)
 
 SimpleSchema validates JavaScript objects to ensure they match a schema. It can also clean the objects to automatically convert types, remove unsupported properties, and add automatic values such that the object is then more likely to pass validation.
 
