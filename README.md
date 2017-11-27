@@ -744,6 +744,8 @@ The following properties and methods are available in `this` for an `autoValue` 
 * `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
 * `parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 
+**NOTE: If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to https://github.com/aldeed/simple-schema-js/issues/204**
+
 ### Getting field properties
 To obtain field's property value, just call get method.
 ```js
