@@ -24,6 +24,10 @@
 
 # simpl-schema CHANGELOG
 
+## 1.1.1
+
+Passing an array of schemas to `new SimpleSchema()` or `extend()` now throws an error rather than failing silently with strange results.
+
 ## 1.1.0
 
 - The `autoConvert` cleaning now converts strings that are "true" or "false" to Boolean if the schema expects a Boolean.
