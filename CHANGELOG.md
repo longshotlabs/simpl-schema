@@ -24,6 +24,10 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+Passing a definition with no `type` to `extend` now works as expected, as long as the existing definition already has a `type`.
+
 ## 1.1.1
 
 Passing an array of schemas to `new SimpleSchema()` or `extend()` now throws an error rather than failing silently with strange results.
