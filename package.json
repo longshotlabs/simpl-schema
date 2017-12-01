@@ -1,6 +1,6 @@
 {
   "name": "simpl-schema",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A schema validation package that supports direct validation of MongoDB update modifier objects.",
   "author": "Eric Dobbertin <aldeed@gmail.com>",
   "license": "MIT",

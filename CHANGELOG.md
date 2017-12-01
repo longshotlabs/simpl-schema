@@ -3,6 +3,8 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [1.1.2](#112)
+  - [1.1.1](#111)
   - [1.1.0](#110)
   - [1.0.0](#100)
   - [0.5.0](#050)
@@ -24,7 +26,7 @@
 
 # simpl-schema CHANGELOG
 
-## vNext
+## 1.1.2
 
 Passing a definition with no `type` to `extend` now works as expected, as long as the existing definition already has a `type`.
 
