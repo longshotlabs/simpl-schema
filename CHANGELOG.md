@@ -26,6 +26,10 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+The performance of `clean`, specifically of looping through the object to apply autoValues and defaultValues, has been greatly improved for large objects.
+
 ## 1.1.2
 
 Passing a definition with no `type` to `extend` now works as expected, as long as the existing definition already has a `type`.
