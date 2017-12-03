@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [1.2.0](#120)
   - [1.1.2](#112)
   - [1.1.1](#111)
   - [1.1.0](#110)
@@ -26,7 +27,7 @@
 
 # simpl-schema CHANGELOG
 
-## vNext
+## 1.2.0
 
 The performance of `clean`, specifically of looping through the object to apply autoValues and defaultValues, has been greatly improved for large objects.
 
