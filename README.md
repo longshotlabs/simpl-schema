@@ -728,23 +728,24 @@ To get the defaultValue for a field, use `schema.defaultValue(fieldName)`. It is
 
 The `autoValue` option allows you to specify a function that is called by `simpleSchemaInstance.clean()` to potentially change the value of a property in the object being cleaned. This is a powerful feature that allows you to set up either forced values or default values, potentially based on the values of other fields in the object.
 
-An `autoValue` function is passed the document or modifier as its only argument, but you will generally not need it. Instead, the function context provides a variety of properties and methods to help you determine what you should return.
+An `autoValue` function `this` context provides a variety of properties and methods to help you determine what you should return:
+
+* `this.isSet`: True if the field is already set in the document or modifier
+* `this.unset()`: Call this method to prevent the original value from being used when you return undefined.
+* `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
+* `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
+* `this.field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
+* `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+* `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 
 If an `autoValue` function does not return anything (i.e., returns `undefined`), the field's value will be whatever the document or modifier says it should be. If that field is already in the document or modifier, it stays in the document or modifier with the same value. If it's not in the document or modifier, it's still not there. If you don't want it to be in the doc or modifier, you must call `this.unset()`.
 
 Any other return value will be used as the field's value. You may also return special pseudo-modifier objects for update operations. Examples are `{$inc: 1}` and `{$push: new Date}`.
 
-The following properties and methods are available in `this` for an `autoValue` function:
+#### autoValue gotchas
 
-* `isSet`: True if the field is already set in the document or modifier
-* `unset()`: Call this method to prevent the original value from being used when you return undefined.
-* `value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
-* `operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
-* `field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
-* `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
-* `parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
-
-**NOTE: If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to https://github.com/aldeed/simple-schema-js/issues/204**
+* If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to https://github.com/aldeed/simple-schema-js/issues/204
+* An `autoValue` function will always run during cleaning even if that field is not in the object being cleaned. This allows you to provide complex default values. If your function applies only when there is a value, you should add `if (!this.isSet) return;` at the top.
 
 ### Getting field properties
 To obtain field's property value, just call get method.
