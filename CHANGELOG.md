@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [1.2.1](#121)
   - [1.2.0](#120)
   - [1.1.2](#112)
   - [1.1.1](#111)
@@ -27,7 +28,7 @@
 
 # simpl-schema CHANGELOG
 
-## vNext
+## 1.2.1
 
 Fix issues with Meteor Tracker reactivity sometimes not working when subschemas are involved.
 

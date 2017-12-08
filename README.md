@@ -58,6 +58,7 @@ There are also reasons not to choose this package. Because of all it does, this 
   - [custom](#custom)
   - [defaultValue](#defaultvalue)
   - [autoValue](#autovalue)
+    - [autoValue gotchas](#autovalue-gotchas)
   - [Getting field properties](#getting-field-properties)
 - [Validating Data](#validating-data)
   - [The Object to Validate](#the-object-to-validate)
