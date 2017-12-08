@@ -1,0 +1,19 @@
+{
+  "name": "meteor-app",
+  "private": true,
+  "scripts": {
+    "test": "TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package meteortesting:mocha",
+    "test:watch": "TEST_BROWSER_DRIVER=nightmare TEST_WATCH=1 meteor test --driver-package meteortesting:mocha",
+    "test:watch:browser": "TEST_WATCH=1 meteor test --driver-package meteortesting:mocha"
+  },
+  "dependencies": {
+    "babel-polyfill": "6.26.0",
+    "babel-runtime": "6.26.0",
+    "meteor-node-stubs": "0.3.2",
+    "simpl-schema": "../../package"
+  },
+  "devDependencies": {
+    "expect": "21.2.1",
+    "nightmare": "2.10.0"
+  }
+}
