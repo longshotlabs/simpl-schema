@@ -27,6 +27,10 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+Fix issues with Meteor Tracker reactivity sometimes not working when subschemas are involved.
+
 ## 1.2.0
 
 The performance of `clean`, specifically of looping through the object to apply autoValues and defaultValues, has been greatly improved for large objects.

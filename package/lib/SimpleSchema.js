@@ -1,6 +1,5 @@
 import extend from 'extend';
 import MongoObject from 'mongo-object';
-import without from 'lodash.without';
 import omit from 'lodash.omit';
 import every from 'lodash.every';
 import pick from 'lodash.pick';
@@ -82,6 +81,7 @@ class SimpleSchema {
 
     // Clone, expanding shorthand, and store the schema object in this._schema
     this._schema = {};
+    this._depsLabels = {};
     this.extend(schema);
 
     // Define default validation error messages
@@ -116,6 +116,32 @@ class SimpleSchema {
    */
   static isSimpleSchema(obj) {
     return (obj && (obj instanceof SimpleSchema || obj._schema));
+  }
+
+  /**
+   * For Meteor apps, add a reactive dependency on the label
+   * for a key.
+   */
+  reactiveLabelDependency(key, tracker = this._constructorOptions.tracker) {
+    if (!key || !tracker) return;
+
+    const genericKey = MongoObject.makeKeyGeneric(key);
+
+    // If in this schema
+    if (this._schema[genericKey]) {
+      if (!this._depsLabels[genericKey]) {
+        this._depsLabels[genericKey] = new tracker.Dependency();
+      }
+      this._depsLabels[genericKey].depend();
+      return;
+    }
+
+    // If in subschema
+    this.findFirstAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+      // Pass tracker down so that we get reactivity even if the subschema
+      // didn't have tracker option set
+      simpleSchema.reactiveLabelDependency(subSchemaKey, tracker);
+    });
   }
 
   /**
@@ -278,7 +304,7 @@ class SimpleSchema {
       }
     });
 
-    return new SimpleSchema(newSchemaDef);
+    return new SimpleSchema(newSchemaDef, this._constructorOptions);
   }
 
   // Returns an array of all the autovalue functions, including those in subschemas all the
@@ -412,11 +438,10 @@ class SimpleSchema {
     let schemaObj;
     if (SimpleSchema.isSimpleSchema(schema)) {
       schemaObj = schema._schema;
-      // Merge the validators
       this._validators = this._validators.concat(schema._validators);
       this._docValidators = this._docValidators.concat(schema._docValidators);
-      // Merge the clean options
-      this._cleanOptions = extend(true, {}, this._cleanOptions, schema._cleanOptions);
+      this._cleanOptions = extend(true, this._cleanOptions, schema._cleanOptions);
+      this._constructorOptions = extend(true, this._constructorOptions, schema._constructorOptions);
     } else {
       schemaObj = expandShorthand(schema);
     }
@@ -450,7 +475,6 @@ class SimpleSchema {
     this._autoValues = {};
     this._blackboxKeys = [];
     this._firstLevelSchemaKeys = [];
-    this._depsLabels = {};
     this._objectKeys = {};
 
     // Update all of the information cached on the instance
@@ -462,11 +486,6 @@ class SimpleSchema {
 
       // Keep list of all top level keys
       if (fieldName.indexOf('.') === -1) this._firstLevelSchemaKeys.push(fieldName);
-
-      // Initialize label reactive dependency (Meteor only)
-      if (this._constructorOptions.tracker) {
-        this._depsLabels[fieldName] = new this._constructorOptions.tracker.Dependency();
-      }
 
       // Keep list of all blackbox keys for passing to MongoObject constructor
       // XXX For now if any oneOf type is blackbox, then the whole field is.
@@ -670,8 +689,7 @@ class SimpleSchema {
     const def = this.getDefinition(key, ['label']);
     if (!def) return null;
 
-    const genericKey = MongoObject.makeKeyGeneric(key);
-    this._depsLabels[genericKey] && this._depsLabels[genericKey].depend();
+    this.reactiveLabelDependency(key);
     return def.label;
   }
 
@@ -862,20 +880,19 @@ function getDefaultAutoValueFunction(defaultValue) {
 
 // Mutates def into standardized object with SimpleSchemaGroup type
 function standardizeDefinition(def) {
-  def = clone(def);
+  const standardizedDef = omit(def, oneOfProps);
 
   // Internally, all definition types are stored as groups for simplicity of access.
   // If we are extending, there may not actually be def.type, but it's okay because
   // it will be added later when the two SimpleSchemaGroups are merged.
-  if (!def.type || !(def.type instanceof SimpleSchemaGroup)) {
-    def.type = new SimpleSchemaGroup(pick(def, oneOfProps));
+  if (def.type && def.type instanceof SimpleSchemaGroup) {
+    standardizedDef.type = def.type;
+  } else {
+    const groupProps = pick(def, oneOfProps);
+    standardizedDef.type = new SimpleSchemaGroup(groupProps);
   }
 
-  without(oneOfProps, 'type').forEach(prop => {
-    delete def[prop];
-  });
-
-  return def;
+  return standardizedDef;
 }
 
 // Checks and mutates definition. Clone it first.

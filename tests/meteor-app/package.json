@@ -2,9 +2,9 @@
   "name": "meteor-app",
   "private": true,
   "scripts": {
-    "test": "TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package meteortesting:mocha",
-    "test:watch": "TEST_BROWSER_DRIVER=nightmare TEST_WATCH=1 meteor test --driver-package meteortesting:mocha",
-    "test:watch:browser": "TEST_WATCH=1 meteor test --driver-package meteortesting:mocha"
+    "test": "TEST_SERVER=0 TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package meteortesting:mocha",
+    "test:watch": "TEST_SERVER=0 TEST_BROWSER_DRIVER=nightmare TEST_WATCH=1 meteor test --driver-package meteortesting:mocha",
+    "test:watch:browser": "TEST_SERVER=0 TEST_WATCH=1 meteor test --driver-package meteortesting:mocha"
   },
   "dependencies": {
     "babel-polyfill": "6.26.0",
