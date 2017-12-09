@@ -6,18 +6,23 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      - image: circleci/node:8.9.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+      - image: circleci/node:8.9.1-browsers
 
     working_directory: ~/repo
 
     steps:
       - checkout
+
+      # Install Meteor
+      - run: curl https://install.meteor.com | sh
+
+      # https://github.com/meteor/meteor/issues/4019
+      - run: sudo apt-get update
+      - run: DEBIAN_FRONTEND=noninteractive sudo apt-get install -y locales
+      - run: sudo sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+      - run: sudo dpkg-reconfigure --frontend=noninteractive locales
+      - run: sudo update-locale LANG=en_US.UTF-8
+      - run: export LANG=en_US.UTF-8
 
       # Download and cache dependencies
       - restore_cache:
@@ -26,7 +31,6 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: curl https://install.meteor.com/ | sh
       - run: cd package && npm install
 
       - save_cache:
@@ -35,4 +39,5 @@ jobs:
           key: v1-dependencies-{{ checksum "package/package.json" }}
 
       # run tests!
-      - run: cd package && npm run lint && npm test
+      - run: cd package && npm run lint && npm test && npm run build
+      - run: cd tests/meteor-app && meteor npm i && npm test
