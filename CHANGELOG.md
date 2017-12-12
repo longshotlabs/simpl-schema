@@ -28,6 +28,10 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+Fix an issue introduced by 1.2.1, where it was possible for a SimpleSchema instance passed to `extend` to be mutated.
+
 ## 1.2.1
 
 Fix issues with Meteor Tracker reactivity sometimes not working when subschemas are involved.

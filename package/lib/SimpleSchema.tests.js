@@ -562,6 +562,28 @@ describe('SimpleSchema', function () {
       expect(schema._schema.name.type.definitions[0].min).toBe(5);
       expect(schema._schema.name.type.definitions[0].max).toBe(15);
     });
+
+    it('does not mutate a schema that is passed to extend', function () {
+      const itemSchema = new SimpleSchema({
+        _id: String,
+      });
+      const mainSchema = new SimpleSchema({
+        items: Array,
+        'items.$': itemSchema,
+      });
+
+      const item2Schema = new SimpleSchema({
+        blah: String,
+      });
+      const main2Schema = new SimpleSchema({
+        items: Array,
+        'items.$': item2Schema,
+      });
+
+      new SimpleSchema({}).extend(mainSchema).extend(main2Schema);
+
+      expect(mainSchema._schema['items.$'].type.definitions[0].type._schemaKeys).toEqual(['_id']);
+    });
   });
 
   it('empty required array is valid', function () {

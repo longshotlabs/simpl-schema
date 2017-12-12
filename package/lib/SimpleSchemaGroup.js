@@ -4,7 +4,7 @@ import extend from 'extend';
 class SimpleSchemaGroup {
   constructor(...definitions) {
     this.definitions = definitions.map(definition => {
-      if (MongoObject.isBasicObject(definition)) return definition;
+      if (MongoObject.isBasicObject(definition)) return extend(true, {}, definition);
 
       if (definition instanceof RegExp) {
         return {
@@ -21,6 +21,10 @@ class SimpleSchemaGroup {
 
   get singleType() {
     return this.definitions[0].type;
+  }
+
+  clone() {
+    return new SimpleSchemaGroup(...this.definitions);
   }
 
   extend(otherGroup) {

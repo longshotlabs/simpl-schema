@@ -886,7 +886,7 @@ function standardizeDefinition(def) {
   // If we are extending, there may not actually be def.type, but it's okay because
   // it will be added later when the two SimpleSchemaGroups are merged.
   if (def.type && def.type instanceof SimpleSchemaGroup) {
-    standardizedDef.type = def.type;
+    standardizedDef.type = def.type.clone();
   } else {
     const groupProps = pick(def, oneOfProps);
     standardizedDef.type = new SimpleSchemaGroup(groupProps);
