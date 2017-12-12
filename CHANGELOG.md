@@ -3,6 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [simpl-schema CHANGELOG](#simpl-schema-changelog)
+  - [1.2.2](#122)
   - [1.2.1](#121)
   - [1.2.0](#120)
   - [1.1.2](#112)
@@ -28,7 +29,7 @@
 
 # simpl-schema CHANGELOG
 
-## vNext
+## 1.2.2
 
 Fix an issue introduced by 1.2.1, where it was possible for a SimpleSchema instance passed to `extend` to be mutated.
 
