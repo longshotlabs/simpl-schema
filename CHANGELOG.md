@@ -29,6 +29,10 @@
 
 # simpl-schema CHANGELOG
 
+## vNext
+
+Add `this.key` and `this.closestSubschemaFieldName` to `autoValue` context to help with tricky situations when subschemas are used.
+
 ## 1.2.2
 
 Fix an issue introduced by 1.2.1, where it was possible for a SimpleSchema instance passed to `extend` to be mutated.

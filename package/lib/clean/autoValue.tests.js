@@ -15,19 +15,32 @@ describe('autoValue', function () {
           type: Boolean,
           optional: true,
           autoValue() {
+            expect(this.key).toBe('bar');
+            expect(this.closestSubschemaFieldName).toBe(null);
             expect(this.isSet).toBe(false);
             expect(this.value).toBe(undefined);
             expect(this.operator).toBe(null);
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(false);
-            expect(foo.value).toBe(undefined);
-            expect(foo.operator).toBe(null);
+            expect(foo).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(false);
-            expect(fooSibling.value).toBe(undefined);
-            expect(fooSibling.operator).toBe(null);
+            expect(fooSibling).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
           },
         },
       });
@@ -49,14 +62,25 @@ describe('autoValue', function () {
             expect(this.operator).toBe(null);
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(true);
-            expect(foo.value).toEqual('clown');
-            expect(foo.operator).toBe(null);
+            expect(foo).toEqual({
+              isSet: true,
+              operator: null,
+              value: 'clown',
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(true);
-            expect(fooSibling.value).toEqual('clown');
-            expect(fooSibling.operator).toBe(null);
+            expect(fooSibling).toEqual({
+              isSet: true,
+              operator: null,
+              value: 'clown',
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
           },
         },
       });
@@ -80,20 +104,76 @@ describe('autoValue', function () {
             expect(this.operator).toBe(null);
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(true);
-            expect(foo.value).toEqual('clown');
-            expect(foo.operator).toBe(null);
+            expect(foo).toEqual({
+              isSet: true,
+              operator: null,
+              value: 'clown',
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(true);
-            expect(fooSibling.value).toEqual('clown');
-            expect(fooSibling.operator).toBe(null);
+            expect(fooSibling).toEqual({
+              isSet: true,
+              operator: null,
+              value: 'clown',
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
           },
         },
       });
       schema.clean({
         foo: 'clown',
         bar: true,
+      });
+    });
+
+    it('parentField', function () {
+      const schema = new SimpleSchema({
+        foo: {
+          type: Object,
+          optional: true,
+        },
+        'foo.bar': {
+          type: Boolean,
+          optional: true,
+          autoValue() {
+            expect(this.parentField()).toEqual({
+              isSet: true,
+              operator: null,
+              value: {},
+            });
+          },
+        },
+      });
+      schema.clean({
+        foo: {},
+      });
+    });
+
+    it('closestSubschemaFieldName set', function () {
+      const schema1 = new SimpleSchema({
+        dug: {
+          type: Boolean,
+          optional: true,
+          autoValue() {
+            expect(this.key).toBe('dig.dug');
+            expect(this.closestSubschemaFieldName).toBe('dig');
+          },
+        },
+      });
+      const schema2 = new SimpleSchema({
+        dig: {
+          type: schema1,
+          optional: true,
+        },
+      });
+      schema2.clean({
+        dig: {},
       });
     });
 
@@ -112,14 +192,26 @@ describe('autoValue', function () {
             expect(this.operator).toBe(null);
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(false);
-            expect(foo.value).toBe(undefined);
-            expect(foo.operator).toBe(null);
+            expect(foo).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(false);
-            expect(fooSibling.value).toBe(undefined);
-            expect(fooSibling.operator).toBe(null);
+            expect(fooSibling).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
+
             this.unset();
           },
         },
@@ -145,14 +237,25 @@ describe('autoValue', function () {
             expect(this.operator).toBe('$set');
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(false);
-            expect(foo.value).toBe(undefined);
-            expect(foo.operator).toBe(null);
+            expect(foo).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(false);
-            expect(fooSibling.value).toBe(undefined);
-            expect(fooSibling.operator).toBe(null);
+            expect(fooSibling).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
           },
         },
       });
@@ -182,17 +285,28 @@ describe('autoValue', function () {
           autoValue() {
             expect(this.isSet).toBe(true);
             expect(this.value).toBe(false);
-            expect(this.operator).toEqual('$set');
+            expect(this.operator).toBe('$set');
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(true);
-            expect(foo.value).toEqual('clown');
-            expect(foo.operator).toEqual('$set');
+            expect(foo).toEqual({
+              isSet: true,
+              operator: '$set',
+              value: 'clown',
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(true);
-            expect(fooSibling.value).toEqual('clown');
-            expect(fooSibling.operator).toEqual('$set');
+            expect(fooSibling).toEqual({
+              isSet: true,
+              operator: '$set',
+              value: 'clown',
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
 
             return true;
           },
@@ -225,17 +339,28 @@ describe('autoValue', function () {
           autoValue() {
             expect(this.isSet).toBe(false);
             expect(this.value).toBe(undefined);
-            expect(this.operator).toEqual('$set');
+            expect(this.operator).toBe('$set');
 
             const foo = this.field('foo');
-            expect(foo.isSet).toBe(false);
-            expect(foo.value).toBe(undefined);
-            expect(foo.operator).toBe(null);
+            expect(foo).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
 
             const fooSibling = this.siblingField('foo');
-            expect(fooSibling.isSet).toBe(false);
-            expect(fooSibling.value).toBe(undefined);
-            expect(fooSibling.operator).toBe(null);
+            expect(fooSibling).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
+
+            const fooParent = this.parentField();
+            expect(fooParent).toEqual({
+              isSet: false,
+              operator: null,
+              value: undefined,
+            });
 
             return {
               $set: true,

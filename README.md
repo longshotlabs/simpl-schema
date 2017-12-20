@@ -731,6 +731,8 @@ The `autoValue` option allows you to specify a function that is called by `simpl
 
 An `autoValue` function `this` context provides a variety of properties and methods to help you determine what you should return:
 
+* `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
+* `this.closestSubschemaFieldName`: If your schema is used as a subschema in another schema, this will be set to the name of the key that references the schema. Otherwise it will be `null`.
 * `this.isSet`: True if the field is already set in the document or modifier
 * `this.unset()`: Call this method to prevent the original value from being used when you return undefined.
 * `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.

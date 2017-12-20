@@ -34,10 +34,11 @@ export default class AutoValueRunner {
     if (includes(this.doneKeys, affectedKey)) return;
 
     const fieldParentName = getParentOfKey(affectedKey, true);
+    const parentFieldInfo = getFieldInfo(mongoObject, fieldParentName.slice(0, -1));
 
     let doUnset = false;
 
-    if (Array.isArray(getFieldInfo(mongoObject, fieldParentName.slice(0, -1)).value)) {
+    if (Array.isArray(parentFieldInfo.value)) {
       if (isNaN(affectedKey.split('.').slice(-1).pop())) {
         // parent is an array, but the key to be set is not an integer (see issue #80)
         return;
@@ -45,21 +46,23 @@ export default class AutoValueRunner {
     }
 
     const autoValue = func.call({
-      isSet: (value !== undefined),
-      unset() {
-        doUnset = true;
-      },
-      value,
-      operator,
+      closestSubschemaFieldName: closestSubschemaFieldName.length ? closestSubschemaFieldName : null,
       field(fName) {
         return getFieldInfo(mongoObject, closestSubschemaFieldName + fName);
+      },
+      isSet: (value !== undefined),
+      key: affectedKey,
+      operator,
+      parentField() {
+        return parentFieldInfo;
       },
       siblingField(fName) {
         return getFieldInfo(mongoObject, fieldParentName + fName);
       },
-      parentField() {
-        return getFieldInfo(mongoObject, fieldParentName.slice(0, -1));
+      unset() {
+        doUnset = true;
       },
+      value,
       ...(extendedAutoValueContext || {}),
     }, mongoObject.getObject());
 
