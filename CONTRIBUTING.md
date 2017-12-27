@@ -1,10 +1,28 @@
 # Contribute
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Introduction](#introduction)
+- [Your First Contribution](#your-first-contribution)
+- [Submitting code](#submitting-code)
+- [Code review process](#code-review-process)
+- [Financial contributions](#financial-contributions)
+- [Questions](#questions)
+- [Credits](#credits)
+  - [Contributors](#contributors)
+  - [Backers](#backers)
+  - [Sponsors](#sponsors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Introduction
 
 First, thank you for considering contributing to simple-schema-js! It's people like you that make the open source community such a great community! 😊
 
-We welcome any type of contribution, not only code. You can help with 
+We welcome any type of contribution, not only code. You can help with
+
 - **QA**: file bug reports, the more details you can give the better (e.g. screenshots with the console open)
 - **Marketing**: writing blog posts, howto's, printing stickers, ...
 - **Community**: presenting the project at meetups, organizing a dedicated meetup for the local community, ...
@@ -41,13 +59,11 @@ You can also reach us at hello@simple-schema-js.opencollective.com.
 Thank you to all the people who have already contributed to simple-schema-js!
 <a href="graphs/contributors"><img src="https://opencollective.com/simple-schema-js/contributors.svg?width=890" /></a>
 
-
 ### Backers
 
 Thank you to all our backers! [[Become a backer](https://opencollective.com/simple-schema-js#backer)]
 
 <a href="https://opencollective.com/simple-schema-js#backers" target="_blank"><img src="https://opencollective.com/simple-schema-js/backers.svg?width=890"></a>
-
 
 ### Sponsors
 

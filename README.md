@@ -1,10 +1,11 @@
-[![Backers on Open Collective](https://opencollective.com/simple-schema-js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/simple-schema-js/sponsors/badge.svg)](#sponsors) [![CircleCI](https://circleci.com/gh/aldeed/simple-schema-js/tree/master.svg?style=svg)](https://circleci.com/gh/aldeed/simple-schema-js/tree/master)
-
 # SimpleSchema (simpl-schema NPM package)
+
+[![Backers on Open Collective](https://opencollective.com/simple-schema-js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/simple-schema-js/sponsors/badge.svg)](#sponsors) [![CircleCI](https://circleci.com/gh/aldeed/simple-schema-js/tree/master.svg?style=svg)](https://circleci.com/gh/aldeed/simple-schema-js/tree/master)
 
 SimpleSchema validates JavaScript objects to ensure they match a schema. It can also clean the objects to automatically convert types, remove unsupported properties, and add automatic values such that the object is then more likely to pass validation.
 
 There are a lot of similar packages for validating objects. These are some of the features of this package that might be good reasons to choose this one over another:
+
 - Isomorphic. Works in NodeJS and modern browsers.
 - The object you validate can be a MongoDB modifier. SimpleSchema understands how to properly validate it such that the object in the database, after undergoing modification, will be valid.
 - Optional Tracker reactivity for Meteor apps
@@ -86,6 +87,9 @@ There are also reasons not to choose this package. Because of all it does, this 
 - [Debug Mode](#debug-mode)
 - [Extending the Schema Options](#extending-the-schema-options)
 - [Add On Packages](#add-on-packages)
+- [Contributors](#contributors)
+- [Backers](#backers)
+- [Sponsors](#sponsors)
 - [License](#license)
 - [Contributing](#contributing)
   - [Thanks](#thanks)
@@ -100,7 +104,7 @@ If you are migrating from the Meteor package, refer to the [CHANGELOG](https://g
 
 ## Installation
 
-```
+```bash
 npm install simpl-schema
 ```
 
@@ -111,6 +115,7 @@ NOTE: You may also need to load the `babel-polyfill` package if you get any erro
 ## Lingo
 
 In this documentation:
+
 - "key", "field", and "property" generally all mean the same thing: an identifier for some part of an object that is validated by your schema. SimpleSchema uses dot notation to identify nested keys.
 - "validate" means to check whether an object matches what you expect, for example, having the expected keys with the expected data types, expected string lengths, etc.
 
@@ -231,6 +236,7 @@ validationContext.validate({
 ```
 
 Passing in `Tracker` causes the following functions to become reactive:
+
 - ValidationContext#keyIsInvalid
 - ValidationContext#keyErrorMessage
 - ValidationContext#isValid
@@ -584,15 +590,15 @@ Here are some specifics about the various rules you can define in your schema.
 
 One of the following:
 
-* `String`
-* `Number`
-* `SimpleSchema.Integer` (same as `Number` but with decimals/floats disallowed)
-* `Boolean`
-* `Object`
-* `Array`
-* Any custom or built-in class like `Date`
-* Another `SimpleSchema` instance, meaning `Object` type with this schema
-* `SimpleSchema.oneOf(...)`, with multiple of the above types
+- `String`
+- `Number`
+- `SimpleSchema.Integer` (same as `Number` but with decimals/floats disallowed)
+- `Boolean`
+- `Object`
+- `Array`
+- Any custom or built-in class like `Date`
+- Another `SimpleSchema` instance, meaning `Object` type with this schema
+- `SimpleSchema.oneOf(...)`, with multiple of the above types
 
 ### label
 
@@ -620,15 +626,15 @@ By default, all keys are required. Set `optional: true` to change that.
 
 With complex keys, it might be difficult to understand what "required" means. Here's a brief explanation of how requiredness is interpreted:
 
-* If `type` is `Array`, then "required" means that key must have a value, but an empty array is fine. (If an empty array is *not* fine, add the `minCount: 1` option.)
-* For array items (when the key name ends with ".$"), the `optional` option has no effect. That is, something cannot be "required" to be in an array.
-* If a key is required at a deeper level, the key must have a value *only if* the object it belongs to is present.
-* When the object being validated is a Mongo modifier object, changes that would unset or `null` a required key result in validation errors.
+- If `type` is `Array`, then "required" means that key must have a value, but an empty array is fine. (If an empty array is *not* fine, add the `minCount: 1` option.)
+- For array items (when the key name ends with ".$"), the `optional` option has no effect. That is, something cannot be "required" to be in an array.
+- If a key is required at a deeper level, the key must have a value *only if* the object it belongs to is present.
+- When the object being validated is a Mongo modifier object, changes that would unset or `null` a required key result in validation errors.
 
 That last point can be confusing, so let's look at a couple examples:
 
-* Say you have a required key "friends.address.city" but "friends.address" is optional. If "friends.address" is set in the object you're validating, but "friends.address.city" is not, there is a validation error. However, if "friends.address" is *not* set, then there is no validation error for "friends.address.city" because the object it belongs to is not present.
-* If you have a required key "friends.$.name", but the `friends` array has no objects in the object you are validating, there is no validation error for "friends.$.name". When the `friends` array *does* have objects, every present object is validated, and each object could potentially have a validation error if it is missing the `name` property. For example, when there are two objects in the friends array and both are missing the `name` property, there will be a validation error for both "friends.0.name" and "friends.1.name".
+- Say you have a required key "friends.address.city" but "friends.address" is optional. If "friends.address" is set in the object you're validating, but "friends.address.city" is not, there is a validation error. However, if "friends.address" is *not* set, then there is no validation error for "friends.address.city" because the object it belongs to is not present.
+- If you have a required key "friends.$.name", but the `friends` array has no objects in the object you are validating, there is no validation error for "friends.$.name". When the `friends` array *does* have objects, every present object is validated, and each object could potentially have a validation error if it is missing the `name` property. For example, when there are two objects in the friends array and both are missing the `name` property, there will be a validation error for both "friends.0.name" and "friends.1.name".
 
 ### required
 
@@ -647,9 +653,9 @@ const schema = new SimpleSchema({
 
 *Can also be a function that returns the min/max value*
 
-* If `type` is `Number` or `SimpleSchema.Integer`, these rules define the minimum or maximum numeric value.
-* If `type` is `String`, these rules define the minimum or maximum string length.
-* If `type` is `Date`, these rules define the minimum or maximum date, inclusive.
+- If `type` is `Number` or `SimpleSchema.Integer`, these rules define the minimum or maximum numeric value.
+- If `type` is `String`, these rules define the minimum or maximum string length.
+- If `type` is `Date`, these rules define the minimum or maximum date, inclusive.
 
 You can alternatively provide a function that takes no arguments and returns the appropriate minimum or maximum value. This is useful, for example, if the minimum Date for a field should be "today".
 
@@ -680,6 +686,7 @@ You can use `schema.getAllowedValuesForKey(key)` to get the allowed values array
 Any regular expression that must be matched for the key to be valid, or an array of regular expressions that will be tested in order.
 
 The `SimpleSchema.RegEx` object defines standard regular expressions you can use as the value for the `regEx` key.
+
 - `SimpleSchema.RegEx.Email` for emails (uses a permissive regEx recommended by W3C, which most browsers use. Does not require a TLD)
 - `SimpleSchema.RegEx.EmailWithTLD` for emails that must have the TLD portion (.com, etc.). Emails like `me@localhost` and `me@192.168.1.1` won't pass this one.
 - `SimpleSchema.RegEx.Domain` for external domains and the domain only (requires a tld like `.com`)
@@ -716,8 +723,8 @@ Set this to any value that you want to be used as the default when an object doe
 
 Note the following points of confusion:
 
-* A default value itself is not cleaned. So, for example, if your default value is "", it will not be removed by the `removeEmptyStrings` operation in the cleaning.
-* A default value is added only if there isn't a value set AND the parent object exists. Usually this is what you want, but if you need to ensure that it will always be added, you can add `defaultValue: {}` to all ancestor objects.
+- A default value itself is not cleaned. So, for example, if your default value is "", it will not be removed by the `removeEmptyStrings` operation in the cleaning.
+- A default value is added only if there isn't a value set AND the parent object exists. Usually this is what you want, but if you need to ensure that it will always be added, you can add `defaultValue: {}` to all ancestor objects.
 
 If you need more control, use the `autoValue` option instead.
 
@@ -731,15 +738,15 @@ The `autoValue` option allows you to specify a function that is called by `simpl
 
 An `autoValue` function `this` context provides a variety of properties and methods to help you determine what you should return:
 
-* `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
-* `this.closestSubschemaFieldName`: If your schema is used as a subschema in another schema, this will be set to the name of the key that references the schema. Otherwise it will be `null`.
-* `this.isSet`: True if the field is already set in the document or modifier
-* `this.unset()`: Call this method to prevent the original value from being used when you return undefined.
-* `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
-* `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
-* `this.field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
-* `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
-* `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
+- `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
+- `this.closestSubschemaFieldName`: If your schema is used as a subschema in another schema, this will be set to the name of the key that references the schema. Otherwise it will be `null`.
+- `this.isSet`: True if the field is already set in the document or modifier
+- `this.unset()`: Call this method to prevent the original value from being used when you return undefined.
+- `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
+- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
+- `this.field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
+- `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+- `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 
 If an `autoValue` function does not return anything (i.e., returns `undefined`), the field's value will be whatever the document or modifier says it should be. If that field is already in the document or modifier, it stays in the document or modifier with the same value. If it's not in the document or modifier, it's still not there. If you don't want it to be in the doc or modifier, you must call `this.unset()`.
 
@@ -747,11 +754,13 @@ Any other return value will be used as the field's value. You may also return sp
 
 #### autoValue gotchas
 
-* If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to https://github.com/aldeed/simple-schema-js/issues/204
-* An `autoValue` function will always run during cleaning even if that field is not in the object being cleaned. This allows you to provide complex default values. If your function applies only when there is a value, you should add `if (!this.isSet) return;` at the top.
+- If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to [issue #204](https://github.com/aldeed/simple-schema-js/issues/204).
+- An `autoValue` function will always run during cleaning even if that field is not in the object being cleaned. This allows you to provide complex default values. If your function applies only when there is a value, you should add `if (!this.isSet) return;` at the top.
 
 ### Getting field properties
+
 To obtain field's property value, just call get method.
+
 ```js
 const schema = new SimpleSchema({
   friends: {
@@ -778,9 +787,9 @@ in the exact object that you are going to pass to `Collection.insert()` or
 There are three ways to validate an object against your schema:
 
 1. With a throwaway context, throwing an Error for the first validation error found (schema.validate())
-2. With a unique unnamed validation context, not throwing any Errors (schema.newContext().validate())
-3. With a unique named validation context, not throwing any Errors (schema.namedContext('someUniqueString').validate())
-4. With the default validation context, not throwing any Errors. (schema.namedContext().validate())
+1. With a unique unnamed validation context, not throwing any Errors (schema.newContext().validate())
+1. With a unique named validation context, not throwing any Errors (schema.namedContext('someUniqueString').validate())
+1. With the default validation context, not throwing any Errors. (schema.namedContext().validate())
 
 A validation context provides reactive methods for validating and checking the validation status of a particular object.
 
@@ -836,11 +845,11 @@ This method returns `true` only if all the specified schema keys and their desce
 
 `validate()` accepts the following options:
 
-* `modifier`: Are you validating a Mongo modifier object? False by default.
-* `upsert`: Are you validating a Mongo modifier object potentially containing upsert operators? False by default.
-* `extendedCustomContext`: This object will be added to the `this` context in any custom validation functions that are run during validation. See the [Custom Validation](#custom-validation) section.
-* `ignore`: An array of validation error types (in SimpleSchema.ErrorTypes enum) to ignore.
-* `keys`: An array of keys to validate. If not provided, revalidates the entire object.
+- `modifier`: Are you validating a Mongo modifier object? False by default.
+- `upsert`: Are you validating a Mongo modifier object potentially containing upsert operators? False by default.
+- `extendedCustomContext`: This object will be added to the `this` context in any custom validation functions that are run during validation. See the [Custom Validation](#custom-validation) section.
+- `ignore`: An array of validation error types (in SimpleSchema.ErrorTypes enum) to ignore.
+- `keys`: An array of keys to validate. If not provided, revalidates the entire object.
 
 ### Validating and Throwing ValidationErrors
 
@@ -909,20 +918,22 @@ const schema = new SimpleSchema({
 ```
 
 All custom validation functions work the same way. First, do the necessary custom validation, use `this` to get whatever information you need. Then, if valid, return `undefined`. If invalid, return an error type string. The error type string can be one of the [built-in strings](#manually-adding-a-validation-error) or any string you want.
-* If you return a built-in string, it's best to use the `SimpleSchema.ErrorTypes` constants.
-* If you return a custom string, you'll usually want to [define a message for it](#customizing-validation-messages).
+
+- If you return a built-in string, it's best to use the `SimpleSchema.ErrorTypes` constants.
+- If you return a custom string, you'll usually want to [define a message for it](#customizing-validation-messages).
 
 Within your custom validation function, `this` provides the following properties:
-* `key`: The name of the schema key (e.g., "addresses.0.street")
-* `genericKey`: The generic name of the schema key (e.g., "addresses.$.street")
-* `definition`: The schema definition object.
-* `isSet`: Does the object being validated have this key set?
-* `value`: The value to validate.
-* `operator`: The Mongo operator for which we're doing validation. Might be `null`.
-* `validationContext`: The current `ValidationContext` instance
-* `field()`: Use this method to get information about other fields. Pass a field name (non-generic schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
-* `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
-* `addValidationErrors(errors)`: Call this to add validation errors for any key. In general, you should use this to add errors for other keys. To add an error for the current key, return the error type string. If you do use this to add an error for the current key, return `false` from your custom validation function.
+
+- `key`: The name of the schema key (e.g., "addresses.0.street")
+- `genericKey`: The generic name of the schema key (e.g., "addresses.$.street")
+- `definition`: The schema definition object.
+- `isSet`: Does the object being validated have this key set?
+- `value`: The value to validate.
+- `operator`: The Mongo operator for which we're doing validation. Might be `null`.
+- `validationContext`: The current `ValidationContext` instance
+- `field()`: Use this method to get information about other fields. Pass a field name (non-generic schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
+- `siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+- `addValidationErrors(errors)`: Call this to add validation errors for any key. In general, you should use this to add errors for other keys. To add an error for the current key, return the error type string. If you do use this to add an error for the current key, return `false` from your custom validation function.
 
 NOTE: If you need to do some custom validation on the server and then display errors back
 on the client, refer to the [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client) section.
@@ -964,10 +975,9 @@ If you want to reactively display an arbitrary validation error and it is not po
 {name: key, type: errorType, value: anyValue}
 ```
 
-* `name`: The schema key as specified in the schema.
-* `type`: The type of error. Any string you want, or one of the strings in the `SimpleSchema.ErrorTypes` list.
-* `value`: Optional. The value that was not valid. Will be used to replace the
-`[value]` placeholder in error messages.
+- `name`: The schema key as specified in the schema.
+- `type`: The type of error. Any string you want, or one of the strings in the `SimpleSchema.ErrorTypes` list.
+- `value`: Optional. The value that was not valid. Will be used to replace the `[value]` placeholder in error messages.
 
 If you use a custom string for `type`, be sure to define a message for it. (See [Customizing Validation Messages](#customizing-validation-messages)).
 
@@ -1022,8 +1032,9 @@ You can use a technique similar to this to work around asynchronicity issues in 
 _This is a reactive method if you have enabled Tracker reactivity._
 
 Call `myValidationContext.validationErrors()` to get the full array of validation errors. Each object in the array has at least two keys:
-* `name`: The schema key as specified in the schema.
-* `type`: The type of error. See `SimpleSchema.ErrorTypes`.
+
+- `name`: The schema key as specified in the schema.
+- `type`: The type of error. See `SimpleSchema.ErrorTypes`.
 
 There may also be a `value` property, which is the value that was invalid.
 
@@ -1080,19 +1091,19 @@ You can call `simpleSchemaInstance.clean()` or `simpleSchemaValidationContextIns
 
 The `clean` function takes the object to be cleaned as its first argument and the following optional options as its second argument:
 
-* `mutate`: The object is copied before being cleaned. If you don't mind mutating the object you are cleaning, you can pass `mutate: true` to get better performance.
-* `isModifier`: Is the first argument a modifier object? False by default.
-* `filter`: `true` by default. If `true`, removes any keys not explicitly or implicitly allowed by the schema, which prevents errors being thrown for those keys during validation.
-* `autoConvert`: `true` by default. If `true`, helps eliminate unnecessary validation messages by automatically converting values where possible.
-  * Non-string values are converted to a String if the schema expects a String
-  * Strings that are numbers are converted to Numbers if the schema expects a Number
-  * Strings that are "true" or "false" are converted to Boolean if the schema expects a Boolean
-  * Numbers are converted to Boolean if the schema expects a Boolean, with 0 being `false` and all other numbers being `true`
-  * Non-array values are converted to a one-item array if the schema expects an Array
-* `removeEmptyStrings`: Remove keys in normal object or $set where the value is an empty string? True by default.
-* `trimStrings`: Remove all leading and trailing spaces from string values? True by default.
-* `getAutoValues`: Run `autoValue` functions and inject automatic and `defaultValue` values? True by default.
-* `extendAutoValueContext`: This object will be added to the `this` context of autoValue functions. `extendAutoValueContext` can be used to give your `autoValue` functions additional valuable information, such as `userId`. (Note that operations done using the Collection2 package automatically add `userId` to the `autoValue` context already.)
+- `mutate`: The object is copied before being cleaned. If you don't mind mutating the object you are cleaning, you can pass `mutate: true` to get better performance.
+- `isModifier`: Is the first argument a modifier object? False by default.
+- `filter`: `true` by default. If `true`, removes any keys not explicitly or implicitly allowed by the schema, which prevents errors being thrown for those keys during validation.
+- `autoConvert`: `true` by default. If `true`, helps eliminate unnecessary validation messages by automatically converting values where possible.
+  - Non-string values are converted to a String if the schema expects a String
+  - Strings that are numbers are converted to Numbers if the schema expects a Number
+  - Strings that are "true" or "false" are converted to Boolean if the schema expects a Boolean
+  - Numbers are converted to Boolean if the schema expects a Boolean, with 0 being `false` and all other numbers being `true`
+  - Non-array values are converted to a one-item array if the schema expects an Array
+- `removeEmptyStrings`: Remove keys in normal object or $set where the value is an empty string? True by default.
+- `trimStrings`: Remove all leading and trailing spaces from string values? True by default.
+- `getAutoValues`: Run `autoValue` functions and inject automatic and `defaultValue` values? True by default.
+- `extendAutoValueContext`: This object will be added to the `this` context of autoValue functions. `extendAutoValueContext` can be used to give your `autoValue` functions additional valuable information, such as `userId`. (Note that operations done using the Collection2 package automatically add `userId` to the `autoValue` context already.)
 
 You can also set defaults for any of these options in your SimpleSchema constructor options:
 
@@ -1209,13 +1220,11 @@ Obviously you need to ensure that `extendOptions` is called before any SimpleSch
 This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
 <a href="graphs/contributors"><img src="https://opencollective.com/simple-schema-js/contributors.svg?width=890" /></a>
 
-
 ## Backers
 
 Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/simple-schema-js#backer)]
 
 <a href="https://opencollective.com/simple-schema-js#backers" target="_blank"><img src="https://opencollective.com/simple-schema-js/backers.svg?width=890"></a>
-
 
 ## Sponsors
 
@@ -1232,8 +1241,6 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 <a href="https://opencollective.com/simple-schema-js/sponsor/8/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/8/avatar.svg"></a>
 <a href="https://opencollective.com/simple-schema-js/sponsor/9/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/9/avatar.svg"></a>
 
-
-
 ## License
 
 MIT
@@ -1249,4 +1256,3 @@ Anyone is welcome to contribute. Before submitting a pull request, make sure tha
 - @mquandalle
 - @Nemo64
 - @DavidSichau
-
