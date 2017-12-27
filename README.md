@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/aldeed/simple-schema-js/tree/master.svg?style=svg)](https://circleci.com/gh/aldeed/simple-schema-js/tree/master)
+[![Backers on Open Collective](https://opencollective.com/simple-schema-js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/simple-schema-js/sponsors/badge.svg)](#sponsors) [![CircleCI](https://circleci.com/gh/aldeed/simple-schema-js/tree/master.svg?style=svg)](https://circleci.com/gh/aldeed/simple-schema-js/tree/master)
 
 # SimpleSchema (simpl-schema NPM package)
 
@@ -1203,6 +1203,36 @@ Obviously you need to ensure that `extendOptions` is called before any SimpleSch
 [mxab:simple-schema-jsdoc](https://atmospherejs.com/mxab/simple-schema-jsdoc) Generate jsdoc from your schemas.
 
 (Submit a PR to list your package here)
+
+## Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
+<a href="graphs/contributors"><img src="https://opencollective.com/simple-schema-js/contributors.svg?width=890" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/simple-schema-js#backer)]
+
+<a href="https://opencollective.com/simple-schema-js#backers" target="_blank"><img src="https://opencollective.com/simple-schema-js/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/simple-schema-js#sponsor)]
+
+<a href="https://opencollective.com/simple-schema-js/sponsor/0/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/1/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/2/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/3/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/4/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/5/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/6/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/7/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/8/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/simple-schema-js/sponsor/9/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/9/avatar.svg"></a>
+
+
 
 ## License
 
