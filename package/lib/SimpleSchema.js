@@ -55,10 +55,22 @@ const propsThatCanBeFunction = [
 ];
 
 class SimpleSchema {
-  constructor(schema = {}, options = {}) {
+  constructor(schema = {}, {
+    check,
+    clean: cleanOptions,
+    defaultLabel,
+    humanizeAutoLabels = true,
+    requiredByDefault = true,
+    tracker,
+  } = {}) {
     // Stash the options object
-    this._constructorOptions = { ...options };
-    if (this._constructorOptions.humanizeAutoLabels !== false) this._constructorOptions.humanizeAutoLabels = true;
+    this._constructorOptions = {
+      check,
+      defaultLabel,
+      humanizeAutoLabels,
+      requiredByDefault,
+      tracker,
+    };
 
     // Custom validators for this instance
     this._validators = [];
@@ -76,7 +88,7 @@ class SimpleSchema {
       getAutoValues: true,
       removeNullsFromArrays: false,
       extendAutoValueContext: {},
-      ...options.clean,
+      ...cleanOptions,
     };
 
     // Clone, expanding shorthand, and store the schema object in this._schema
@@ -304,7 +316,7 @@ class SimpleSchema {
       }
     });
 
-    return new SimpleSchema(newSchemaDef, this._constructorOptions);
+    return this._copyWithSchema(newSchemaDef);
   }
 
   // Returns an array of all the autovalue functions, including those in subschemas all the
@@ -427,6 +439,34 @@ class SimpleSchema {
   }
 
   /**
+   * Copies this schema into a new instance with the same validators, messages,
+   * and options, but with different keys as defined in `schema` argument
+   *
+   * @param {Object} schema
+   * @returns The new SimpleSchema instance (chainable)
+   */
+  _copyWithSchema(schema) {
+    const cl = new SimpleSchema(schema, clone(this._constructorOptions, false, 1));
+    cl._cleanOptions = this._cleanOptions;
+    if (typeof this.messageBox.clone === 'function') {
+      cl.messageBox = this.messageBox.clone();
+    } else {
+      cl.messageBox = this.messageBox;
+    }
+    return cl;
+  }
+
+  /**
+   * Clones this schema into a new instance with the same schema keys, validators,
+   * and options.
+   *
+   * @returns The new SimpleSchema instance (chainable)
+   */
+  clone() {
+    return this._copyWithSchema(this._schema);
+  }
+
+  /**
    * Extends (mutates) this schema with another schema, key by key.
    *
    * @param {SimpleSchema|Object} schema
@@ -440,8 +480,8 @@ class SimpleSchema {
       schemaObj = schema._schema;
       this._validators = this._validators.concat(schema._validators);
       this._docValidators = this._docValidators.concat(schema._docValidators);
-      this._cleanOptions = extend(true, this._cleanOptions, schema._cleanOptions);
-      this._constructorOptions = extend(true, this._constructorOptions, schema._constructorOptions);
+      this._cleanOptions = extend(false, this._cleanOptions, schema._cleanOptions);
+      this._constructorOptions = extend(false, this._constructorOptions, schema._constructorOptions);
     } else {
       schemaObj = expandShorthand(schema);
     }
@@ -566,11 +606,12 @@ class SimpleSchema {
    *
    * Throws an Error with name `ClientError` and `details` property containing the errors.
    */
-  validate(obj, options) {
+  validate(obj, options = {}) {
     // For Meteor apps, `check` option can be passed to silence audit-argument-checks
-    if (typeof this._constructorOptions.check === 'function') {
+    const check = options.check || this._constructorOptions.check;
+    if (typeof check === 'function') {
       // Call check but ignore the error
-      try { this._constructorOptions.check(obj); } catch (e) { /* ignore error */ }
+      try { check(obj); } catch (e) { /* ignore error */ }
     }
 
     // obj can be an array, in which case we validate each object in it and
@@ -987,9 +1028,7 @@ function getPickOrOmit(type) {
       }
     });
 
-    const subSchema = new SimpleSchema(newSchema, this._constructorOptions);
-    subSchema.messageBox = this.messageBox;
-    return subSchema;
+    return this._copyWithSchema(newSchema);
   };
 }
 
