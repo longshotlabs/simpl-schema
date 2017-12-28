@@ -1,7 +1,7 @@
-import { SimpleSchema } from '../SimpleSchema';
-import { dateToDateString } from '../utility';
+import { SimpleSchema } from '../../SimpleSchema';
+import { dateToDateString } from '../../utility';
 
-function doDateChecks(def, keyValue) {
+export default function doDateChecks(def, keyValue) {
   // Is it an invalid date?
   if (isNaN(keyValue.getTime())) return { type: SimpleSchema.ErrorTypes.BAD_DATE };
 
@@ -15,5 +15,3 @@ function doDateChecks(def, keyValue) {
     return { type: SimpleSchema.ErrorTypes.MAX_DATE, max: dateToDateString(def.max) };
   }
 }
-
-export default doDateChecks;

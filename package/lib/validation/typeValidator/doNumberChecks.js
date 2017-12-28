@@ -1,11 +1,11 @@
-import { SimpleSchema } from '../SimpleSchema';
+import { SimpleSchema } from '../../SimpleSchema';
 
 // Polyfill to support IE11
 Number.isInteger = Number.isInteger || function isInteger(value) {
   return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
 };
 
-function doNumberChecks(def, keyValue, op, expectsInteger) {
+export default function doNumberChecks(def, keyValue, op, expectsInteger) {
   // Is it a valid number?
   if (typeof keyValue !== 'number' || isNaN(keyValue)) {
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: expectsInteger ? 'Integer' : 'Number' };
@@ -26,5 +26,3 @@ function doNumberChecks(def, keyValue, op, expectsInteger) {
     return { type: SimpleSchema.ErrorTypes.MUST_BE_INTEGER };
   }
 }
-
-export default doNumberChecks;

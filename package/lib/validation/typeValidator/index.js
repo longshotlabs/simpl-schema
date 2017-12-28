@@ -1,10 +1,10 @@
-import { SimpleSchema } from '../SimpleSchema';
+import { SimpleSchema } from '../../SimpleSchema';
 import doDateChecks from './doDateChecks';
 import doNumberChecks from './doNumberChecks';
 import doStringChecks from './doStringChecks';
 import doArrayChecks from './doArrayChecks';
 
-function typeValidator() {
+export default function typeValidator() {
   if (!this.valueShouldBeChecked) return;
 
   const def = this.definition;
@@ -38,5 +38,3 @@ function typeValidator() {
     if (expectedType === Date) return doDateChecks(def, keyValue);
   }
 }
-
-export default typeValidator;

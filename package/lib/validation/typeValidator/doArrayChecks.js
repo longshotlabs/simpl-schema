@@ -1,6 +1,6 @@
-import { SimpleSchema } from '../SimpleSchema';
+import { SimpleSchema } from '../../SimpleSchema';
 
-function doArrayChecks(def, keyValue) {
+export default function doArrayChecks(def, keyValue) {
   // Is it an array?
   if (!Array.isArray(keyValue)) {
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Array' };
@@ -16,5 +16,3 @@ function doArrayChecks(def, keyValue) {
     return { type: SimpleSchema.ErrorTypes.MAX_COUNT, maxCount: def.maxCount };
   }
 }
-
-export default doArrayChecks;

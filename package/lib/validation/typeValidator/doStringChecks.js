@@ -1,6 +1,6 @@
-import { SimpleSchema } from '../SimpleSchema';
+import { SimpleSchema } from '../../SimpleSchema';
 
-function doStringChecks(def, keyValue) {
+export default function doStringChecks(def, keyValue) {
   // Is it a String?
   if (typeof keyValue !== 'string') {
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'String' };
@@ -34,5 +34,3 @@ function doStringChecks(def, keyValue) {
     if (regExError) return regExError;
   }
 }
-
-export default doStringChecks;
