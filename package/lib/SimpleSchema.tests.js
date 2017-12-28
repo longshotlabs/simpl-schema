@@ -393,6 +393,23 @@ describe('SimpleSchema', function () {
     expect(schema.get('name', 'max')).toBe(15);
   });
 
+  it('this.key in label function context', function () {
+    const schema = new SimpleSchema({
+      items: Array,
+      'items.$': {
+        type: String,
+        label() {
+          const { key } = this;
+          if (!key) return 'Item';
+          return `Item ${key.slice(key.lastIndexOf('.') + 1)}`;
+        },
+      },
+    });
+
+    expect(schema.label('items.0')).toBe('Item 0');
+    expect(schema.label('items.1')).toBe('Item 1');
+  });
+
   it('keyIsInBlackBox in subschema', function () {
     const schema = new SimpleSchema({
       foo: new SimpleSchema({

@@ -215,7 +215,7 @@ class SimpleSchema {
    * @param {Object} [functionContext] The context to use when evaluating schema options that are functions
    * @returns {Object} The schema definition for the requested key
    */
-  getDefinition(key, propList, functionContext) {
+  getDefinition(key, propList, functionContext = {}) {
     const defs = this.schema(key);
     if (!defs) return;
 
@@ -225,7 +225,10 @@ class SimpleSchema {
         const val = obj[prop];
         // For any options that support specifying a function, evaluate the functions
         if (propsThatCanBeFunction.indexOf(prop) > -1 && typeof val === 'function') {
-          newObj[prop] = val.call(functionContext || {});
+          newObj[prop] = val.call({
+            key,
+            ...functionContext,
+          });
           // Inflect label if undefined
           if (prop === 'label' && typeof newObj[prop] !== 'string') newObj[prop] = inflectedLabel(key, this._constructorOptions.humanizeAutoLabels);
         } else {
@@ -575,9 +578,7 @@ class SimpleSchema {
       key = `${key}.$`;
     }
 
-    const defs = this.getDefinition(key, ['allowedValues']);
-
-    return defs && defs.type[0].allowedValues;
+    return this.get(key, 'allowedValues');
   }
 
   newContext() {
@@ -727,24 +728,21 @@ class SimpleSchema {
     }
 
     // Get label for one field
-    const def = this.getDefinition(key, ['label']);
-    if (!def) return null;
-
-    this.reactiveLabelDependency(key);
-    return def.label;
+    const label = this.get(key, 'label');
+    if (label) this.reactiveLabelDependency(key);
+    return label || null;
   }
 
   /**
    * Gets a field's property
    *
-   * @param {String} [key] The schema key, specific or generic.
-   *   Omit this argument to get a dictionary of all labels.
-   * @param {String} [prop] Name of the property to get.
-   *
+   * @param {String} key The schema key, specific or generic.
+   * @param {String} prop Name of the property to get for that schema key
+   * @param {Object} [functionContext] The `this` context to use if prop is a function
    * @returns {any} The property value
    */
-  get(key, prop) {
-    const def = this.getDefinition(key, ['type', prop]);
+  get(key, prop, functionContext) {
+    const def = this.getDefinition(key, ['type', prop], functionContext);
 
     if (!def) return undefined;
 
