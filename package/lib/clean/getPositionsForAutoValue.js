@@ -75,7 +75,7 @@ export default function getPositionsForAutoValue({ fieldName, isModifier, mongoO
           newKey = newPieces.join('.');
         }
         newKey = `${newKey}.${fieldName.slice(newKey.length + 1)}`;
-        wouldBePosition = `${operator}[${newKey}]`;
+        wouldBePosition = `$set[${newKey}]`;
       } else {
         const lastPart2 = getLastPartOfKey(fieldName, parentPath);
         const lastPartWithBraces2 = lastPart2.replace(/\./g, '][');
@@ -85,7 +85,7 @@ export default function getPositionsForAutoValue({ fieldName, isModifier, mongoO
         positions.push({
           key: MongoObject._positionToKey(wouldBePosition),
           value: undefined,
-          operator,
+          operator: operator ? '$set' : null,
           position: wouldBePosition,
         });
       }
