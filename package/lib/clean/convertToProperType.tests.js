@@ -31,4 +31,8 @@ describe('convertToProperType', function () {
   it('don\'t convert NaN to boolean value', function () {
     expect(convertToProperType(Number('text'), Boolean)).toEqual(NaN);
   });
+
+  it('does not try to convert null', function () {
+    expect(convertToProperType(null, Array)).toBe(null);
+  });
 });

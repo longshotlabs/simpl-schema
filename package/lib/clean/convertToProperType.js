@@ -8,10 +8,11 @@ import { SimpleSchema } from '../SimpleSchema';
  * @returns {Any} Value converted to type.
  */
 function convertToProperType(value, type) {
-  // Can't and shouldn't convert arrays or objects
+  // Can't and shouldn't convert arrays or objects or null
   if (
     Array.isArray(value) ||
-    (value && (typeof value === 'function' || typeof value === 'object') && !(value instanceof Date))
+    (value && (typeof value === 'function' || typeof value === 'object') && !(value instanceof Date)) ||
+    value === null
   ) return value;
 
   // Convert to String type
