@@ -23,6 +23,46 @@ describe('SimpleSchema', function () {
       }).toThrow();
     });
 
+    it.skip('allows either type including schemas', function () {
+      const schemaOne = new SimpleSchema({
+        itemRef: String,
+        partNo: String,
+      });
+
+      const schemaTwo = new SimpleSchema({
+        anotherIdentifier: String,
+        partNo: String,
+      });
+
+      const combinedSchema = new SimpleSchema({
+        item: SimpleSchema.oneOf(String, schemaOne, schemaTwo),
+      });
+
+      let isValid = combinedSchema.namedContext().validate({
+        item: 'foo',
+      });
+      console.log(combinedSchema.namedContext().validationErrors());
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        item: {
+          anotherIdentifier: 'hhh',
+          partNo: 'ttt',
+        },
+      });
+      console.log(combinedSchema.namedContext().validationErrors());
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        item: {
+          itemRef: 'hhh',
+          partNo: 'ttt',
+        },
+      });
+      console.log(combinedSchema.namedContext().validationErrors());
+      expect(isValid).toBe(true);
+    });
+
     it('is valid as long as one min value is met', function () {
       const schema = new SimpleSchema({
         foo: SimpleSchema.oneOf({
