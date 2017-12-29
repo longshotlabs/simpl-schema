@@ -124,9 +124,7 @@ function clean(ss, doc, options = {}) {
   }
 
   // Set automatic values
-  console.log('cleanDoc', cleanDoc);
   options.getAutoValues && setAutoValues(ss.autoValueFunctions(), mongoObject, options.isModifier, options.extendAutoValueContext);
-  console.log('cleanDoc2', cleanDoc);
 
   // Ensure we don't have any operators set to an empty object
   // since MongoDB 2.6+ will throw errors.
