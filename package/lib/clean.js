@@ -1,10 +1,10 @@
-import MongoObject from 'mongo-object';
+import clone from 'clone';
 import isEmpty from 'lodash.isempty';
+import MongoObject from 'mongo-object';
 import { looksLikeModifier } from './utility';
 import { SimpleSchema } from './SimpleSchema';
 import convertToProperType from './clean/convertToProperType';
 import setAutoValues from './clean/setAutoValues';
-import clone from 'clone';
 
 /**
  * @param {SimpleSchema} ss - A SimpleSchema instance
@@ -124,7 +124,9 @@ function clean(ss, doc, options = {}) {
   }
 
   // Set automatic values
+  console.log('cleanDoc', cleanDoc);
   options.getAutoValues && setAutoValues(ss.autoValueFunctions(), mongoObject, options.isModifier, options.extendAutoValueContext);
+  console.log('cleanDoc2', cleanDoc);
 
   // Ensure we don't have any operators set to an empty object
   // since MongoDB 2.6+ will throw errors.

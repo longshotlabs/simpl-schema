@@ -1,5 +1,6 @@
-import { getParentOfKey } from '../utility';
+import clone from 'clone';
 import includes from 'lodash.includes';
+import { getParentOfKey } from '../utility';
 
 function getFieldInfo(mongoObject, key) {
   const keyInfo = mongoObject.getInfoForKey(key) || {};
@@ -97,12 +98,13 @@ export default class AutoValueRunner {
       if (op) {
         // Update/change value
         mongoObject.removeValueForPosition(position);
-        mongoObject.setValueForPosition(`${op}[${affectedKey}]`, newValue);
+        mongoObject.setValueForPosition(`${op}[${affectedKey}]`, clone(newValue));
         return;
       }
     }
 
-    // Update/change value
-    mongoObject.setValueForPosition(position, autoValue);
+    // Update/change value. Cloning is necessary in case it's an object, because
+    // if we later set some keys within it, they'd be set on the original object, too.
+    mongoObject.setValueForPosition(position, clone(autoValue));
   }
 }

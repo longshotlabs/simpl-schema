@@ -202,7 +202,6 @@ function doValidation({
       // Make a generic version of the affected key, and use that
       // to get the schema for this key.
       affectedKeyGeneric = MongoObject.makeKeyGeneric(affectedKey);
-      def = schema.getDefinition(affectedKey);
 
       const shouldValidateKey = !keysToValidate || keysToValidate.some(keyToValidate => (
         keyToValidate === affectedKey ||
@@ -212,6 +211,7 @@ function doValidation({
       ));
 
       // Perform validation for this key
+      def = schema.getDefinition(affectedKey);
       if (shouldValidateKey) {
         validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject);
       }

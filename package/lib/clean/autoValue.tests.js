@@ -969,4 +969,33 @@ describe('autoValue', function () {
       },
     });
   });
+
+  it('after cleaning with one extended, autoValues do not bleed over', function () {
+    const schema1 = new SimpleSchema({
+      n: Number,
+      obj: {
+        type: Object,
+        defaultValue: {},
+      },
+    });
+
+    const schema2 = schema1.clone().extend({
+      'obj.b': {
+        type: SimpleSchema.Integer,
+        defaultValue: 1,
+      },
+    });
+
+    // This is a bug where after you've run autoValues with schema2, which
+    // is cloned from schema1, the schema2 autoValues are not set while
+    // cleaning with schema1. So we need these duplicate expects here to
+    // verify it is fixed. The issue happened when a `defaultValue` was a
+    // {} because additional default values within that object would actually
+    // be mutated onto the original object. We now clone autoValues in
+    // AutoValueRunner to fix this.
+    expect(schema1.clean({})).toEqual({ obj: {} });
+    expect(schema2.clean({})).toEqual({ obj: { b: 1 } });
+    expect(schema1.clean({})).toEqual({ obj: {} });
+    expect(schema2.clean({})).toEqual({ obj: { b: 1 } });
+  });
 });
