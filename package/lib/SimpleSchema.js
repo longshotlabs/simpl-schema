@@ -102,23 +102,18 @@ class SimpleSchema {
     this.version = SimpleSchema.version;
   }
 
-  findFirstAncestorSimpleSchema(key, func) {
+  forEachAncestorSimpleSchema(key, func) {
     const genericKey = MongoObject.makeKeyGeneric(key);
 
-    let foundSchema = false;
     forEachKeyAncestor(genericKey, (ancestor) => {
-      if (foundSchema) return; // skip remaining once we've found it
       const def = this._schema[ancestor];
       if (!def) return;
       def.type.definitions.forEach(typeDef => {
         if (SimpleSchema.isSimpleSchema(typeDef.type)) {
           func(typeDef.type, ancestor, genericKey.slice(ancestor.length + 1));
-          foundSchema = true;
         }
       });
     });
-
-    return foundSchema;
   }
 
   /**
@@ -149,7 +144,7 @@ class SimpleSchema {
     }
 
     // If in subschema
-    this.findFirstAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+    this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
       // Pass tracker down so that we get reactivity even if the subschema
       // didn't have tracker option set
       simpleSchema.reactiveLabelDependency(subSchemaKey, tracker);
@@ -172,8 +167,10 @@ class SimpleSchema {
 
     // If not defined in this schema, see if it's defined in a subschema
     if (!keySchema) {
-      this.findFirstAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
-        keySchema = simpleSchema.schema(subSchemaKey);
+      let found = false;
+      this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+        if (!found) keySchema = simpleSchema.schema(subSchemaKey);
+        if (keySchema) found = true;
       });
     }
 
@@ -191,7 +188,7 @@ class SimpleSchema {
   mergedSchema() {
     const mergedSchema = {};
 
-    Object.keys(this._schema).forEach((key) => {
+    this._schemaKeys.forEach((key) => {
       const keySchema = this._schema[key];
       mergedSchema[key] = keySchema;
 
@@ -325,21 +322,9 @@ class SimpleSchema {
   // Returns an array of all the autovalue functions, including those in subschemas all the
   // way down the schema tree
   autoValueFunctions() {
-    let result = [];
+    let result = [].concat(this._autoValues);
 
-    function addFuncs(autoValues, closestSubschemaFieldName) {
-      Object.keys(autoValues).forEach((fieldName) => {
-        result.push({
-          func: autoValues[fieldName],
-          fieldName,
-          closestSubschemaFieldName,
-        });
-      });
-    }
-
-    addFuncs(this._autoValues, '');
-
-    Object.keys(this._schema).forEach((key) => {
+    this._schemaKeys.forEach((key) => {
       this._schema[key].type.definitions.forEach(typeDef => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
         result = result.concat(typeDef.type.autoValueFunctions().map(({
@@ -362,7 +347,7 @@ class SimpleSchema {
   // Returns an array of all the blackbox keys, including those in subschemas
   blackboxKeys() {
     const blackboxKeys = this._blackboxKeys;
-    Object.keys(this._schema).forEach((key) => {
+    this._schemaKeys.forEach((key) => {
       this._schema[key].type.definitions.forEach(typeDef => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
         typeDef.type._blackboxKeys.forEach(blackboxKey => {
@@ -514,18 +499,15 @@ class SimpleSchema {
     checkSchemaOverlap(this._schema);
 
     // Set/Reset all of these
-    this._schemaKeys = [];
-    this._autoValues = {};
+    this._schemaKeys = Object.keys(this._schema);
+    this._autoValues = [];
     this._blackboxKeys = [];
     this._firstLevelSchemaKeys = [];
     this._objectKeys = {};
 
     // Update all of the information cached on the instance
-    Object.keys(this._schema).forEach((fieldName) => {
+    this._schemaKeys.forEach((fieldName) => {
       const definition = this._schema[fieldName];
-
-      // Keep list of all keys for speedier checking
-      this._schemaKeys.push(fieldName);
 
       // Keep list of all top level keys
       if (fieldName.indexOf('.') === -1) this._firstLevelSchemaKeys.push(fieldName);
@@ -540,8 +522,14 @@ class SimpleSchema {
         return true;
       });
 
-      // Keep list of autoValue functions by key
-      if (definition.autoValue) this._autoValues[fieldName] = definition.autoValue;
+      // Keep list of autoValue functions
+      if (typeof definition.autoValue === 'function') {
+        this._autoValues.push({
+          closestSubschemaFieldName: '',
+          fieldName,
+          func: definition.autoValue,
+        });
+      }
     });
 
     // Store child keys keyed by parent. This needs to be done recursively to handle
@@ -588,7 +576,7 @@ class SimpleSchema {
   namedContext(name) {
     if (typeof name !== 'string') name = 'default';
     if (!this._validationContexts[name]) {
-      this._validationContexts[name] = new SimpleSchema.ValidationContext(this);
+      this._validationContexts[name] = new ValidationContext(this);
     }
     return this._validationContexts[name];
   }
@@ -1016,7 +1004,7 @@ function getPickOrOmit(type) {
   return function pickOrOmit(...args) {
     // If they are picking/omitting an object or array field, we need to also include everything under it
     const newSchema = {};
-    Object.keys(this._schema).forEach((key) => {
+    this._schemaKeys.forEach((key) => {
       // Pick/omit it if it IS in the array of keys they want OR if it
       // STARTS WITH something that is in the array plus a period
       const includeIt = args.some(wantedField => key === wantedField || key.indexOf(`${wantedField}.`) === 0);
