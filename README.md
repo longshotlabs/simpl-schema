@@ -60,6 +60,7 @@ There are also reasons not to choose this package. Because of all it does, this 
   - [defaultValue](#defaultvalue)
   - [autoValue](#autovalue)
     - [autoValue gotchas](#autovalue-gotchas)
+  - [Function Properties](#function-properties)
   - [Getting field properties](#getting-field-properties)
 - [Validating Data](#validating-data)
   - [The Object to Validate](#the-object-to-validate)
@@ -756,6 +757,12 @@ Any other return value will be used as the field's value. You may also return sp
 
 - If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to [issue #204](https://github.com/aldeed/simple-schema-js/issues/204).
 - An `autoValue` function will always run during cleaning even if that field is not in the object being cleaned. This allows you to provide complex default values. If your function applies only when there is a value, you should add `if (!this.isSet) return;` at the top.
+
+### Function Properties
+
+You may have noticed that many of the rule properties can be set to functions that return the value. If you do this, the `this` context within those functions will have the following properties:
+
+- `this.key`: The schema key for which the function is running. This is usually known, but if your function is shared among various keys or is within an array, or if your schema is used as a subschema in another schema, this can be useful.
 
 ### Getting field properties
 

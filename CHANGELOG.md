@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.4.0](#140)
 - [1.3.0](#130)
 - [1.2.2](#122)
 - [1.2.1](#121)
@@ -28,6 +29,14 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.4.0
+
+- Fixed an issue where the defaultValue `$setOnInsert` added to a modifier containing `$addToSet` would target an incorrect object path.
+- When cleaning, it no longer tries to convert the type of `null`.
+- Any value returned from autoValue/defaultValue is now cloned to prevent accidental mutation.
+- Added `this.key` in the function context when executing schema definition properties that are functions. This can help you determine what the array index is for keys that are within arrays.
+- Added a `clone()` function on SimpleSchema instances.
 
 ## 1.3.0
 
