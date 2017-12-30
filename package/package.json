@@ -21,7 +21,8 @@
   "scripts": {
     "build": "rm -rf dist/** && babel lib --out-dir dist --ignore *.tests.js,testHelpers/*",
     "lint": "eslint .",
-    "prepare": "npm run lint && npm test && npm run build && (cd ../tests/meteor-app && meteor npm i && npm test)",
+    "lintAndTest": "npm run lint && npm test && npm run build && (cd ../tests/meteor-app && meteor npm i && npm test)",
+    "prepublishOnly": "npm run lintAndTest",
     "test": "mocha --compilers js:babel-core/register --recursive \"lib/**/*.tests.js\"",
     "test:watch": "npm test -- --watch"
   },

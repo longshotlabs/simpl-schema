@@ -39,5 +39,4 @@ jobs:
           key: v1-dependencies-{{ checksum "package/package.json" }}
 
       # run tests!
-      - run: cd package && npm run lint && npm test && npm run build
-      - run: cd tests/meteor-app && meteor npm i && npm test
+      - run: cd package && npm run lintAndTest
