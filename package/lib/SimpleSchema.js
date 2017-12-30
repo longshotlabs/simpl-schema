@@ -436,11 +436,7 @@ class SimpleSchema {
   _copyWithSchema(schema) {
     const cl = new SimpleSchema(schema, clone(this._constructorOptions, false, 1));
     cl._cleanOptions = this._cleanOptions;
-    if (typeof this.messageBox.clone === 'function') {
-      cl.messageBox = this.messageBox.clone();
-    } else {
-      cl.messageBox = this.messageBox;
-    }
+    cl.messageBox = this.messageBox.clone();
     return cl;
   }
 

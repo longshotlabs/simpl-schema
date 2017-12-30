@@ -38,7 +38,7 @@
     "lodash.pick": "^4.4.0",
     "lodash.union": "^4.6.0",
     "lodash.uniq": "^4.5.0",
-    "message-box": "^0.1.1",
+    "message-box": "^0.2.0",
     "mongo-object": "^0.1.1"
   },
   "devDependencies": {
