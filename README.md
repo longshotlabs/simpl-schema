@@ -1063,7 +1063,7 @@ SimpleSchema.setDefaultMessages({
 });
 ```
 
-The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/node-simple-schema/blob/master/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
+The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/simple-schema-js/blob/master/package/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
 
 The `MessageBox` instance for a specific schema instance is `simpleSchemaInstance.messageBox`. You can call `messages` function on this to update the messages for that schema only. Example:
 
