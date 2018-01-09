@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.4.1](#141)
 - [1.4.0](#140)
 - [1.3.0](#130)
 - [1.2.2](#122)
@@ -29,6 +30,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.4.1
+
+Fixed an issue where defaultValues would be incorrectly added to `$setOnInsert` when your modifier contained `$unset` for deeply nested fields.
 
 ## 1.4.0
 

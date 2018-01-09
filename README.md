@@ -85,6 +85,7 @@ There are also reasons not to choose this package. Because of all it does, this 
 - [Best Practice Code Examples](#best-practice-code-examples)
   - [Make a field conditionally required](#make-a-field-conditionally-required)
   - [Validate one key against another](#validate-one-key-against-another)
+  - [Translation of Regular Expression Messages](#translation-of-regular-expression-messages)
 - [Debug Mode](#debug-mode)
 - [Extending the Schema Options](#extending-the-schema-options)
 - [Add On Packages](#add-on-packages)
