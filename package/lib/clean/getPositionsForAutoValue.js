@@ -30,6 +30,12 @@ export default function getPositionsForAutoValue({ fieldName, isModifier, mongoO
   // Positions for this field
   const positions = mongoObject.getPositionsInfoForGenericKey(fieldName);
 
+  // If the field is an object and will be created by MongoDB,
+  // we don't need (and can't have) a value for it
+  if (isModifier && mongoObject.getPositionsThatCreateGenericKey(fieldName).length > 0) {
+    return positions;
+  }
+
   // For simple top-level fields, just add an undefined would-be position
   // if there isn't a real position.
   if (fieldName.indexOf('.') === -1 && positions.length === 0) {

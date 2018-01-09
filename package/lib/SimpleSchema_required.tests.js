@@ -679,6 +679,12 @@ describe('SimpleSchema - required', function () {
         },
       }, { modifier: true });
 
+      expectValid(requiredSchema, {
+        $unset: {
+          optionalObject: '',
+        },
+      }, { modifier: true });
+
       // Array of objects
       expectValid(friendsSchema, {
         $unset: {
@@ -706,6 +712,18 @@ describe('SimpleSchema - required', function () {
           requiredUrl: 1,
         },
       }, { modifier: true }).toBe(6);
+
+      expectRequiredErrorLength(requiredSchema, {
+        $unset: {
+          'optionalObject.requiredString': 1,
+        },
+      }, { modifier: true }).toBe(1);
+
+      expectRequiredErrorLength(requiredSchema, {
+        $unset: {
+          'requiredObject.requiredNumber': 1,
+        },
+      }, { modifier: true }).toBe(1);
 
       // Array of objects
       expectRequiredErrorLength(friendsSchema, {

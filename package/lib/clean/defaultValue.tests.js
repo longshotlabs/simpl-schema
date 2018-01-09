@@ -592,4 +592,127 @@ describe('defaultValue', function () {
       },
     });
   });
+
+  it('$setOnInsert are correctly added with path notation', function () {
+    const schema = new SimpleSchema({
+      settings: {
+        type: Object,
+        optional: true,
+        defaultValue: {},
+      },
+      'settings.bool': {
+        type: Boolean,
+        defaultValue: false,
+      },
+      'settings.obj': {
+        type: Object,
+        optional: true,
+        defaultValue: {},
+      },
+      'settings.obj.bool': {
+        type: Boolean,
+        optional: true,
+        defaultValue: false,
+      },
+      'settings.obj.name': {
+        type: Boolean,
+        optional: true,
+        defaultValue: 'foo',
+      },
+      'settings.obj2': {
+        type: Object,
+        optional: true,
+        defaultValue: {},
+      },
+      'settings.obj2.bool': {
+        type: Boolean,
+        optional: true,
+        defaultValue: false,
+      },
+      'settings.obj2.name': String,
+    });
+
+    expect(schema.clean({
+      $set: {
+        'settings.obj.bool': true,
+      },
+      $unset: {
+        'settings.obj2.name': '',
+      },
+    })).toEqual({
+      $set: {
+        'settings.obj.bool': true,
+      },
+      $unset: {
+        'settings.obj2.name': '',
+      },
+      $setOnInsert: {
+        'settings.bool': false,
+        'settings.obj.name': 'foo',
+        'settings.obj2': { bool: false },
+      },
+    });
+  });
+
+  it('$setOnInsert are correctly added with path notation - v2', function () {
+    // This is the same as the test above, except that there is no default
+    // value of {} for settings.obj2 so settings.obj2.bool should not be
+    // set on insert
+    const schema = new SimpleSchema({
+      settings: {
+        type: Object,
+        optional: true,
+        defaultValue: {},
+      },
+      'settings.bool': {
+        type: Boolean,
+        defaultValue: false,
+      },
+      'settings.obj': {
+        type: Object,
+        optional: true,
+        defaultValue: {},
+      },
+      'settings.obj.bool': {
+        type: Boolean,
+        optional: true,
+        defaultValue: false,
+      },
+      'settings.obj.name': {
+        type: Boolean,
+        optional: true,
+        defaultValue: 'foo',
+      },
+      'settings.obj2': {
+        type: Object,
+        optional: true,
+      },
+      'settings.obj2.bool': {
+        type: Boolean,
+        optional: true,
+        defaultValue: false,
+      },
+      'settings.obj2.name': String,
+    });
+
+    expect(schema.clean({
+      $set: {
+        'settings.obj.bool': true,
+      },
+      $unset: {
+        'settings.obj2.name': '',
+      },
+    })).toEqual({
+      $set: {
+        'settings.obj.bool': true,
+      },
+      $unset: {
+        'settings.obj2.name': '',
+      },
+      $setOnInsert: {
+        'settings.bool': false,
+        'settings.obj.name': 'foo',
+      },
+    });
+  });
 });
