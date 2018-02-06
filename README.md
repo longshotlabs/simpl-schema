@@ -767,7 +767,7 @@ You may have noticed that many of the rule properties can be set to functions th
 
 ### Getting field properties
 
-To obtain field's property value, just call get method.
+To obtain field's property value, just call the `get` method.
 
 ```js
 const schema = new SimpleSchema({

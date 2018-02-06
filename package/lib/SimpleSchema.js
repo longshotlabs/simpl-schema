@@ -930,12 +930,15 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
   });
 
   // Make sure the `type`s are OK
+  let couldBeArray = false;
   definition.type.definitions.forEach(({ type }) => {
     if (!type) throw new Error(`Invalid definition for ${fieldName} field: "type" option is required`);
 
     if (Array.isArray(type)) {
       throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an array. Change it to Array.`);
     }
+
+    if (type === Array) couldBeArray = true;
 
     if (SimpleSchema.isSimpleSchema(type)) {
       Object.keys(type._schema).forEach((subKey) => {
@@ -946,6 +949,12 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
       });
     }
   });
+
+  // If at least one of the possible types is Array, then make sure we have a
+  // definition for the array items, too.
+  if (couldBeArray && !fullSchemaObj.hasOwnProperty(`${fieldName}.$`)) {
+    throw new Error(`"${fieldName}" is Array type but the schema does not include a "${fieldName}.$" definition for the array items"`);
+  }
 
   // defaultValue -> autoValue
   // We support defaultValue shortcut by converting it immediately into an

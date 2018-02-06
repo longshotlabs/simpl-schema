@@ -41,6 +41,14 @@ describe('SimpleSchema', function () {
     }).toThrow('valueOf key is actually the name of a method on Object');
   });
 
+  it('throws a error if array item definition is missing', function () {
+    expect(function () {
+      return new SimpleSchema({
+        someArray: Array,
+      });
+    }).toThrow('"someArray" is Array type but the schema does not include a "someArray.$" definition for the array items');
+  });
+
   describe('nesting', function () {
     it('throws an error if a nested schema defines a field that its parent also defines', function () {
       expect(function () {
@@ -974,6 +982,7 @@ describe('SimpleSchema', function () {
             type: SimpleSchema.Integer,
             min: 0,
           }),
+          'd.$': String,
         }),
       },
     });
