@@ -503,6 +503,12 @@ class SimpleSchema {
 
     // Update all of the information cached on the instance
     this._schemaKeys.forEach((fieldName) => {
+      // Make sure parent has a definition in the schema. No implied objects!
+      if (fieldName.indexOf('.') > -1) {
+        const parentFieldName = fieldName.slice(0, fieldName.lastIndexOf('.'));
+        if (!this._schema.hasOwnProperty(parentFieldName)) throw new Error(`"${fieldName}" is in the schema but "${parentFieldName}" is not`);
+      }
+
       const definition = this._schema[fieldName];
 
       // Keep list of all top level keys

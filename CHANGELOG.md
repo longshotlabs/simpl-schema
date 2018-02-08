@@ -32,6 +32,10 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## NEXT
+
+Forgetting to define the parent key of any key in a schema will now throw an error
+
 ## 1.4.2
 
 The SimpleSchema constructor or `.extend()` will now throw an error if you define an Array field but forget to define the corresponding array item field.
