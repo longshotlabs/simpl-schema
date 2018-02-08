@@ -715,7 +715,7 @@ When you call `simpleSchemaInstance.clean()` with `trimStrings` set to `true`, a
 
 ### custom
 
-Refer to the [Custom Validation](#custom-validation) section.
+Refer to the [Custom Validation](#custom-field-validation) section.
 
 ### defaultValue
 
