@@ -37,6 +37,16 @@ const testSchema = new SimpleSchema({
     type: String,
     allowedValues: ['tuna', 'fish', 'salad'],
   },
+  allowedStringsSetOrArray: { // make sure test always runnable even without Set
+    type: Array,
+    optional: true,
+  },
+  'allowedStringsSetOrArray.$': {
+    type: String,
+    allowedValues: typeof Set === 'function' ?
+      new Set(['tuna', 'fish', 'salad']) :
+      ['tuna', 'fish', 'salad'],
+  },
   boolean: {
     type: Boolean,
     optional: true,
@@ -114,6 +124,16 @@ const testSchema = new SimpleSchema({
   'allowedNumbersArray.$': {
     type: SimpleSchema.Integer,
     allowedValues: [1, 2, 3],
+  },
+  allowedNumbersSetOrArray: {
+    type: Array,
+    optional: true,
+  },
+  'allowedNumbersSetOrArray.$': {
+    type: SimpleSchema.Integer,
+    allowedValues: typeof Set === 'function' ?
+      new Set([1, 2, 3]) :
+      [1, 2, 3],
   },
   decimal: {
     type: Number,

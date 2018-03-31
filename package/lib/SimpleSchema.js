@@ -568,7 +568,16 @@ class SimpleSchema {
       key = `${key}.$`;
     }
 
-    return this.get(key, 'allowedValues');
+    const _allowedValues = this.get(key, 'allowedValues');
+    // Check if it is a Set. If yes, convert to array (prefer forEach instead of Array.from)
+    if (typeof Set === 'function' && _allowedValues instanceof Set) {
+      const _allowedValuesArray = [];
+      _allowedValues.forEach(function(value) {
+        _allowedValuesArray.push(value);
+      })
+      return _allowedValuesArray;
+    }
+    return _allowedValues;
   }
 
   newContext() {
