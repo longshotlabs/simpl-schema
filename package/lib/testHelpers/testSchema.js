@@ -1,5 +1,6 @@
 import { SimpleSchema } from '../SimpleSchema';
 import Address from './Address';
+import 'babel-polyfill';
 
 const testSchema = new SimpleSchema({
   string: {
@@ -37,15 +38,13 @@ const testSchema = new SimpleSchema({
     type: String,
     allowedValues: ['tuna', 'fish', 'salad'],
   },
-  allowedStringsSetOrArray: { // make sure test always runnable even without Set
+  allowedStringsSet: {
     type: Array,
     optional: true,
   },
-  'allowedStringsSetOrArray.$': {
+  'allowedStringsSet.$': {
     type: String,
-    allowedValues: typeof Set === 'function' ?
-      new Set(['tuna', 'fish', 'salad']) :
-      ['tuna', 'fish', 'salad'],
+    allowedValues: new Set(['tuna', 'fish', 'salad']),
   },
   boolean: {
     type: Boolean,
@@ -125,15 +124,13 @@ const testSchema = new SimpleSchema({
     type: SimpleSchema.Integer,
     allowedValues: [1, 2, 3],
   },
-  allowedNumbersSetOrArray: {
+  allowedNumbersSet: {
     type: Array,
     optional: true,
   },
-  'allowedNumbersSetOrArray.$': {
+  'allowedNumbersSet.$': {
     type: SimpleSchema.Integer,
-    allowedValues: typeof Set === 'function' ?
-      new Set([1, 2, 3]) :
-      [1, 2, 3],
+    allowedValues: new Set([1, 2, 3]),
   },
   decimal: {
     type: Number,

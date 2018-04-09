@@ -5,6 +5,7 @@ import expect from 'expect';
 import friendsSchema from './testHelpers/friendsSchema';
 import testSchema from './testHelpers/testSchema';
 import expectErrorLength from './testHelpers/expectErrorLength';
+import 'babel-polyfill';
 
 describe('SimpleSchema - allowedValues', function () {
   describe('normal', function () {
@@ -18,7 +19,7 @@ describe('SimpleSchema - allowedValues', function () {
       }).toEqual(0);
 
       expectErrorLength(testSchema, {
-        allowedStringsSetOrArray: ['tuna', 'fish', 'salad'],
+        allowedStringsSet: ['tuna', 'fish', 'salad'],
       }).toEqual(0);
 
       // Array of objects
@@ -43,7 +44,7 @@ describe('SimpleSchema - allowedValues', function () {
 
       // Set Or Array
       expectErrorLength(testSchema, {
-        allowedStringsSetOrArray: ['tuna', 'fish', 'sandwich'],
+        allowedStringsSet: ['tuna', 'fish', 'sandwich'],
       }).toEqual(1);
 
       // Array of objects
@@ -66,7 +67,7 @@ describe('SimpleSchema - allowedValues', function () {
       }).toEqual(0);
 
       expectErrorLength(testSchema, {
-        allowedNumbersSetOrArray: [1, 2, 3],
+        allowedNumbersSet: [1, 2, 3],
       }).toEqual(0);
 
       // Array of objects
@@ -94,7 +95,7 @@ describe('SimpleSchema - allowedValues', function () {
 
       // Set or Array
       expectErrorLength(testSchema, {
-        allowedNumbersSetOrArray: [1, 2, 3, 4],
+        allowedNumbersSet: [1, 2, 3, 4],
       }).toEqual(1);
 
       // Array of objects
@@ -129,7 +130,7 @@ describe('SimpleSchema - allowedValues', function () {
       // Set or Array
       expectErrorLength(testSchema, {
         $setOnInsert: {
-          allowedStringsSetOrArray: ['tuna', 'fish', 'salad'],
+          allowedStringsSet: ['tuna', 'fish', 'salad'],
         },
       }, { modifier: true, upsert: true }).toEqual(0);
 
@@ -162,7 +163,7 @@ describe('SimpleSchema - allowedValues', function () {
       // Set or Array
       expectErrorLength(testSchema, {
         $setOnInsert: {
-          allowedStringsSetOrArray: ['tuna', 'fish', 'sandwich'],
+          allowedStringsSet: ['tuna', 'fish', 'sandwich'],
         },
       }, { modifier: true, upsert: true }).toEqual(1);
 
@@ -195,7 +196,7 @@ describe('SimpleSchema - allowedValues', function () {
       // Set or Array
       expectErrorLength(testSchema, {
         $setOnInsert: {
-          allowedNumbersSetOrArray: [1, 2, 3],
+          allowedNumbersSet: [1, 2, 3],
         },
       }, { modifier: true, upsert: true }).toEqual(0);
 
@@ -231,7 +232,7 @@ describe('SimpleSchema - allowedValues', function () {
       // Set or Array
       expectErrorLength(testSchema, {
         $setOnInsert: {
-          allowedNumbersSetOrArray: [1, 2, 3, 4],
+          allowedNumbersSet: [1, 2, 3, 4],
         },
       }, { modifier: true, upsert: true }).toEqual(1);
 
@@ -269,7 +270,7 @@ describe('SimpleSchema - allowedValues', function () {
       // Set or Array
       expectErrorLength(testSchema, {
         $set: {
-          allowedStringsSetOrArray: ['tuna', 'fish', 'salad'],
+          allowedStringsSet: ['tuna', 'fish', 'salad'],
         },
       }, { modifier: true }).toEqual(0);
 
@@ -304,7 +305,7 @@ describe('SimpleSchema - allowedValues', function () {
       // Set or Array
       expectErrorLength(testSchema, {
         $set: {
-          allowedStringsSetOrArray: ['tuna', 'fish', 'sandwich'],
+          allowedStringsSet: ['tuna', 'fish', 'sandwich'],
         },
       }, { modifier: true }).toEqual(1);
 
@@ -337,7 +338,7 @@ describe('SimpleSchema - allowedValues', function () {
 
       expectErrorLength(testSchema, {
         $set: {
-          allowedNumbersSetOrArray: [1, 2, 3],
+          allowedNumbersSet: [1, 2, 3],
         },
       }, { modifier: true }).toEqual(0);
     });
@@ -357,7 +358,7 @@ describe('SimpleSchema - allowedValues', function () {
 
       expectErrorLength(testSchema, {
         $set: {
-          allowedNumbersSetOrArray: [1, 2, 3, 4],
+          allowedNumbersSet: [1, 2, 3, 4],
         },
       }, { modifier: true }).toEqual(1);
     });
@@ -377,20 +378,18 @@ describe('SimpleSchema - allowedValues', function () {
     });
 
     it('works with set, convert to array', function () {
-      if (typeof Set === 'function') {
-        const allowedValues = new Set(['a', 'b']);
-        const schema = new SimpleSchema({
-          foo: Array,
-          'foo.$': {
-            type: String,
-            allowedValues,
-          },
-        });
-        const fetchedAllowedValues = schema.getAllowedValuesForKey('foo');
-        expect(fetchedAllowedValues).toInclude('a');
-        expect(fetchedAllowedValues).toInclude('b');
-        expect(fetchedAllowedValues.length).toEqual(2);
-      }
+      const allowedValues = new Set(['a', 'b']);
+      const schema = new SimpleSchema({
+        foo: Array,
+        'foo.$': {
+          type: String,
+          allowedValues,
+        },
+      });
+      const fetchedAllowedValues = schema.getAllowedValuesForKey('foo');
+      expect(fetchedAllowedValues).toInclude('a');
+      expect(fetchedAllowedValues).toInclude('b');
+      expect(fetchedAllowedValues.length).toEqual(2);
     });
   });
 });
