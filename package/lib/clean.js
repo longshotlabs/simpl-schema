@@ -112,13 +112,14 @@ function clean(ss, doc, options = {}) {
     }, { endPointsOnly: false });
 
     // Remove any objects that are now empty after filtering
-    for (const removedPosition of removedPositions) {
+    removedPositions.forEach((removedPosition) => {
       const lastBrace = removedPosition.lastIndexOf('[');
-      if (lastBrace === -1) continue;
-      const removedPositionParent = removedPosition.slice(0, lastBrace);
-      const value = mongoObject.getValueForPosition(removedPositionParent);
-      if (isEmpty(value)) mongoObject.removeValueForPosition(removedPositionParent);
-    }
+      if (lastBrace !== -1) {
+        const removedPositionParent = removedPosition.slice(0, lastBrace);
+        const value = mongoObject.getValueForPosition(removedPositionParent);
+        if (isEmpty(value)) mongoObject.removeValueForPosition(removedPositionParent);
+      }
+    });
 
     mongoObject.removeArrayItems();
   }
