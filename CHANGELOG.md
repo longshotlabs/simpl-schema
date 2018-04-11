@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.4.3](#143)
 - [1.4.2](#142)
 - [1.4.1](#141)
 - [1.4.0](#140)
@@ -32,9 +33,10 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## NEXT
+## 1.4.3
 
-Forgetting to define the parent key of any key in a schema will now throw an error
+- Forgetting to define the parent key of any key in a schema will now throw an error
+- use Array.forEach to remove empty objects fixes #244 (#246)
 
 ## 1.4.2
 

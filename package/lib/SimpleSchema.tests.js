@@ -1013,4 +1013,31 @@ describe('SimpleSchema', function () {
     expect(schema.defaultValue('a.b')).toBe('ab');
     expect(schema.defaultValue('a.b.c')).toBe('abc');
   });
+
+  it('issue #232', function () {
+    let foo;
+
+    expect(function () {
+      const schema3 = new SimpleSchema({
+        foo: String,
+      });
+
+      const schema2 = new SimpleSchema({
+        field2: {
+          type: Array,
+          optional: true,
+        },
+        'field2.$': schema3,
+      });
+
+      foo = new SimpleSchema({
+        field1: {
+          type: schema2,
+          defaultValue: {},
+        },
+      });
+    }).toNotThrow();
+
+    expect(foo instanceof SimpleSchema).toBe(true);
+  });
 });
