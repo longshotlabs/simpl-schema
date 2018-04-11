@@ -568,7 +568,7 @@ class SimpleSchema {
       key = `${key}.$`;
     }
 
-    return this.get(key, 'allowedValues');
+    return [...this.get(key, 'allowedValues')];
   }
 
   newContext() {

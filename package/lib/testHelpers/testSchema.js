@@ -1,5 +1,6 @@
 import { SimpleSchema } from '../SimpleSchema';
 import Address from './Address';
+import 'babel-polyfill';
 
 const testSchema = new SimpleSchema({
   string: {
@@ -36,6 +37,14 @@ const testSchema = new SimpleSchema({
   'allowedStringsArray.$': {
     type: String,
     allowedValues: ['tuna', 'fish', 'salad'],
+  },
+  allowedStringsSet: {
+    type: Array,
+    optional: true,
+  },
+  'allowedStringsSet.$': {
+    type: String,
+    allowedValues: new Set(['tuna', 'fish', 'salad']),
   },
   boolean: {
     type: Boolean,
@@ -114,6 +123,14 @@ const testSchema = new SimpleSchema({
   'allowedNumbersArray.$': {
     type: SimpleSchema.Integer,
     allowedValues: [1, 2, 3],
+  },
+  allowedNumbersSet: {
+    type: Array,
+    optional: true,
+  },
+  'allowedNumbersSet.$': {
+    type: SimpleSchema.Integer,
+    allowedValues: new Set([1, 2, 3]),
   },
   decimal: {
     type: Number,
