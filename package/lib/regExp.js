@@ -19,9 +19,10 @@ const regEx = {
   // We use the RegExp suggested by W3C in http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
   // This is probably the same logic used by most browsers when type=email, which is our goal. It is
   // a very permissive expression. Some apps may wish to be more strict and can write their own RegExp.
-  Email: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  Email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+
   // Like Email but requires the TLD (.com, etc)
-  EmailWithTLD: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+(?:\.[A-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[A-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[A-z0-9]{2,}(?:[a-z0-9-]*[a-z0-9])?$/,
+  EmailWithTLD: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 
   Domain: new RegExp(`^${rxDomain}$`),
   WeakDomain: new RegExp(`^${rxWeakDomain}$`),
