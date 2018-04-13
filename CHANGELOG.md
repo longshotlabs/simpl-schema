@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.5.0](#150)
 - [1.4.3](#143)
 - [1.4.2](#142)
 - [1.4.1](#141)
@@ -32,6 +33,11 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.5.0
+
+- `allowedValues` may now be a `Set` instance (thanks @kevinkassimo)
+- Updated `EmailWithTLD` regular expression with one that is not susceptible to catastrophic backtracking attacks (thanks @davisjam)
 
 ## 1.4.3
 
