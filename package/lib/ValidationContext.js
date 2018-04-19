@@ -14,9 +14,9 @@ export default class ValidationContext {
     const { tracker } = ss._constructorOptions;
     if (tracker) {
       this._depsAny = new tracker.Dependency();
-      for (const key of this._schemaKeys) {
+      this._schemaKeys.forEach((key) => {
         this._deps[key] = new tracker.Dependency();
-      }
+      });
     }
   }
 
@@ -28,9 +28,7 @@ export default class ValidationContext {
   _markKeysChanged(keys) {
     if (!keys || !Array.isArray(keys) || !keys.length) return;
 
-    for (const key of keys) {
-      this._markKeyChanged(key);
-    }
+    keys.forEach(key => this._markKeyChanged(key));
 
     this._depsAny && this._depsAny.changed();
   }
@@ -49,9 +47,7 @@ export default class ValidationContext {
   addValidationErrors(errors) {
     const newValidationErrors = errors.map(o => o.name);
 
-    for (const error of errors) {
-      this._validationErrors.push(error);
-    }
+    errors.forEach(error => this._validationErrors.push(error));
 
     // Mark all new as changed
     this._markKeysChanged(newValidationErrors);

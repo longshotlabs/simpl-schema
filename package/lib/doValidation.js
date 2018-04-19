@@ -81,9 +81,7 @@ function doValidation({
 
     const validatorContext = {
       addValidationErrors(errors) {
-        for (const error of errors) {
-          fieldValidationErrors.push(error);
-        }
+        errors.forEach(error => fieldValidationErrors.push(error));
       },
       field(fName) {
         return getFieldInfo(fName);
