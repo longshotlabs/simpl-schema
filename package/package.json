@@ -14,8 +14,8 @@
   "homepage": "https://github.com/aldeed/node-simple-schema",
   "files": [
     "dist",
-    "LICENSE",
-    "README.md"
+    "../LICENSE",
+    "../README.md"
   ],
   "main": "./dist/main.js",
   "scripts": {
