@@ -51,6 +51,17 @@ const ss = new SimpleSchema({
   'booleanArray.$': {
     type: Boolean,
   },
+  objectArray: {
+    type: Array,
+    optional: true,
+  },
+  'objectArray.$': {
+    type: Object,
+  },
+  'objectArray.$.boolean': {
+    type: Boolean,
+    defaultValue: false,
+  },
   number: {
     type: SimpleSchema.Integer,
     optional: true,
@@ -270,6 +281,7 @@ describe('clean', function () {
 
   describe('$pull', function () {
     it('when you clean a good object it is still good', getTest({ $pull: { allowedNumbersArray: 1 } }, { $pull: { allowedNumbersArray: 1 } }, true));
+    it('when you clean a good object with defaultValue it is still good', getTest({ $pull: { objectArray: { boolean: true } } }, { $pull: { objectArray: { boolean: true } } }, true));
     it('when you clean a bad object it is now good', getTest({ $pull: { allowedNumbersArray: 1, admin: 1 } }, { $pull: { allowedNumbersArray: 1 } }, true));
     it('type conversion works', getTest({ $pull: { allowedNumbersArray: '1' } }, { $pull: { allowedNumbersArray: 1 } }, true));
   });
