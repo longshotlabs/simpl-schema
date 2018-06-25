@@ -372,6 +372,8 @@ class SimpleSchema {
           testKeySchema.type.definitions.forEach(typeDef => {
             if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
             if (typeDef.type.keyIsInBlackBox(remainder)) isInBlackBox = true;
+            // Also consider parents with type: SimpleSchema.Any as blackboxed
+            if (typeDef.type === SimpleSchema.Any) isInBlackBox = true;
           });
         }
       }
@@ -519,7 +521,8 @@ class SimpleSchema {
       // Keep list of all blackbox keys for passing to MongoObject constructor
       // XXX For now if any oneOf type is blackbox, then the whole field is.
       every(definition.type.definitions, (oneOfDef) => {
-        if (oneOfDef.blackbox === true) {
+        // XXX If the type is SS.Any, also consider it a blackbox
+        if (oneOfDef.blackbox === true || oneOfDef.type === SimpleSchema.Any) {
           this._blackboxKeys.push(fieldName);
           return false; // exit loop
         }

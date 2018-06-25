@@ -1082,16 +1082,31 @@ describe('SimpleSchema', function () {
         testAny: [],
       });
     });
-    // Fails...
+    
     it('can be used to allow a key with ["string"]', function () {
       expectValid(schema, {
         testAny: ['string'],
+      });
+    });
+    it('can be used to allow a key with { }', function () {
+      expectValid(schema, {
+        testAny: {},
       });
     });
     it('can be used to allow a key with { test: true }', function () {
       expectValid(schema, {
         testAny: { test: true },
       });
+    });
+    it('can be used to allow a key with { test: true }', function () {
+      expectValid(
+        new SimpleSchema({
+          testNested: schema,
+        }),
+        {
+          testNested: { testAny: { test: true } },
+        }
+      );
     });
     it('can be used to allow a key with NaN', function () {
       expectValid(schema, {
