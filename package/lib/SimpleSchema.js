@@ -810,6 +810,8 @@ class SimpleSchema {
     return new SimpleSchemaGroup(...definitions);
   }
 
+  static Any = '___Any___';
+
   static RegEx = regExpObj;
 
   // Global custom validators

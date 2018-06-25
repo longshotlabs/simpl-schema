@@ -1057,4 +1057,61 @@ describe('SimpleSchema', function () {
 
     expect(foo instanceof SimpleSchema).toBe(true);
   });
+
+  describe('SimpleSchema.Any', function () {
+    const schema = new SimpleSchema({
+      testAny: SimpleSchema.Any,
+    });
+    it('can be used to allow a key with string', function () {
+      expectValid(schema, {
+        testAny: 'string',
+      });
+    });
+    it('can be used to allow a key with 42', function () {
+      expectValid(schema, {
+        testAny: 42,
+      });
+    });
+    it('can be used to allow a key with 3.1415', function () {
+      expectValid(schema, {
+        testAny: 3.1415,
+      });
+    });
+    it('can be used to allow a key with []', function () {
+      expectValid(schema, {
+        testAny: [],
+      });
+    });
+    // Fails...
+    it('can be used to allow a key with ["string"]', function () {
+      expectValid(schema, {
+        testAny: ['string'],
+      });
+    });
+    it('can be used to allow a key with { test: true }', function () {
+      expectValid(schema, {
+        testAny: { test: true },
+      });
+    });
+    it('can be used to allow a key with NaN', function () {
+      expectValid(schema, {
+        testAny: NaN,
+      });
+    });
+    it('can be used to allow a key with new Date()', function () {
+      expectValid(schema, {
+        testAny: new Date(),
+      });
+    });
+    it('can be used to allow a key with true', function () {
+      expectValid(schema, {
+        testAny: true,
+      });
+    });
+    it('can be used to allow a key with false', function () {
+      expectValid(schema, {
+        testAny: false,
+      });
+    });
+  });
 });
