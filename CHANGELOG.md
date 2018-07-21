@@ -34,6 +34,11 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.5.1
+
+- Fix issues with `$pull` modifier being incorrectly cleaned in some cases where some properties have `defaultValue` (thanks @vparpoil)
+- Other behind-the-scenes refactoring
+
 ## 1.5.0
 
 - `allowedValues` may now be a `Set` instance (thanks @kevinkassimo)
