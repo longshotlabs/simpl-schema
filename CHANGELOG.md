@@ -4,6 +4,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.5.2](#152)
+- [1.5.1](#151)
 - [1.5.0](#150)
 - [1.4.3](#143)
 - [1.4.2](#142)
@@ -33,6 +35,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.5.2
+
+Include README.md and LICENSE in the published package
 
 ## 1.5.1
 
