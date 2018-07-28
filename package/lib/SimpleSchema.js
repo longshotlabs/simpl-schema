@@ -568,7 +568,13 @@ class SimpleSchema {
       key = `${key}.$`;
     }
 
-    return [...this.get(key, 'allowedValues')];
+    // `undefined` and `null` are not iterable
+    const allowedValues = this.get(key, 'allowedValues');
+    if (allowedValues) {
+      return [...allowedValues];
+    } else {
+      return undefined;
+    }
   }
 
   newContext() {
