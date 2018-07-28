@@ -572,8 +572,6 @@ class SimpleSchema {
     const allowedValues = this.get(key, 'allowedValues');
     if (allowedValues) {
       return [...allowedValues];
-    } else {
-      return undefined;
     }
   }
 
