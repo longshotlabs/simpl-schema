@@ -896,7 +896,7 @@ function getDefaultAutoValueFunction(defaultValue) {
 
     // Handle the case when pulling an object from an array the object contains a field
     // which has a defaultValue. We don't wan't the default value to be returned in this case
-    if (this.operator === '$pull') return;
+    if (this.operator === '$pull' || this.isUpdate) return;
 
     // Handle the case where we are $pushing an object into an array of objects and we
     // want any fields missing from that object to be added if they have default values
