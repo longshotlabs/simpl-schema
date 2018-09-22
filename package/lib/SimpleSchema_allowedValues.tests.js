@@ -391,5 +391,15 @@ describe('SimpleSchema - allowedValues', function () {
       expect(fetchedAllowedValues).toInclude('b');
       expect(fetchedAllowedValues.length).toEqual(2);
     });
+
+    it('returns null when allowedValues key is empty', function () {
+      const schema = new SimpleSchema({
+        foo: Array,
+        'foo.$': {
+          type: String,
+        },
+      });
+      expect(schema.getAllowedValuesForKey('foo')).toEqual(null);
+    });
   });
 });
