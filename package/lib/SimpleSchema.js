@@ -898,12 +898,12 @@ function getDefaultAutoValueFunction(defaultValue) {
     // want any fields missing from that object to be added if they have default values
     if (this.operator === '$push') return defaultValue;
 
-    // If parent is set, we should update this position instead of $setOnInsert
-    if (this.parentField().isSet) return defaultValue;
-
     // Handle the case when pulling an object from an array the object contains a field
     // which has a defaultValue. We don't wan't the default value to be returned in this case
     if (this.operator === '$pull' || this.isUpdate) return;
+
+    // If parent is set, we should update this position instead of $setOnInsert
+    if (this.parentField().isSet) return defaultValue;
 
     // We don't know whether it's an upsert, but if it's not, this seems to be ignored,
     // so this is a safe way to make sure the default value is added on upsert insert.
