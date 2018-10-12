@@ -1082,7 +1082,7 @@ describe('SimpleSchema', function () {
         testAny: [],
       });
     });
-    
+
     it('can be used to allow a key with ["string"]', function () {
       expectValid(schema, {
         testAny: ['string'],
