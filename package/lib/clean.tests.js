@@ -583,4 +583,27 @@ describe('clean', function () {
       },
     });
   });
+
+  describe('with SimpleSchema.oneOf(String, Number, Date)', function () {
+    const oneOfSchema = new SimpleSchema({
+      field: {
+        type: SimpleSchema.oneOf(String, Number, Date),
+      },
+    });
+
+    function doTest(given, expected) {
+      const cleanObj = oneOfSchema.clean(given, { mutate: true });
+      expect(cleanObj).toEqual(expected);
+    }
+
+    it('should not convert a string', function () {
+      doTest({ field: 'I am a string' }, { field: 'I am a string' });
+    });
+    it('should not convert a number', function () {
+      doTest({ field: 12345 }, { field: 12345 });
+    });
+    it('should not convert a Date', function () {
+      doTest({ field: new Date(12345) }, { field: new Date(12345) });
+    });
+  });
 });
