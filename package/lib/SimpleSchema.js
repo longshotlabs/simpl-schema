@@ -772,10 +772,29 @@ class SimpleSchema {
 
   /**
    * @method SimpleSchema#omit
+   *
    * @param {[fields]} The list of fields to omit to instantiate the subschema
    * @returns {SimpleSchema} The subschema
    */
   omit = getPickOrOmit('omit');
+
+  /**
+   * Maps over the schema's keys and returns a new schema
+   *
+   * @param {iteratee} A function to call on each field, with signature: (key, field) => field
+   * If it returns falsy, the old field is kept instead.
+   * @returns {SimpleSchema} A new simpleschema
+   */
+  map(iteratee) {
+   const oldSchema = this.schema();
+   const mappedSchema = Object.keys(oldSchema).reduce((obj, key) => {
+     const oldField = oldSchema[key]
+     const newField = iteratee(key, oldField);
+     return { ...obj, [key]: newField || oldField };
+   }, {})
+   
+   return new SimpleSchema(mappedSchema, { ...this._constructorOptions, ...this._cleanOptions });
+  }
 
   static version = 2;
 
