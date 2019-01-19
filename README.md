@@ -681,7 +681,7 @@ An array or a `Set` of values that are allowed. A key will be invalid if its val
 
 You can use `schema.getAllowedValuesForKey(key)` to get the allowed values array for a key.
 
-**Note**: If you wish to restrict the items allowed items in an Array, the `allowedValues` property must be on the array item definition, so `myArray.$'
+**Note**: If you wish to restrict the items allowed items in an Array, the `allowedValues` property must be on the array item definition, e.g: `myArray.$`
 
 ### regEx
 
