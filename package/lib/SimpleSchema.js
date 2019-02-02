@@ -7,6 +7,7 @@ import pick from 'lodash.pick';
 import uniq from 'lodash.uniq';
 import MessageBox from 'message-box';
 import includes from 'lodash.includes';
+import isEmpty from 'lodash.isempty';
 import clone from 'clone';
 import humanize from './humanize.js';
 import ValidationContext from './ValidationContext';
@@ -947,6 +948,10 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
 
     if (Array.isArray(type)) {
       throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an array. Change it to Array.`);
+    }
+
+    if (type.constructor === Object && isEmpty(type)) {
+      throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an object. Change it to Object`);
     }
 
     if (type === Array) couldBeArray = true;

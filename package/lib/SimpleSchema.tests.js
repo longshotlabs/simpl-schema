@@ -199,6 +199,23 @@ describe('SimpleSchema', function () {
         },
       ]);
     });
+
+    it('issue #307 - throws an error if incorrect import results in empty object', function () {
+      expect(function () {
+        // Assume that default import of a file with no default export returns an empty object
+        const Place = {};
+
+        // eslint-disable-next-line no-new
+        new SimpleSchema({
+          places: {
+            type: Array,
+            label: 'Places',
+            optional: true,
+          },
+          'places.$': { type: Place },
+        });
+      }).toThrow('Invalid definition for places.$ field: "type" may not be an object. Change it to Object');
+    });
   });
 
   it('Safely sets defaultValues on subschemas nested in arrays', function () {
