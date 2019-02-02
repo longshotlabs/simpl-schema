@@ -57,7 +57,7 @@
     "eslint-plugin-jsx-a11y": "^1.5.3",
     "eslint-plugin-react": "^5.2.2",
     "expect": "^1.20.1",
-    "mocha": "^2.5.3"
+    "mocha": "^5.2.0"
   },
   "babel": {
     "presets": [
