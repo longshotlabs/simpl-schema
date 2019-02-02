@@ -2,6 +2,29 @@ import getPositionsForAutoValue from './getPositionsForAutoValue';
 import AutoValueRunner from './AutoValueRunner';
 
 /**
+ * @method sortAutoValueFunctions
+ * @private
+ * @param {Array} autoValueFunctions - Array of objects to be sorted
+ * @returns {Array} Sorted array
+ *
+ * Stable sort of the autoValueFunctions (preserves order at the same field depth).
+ */
+export function sortAutoValueFunctions(autoValueFunctions) {
+  const defaultFieldOrder = autoValueFunctions.reduce((acc, { fieldName }, index) => {
+    acc[fieldName] = index;
+    return acc;
+  }, {});
+
+  // Sort by how many dots each field name has, asc, such that we can auto-create
+  // objects and arrays before we run the autoValues for properties within them.
+  // Fields of the same level (same number of dots) preserve should order from the original array.
+  return autoValueFunctions.sort((a, b) => {
+    const depthDiff = a.fieldName.split('.').length - b.fieldName.split('.').length;
+    return depthDiff === 0 ? defaultFieldOrder[a.fieldName] - defaultFieldOrder[b.fieldName] : depthDiff;
+  });
+}
+
+/**
  * @method setAutoValues
  * @private
  * @param {Array} autoValueFunctions - An array of objects with func, fieldName, and closestSubschemaFieldName props
@@ -14,11 +37,7 @@ import AutoValueRunner from './AutoValueRunner';
  * values from defaultValue. Modifies the referenced object in place.
  */
 function setAutoValues(autoValueFunctions, mongoObject, isModifier, extendedAutoValueContext) {
-  // Sort by how many dots each field name has, asc, such that we can auto-create
-  // objects and arrays before we run the autoValues for properties within them.
-  const sortedAutoValueFunctions = autoValueFunctions.sort((a, b) => {
-    return a.fieldName.split('.').length - b.fieldName.split('.').length;
-  });
+  const sortedAutoValueFunctions = sortAutoValueFunctions(autoValueFunctions);
 
   sortedAutoValueFunctions.forEach(({ func, fieldName, closestSubschemaFieldName }) => {
     const avRunner = new AutoValueRunner({
