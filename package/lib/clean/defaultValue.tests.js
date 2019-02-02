@@ -256,6 +256,9 @@ describe('defaultValue', function () {
         $set: {
           'obj.a': {},
         },
+      }, {
+        isModifier: true,
+        isUpsert: true,
       });
 
       expect(result).toEqual({
@@ -352,6 +355,9 @@ describe('defaultValue', function () {
           'obj.a': 100,
           'obj.c': 2,
         },
+      }, {
+        isModifier: true,
+        isUpsert: true,
       });
 
       expect(result).toEqual({
@@ -400,6 +406,9 @@ describe('defaultValue', function () {
         $set: {
           'obj.a.one': 100,
         },
+      }, {
+        isModifier: true,
+        isUpsert: true,
       });
 
       expect(result).toEqual({
@@ -433,6 +442,9 @@ describe('defaultValue', function () {
         $addToSet: {
           names: 'new value',
         },
+      }, {
+        isModifier: true,
+        isUpsert: true,
       });
 
       expect(result).toEqual({
@@ -639,6 +651,9 @@ describe('defaultValue', function () {
       $unset: {
         'settings.obj2.name': '',
       },
+    }, {
+      isModifier: true,
+      isUpsert: true,
     })).toEqual({
       $set: {
         'settings.obj.bool': true,
@@ -702,6 +717,9 @@ describe('defaultValue', function () {
       $unset: {
         'settings.obj2.name': '',
       },
+    }, {
+      isModifier: true,
+      isUpsert: true,
     })).toEqual({
       $set: {
         'settings.obj.bool': true,
@@ -713,6 +731,91 @@ describe('defaultValue', function () {
         'settings.bool': false,
         'settings.obj.name': 'foo',
       },
+    });
+  });
+
+  it('default value for sibling field added by $addToSet', function () {
+    const AddressItem = new SimpleSchema({
+      fullName: String,
+      address1: String,
+      address2: String,
+    });
+
+    const Profile = new SimpleSchema({
+      addressBook: {
+        type: Array,
+        optional: true,
+      },
+      'addressBook.$': {
+        type: AddressItem,
+      },
+      invited: {
+        type: Boolean,
+        defaultValue: false,
+      },
+    });
+
+    const schema = new SimpleSchema({
+      profile: {
+        type: Profile,
+        optional: true,
+      },
+    });
+
+    const accountsUpdateQuery = {
+      $addToSet: {
+        'profile.addressBook': {
+          fullName: 'Sonny Hayes',
+          address1: '518 Nader Rapids',
+          address2: 'Apt. 893',
+        },
+      },
+    };
+
+    const cleanedModifier = schema.clean(accountsUpdateQuery, { isModifier: true, isUpsert: true });
+    expect(cleanedModifier).toEqual({
+      $addToSet: {
+        'profile.addressBook': {
+          fullName: 'Sonny Hayes',
+          address1: '518 Nader Rapids',
+          address2: 'Apt. 893',
+        },
+      },
+      $setOnInsert: {
+        'profile.invited': false,
+      },
+    });
+  });
+
+  it('does not add $setOnInsert to modifiers normally', function () {
+    const schema = new SimpleSchema({
+      name: String,
+      isOwner: { type: Boolean, defaultValue: true },
+    });
+
+    expect(schema.clean({
+      $set: { name: 'Phil' },
+    }, {
+      isModifier: true,
+    })).toEqual({
+      $set: { name: 'Phil' },
+    });
+  });
+
+  it('adds $setOnInsert to modifiers when isUpsert it true', function () {
+    const schema = new SimpleSchema({
+      name: String,
+      isOwner: { type: Boolean, defaultValue: true },
+    });
+
+    expect(schema.clean({
+      $set: { name: 'Phil' },
+    }, {
+      isModifier: true,
+      isUpsert: true,
+    })).toEqual({
+      $set: { name: 'Phil' },
+      $setOnInsert: { isOwner: true },
     });
   });
 });

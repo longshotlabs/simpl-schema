@@ -36,7 +36,7 @@ export function sortAutoValueFunctions(autoValueFunctions) {
  * Updates doc with automatic values from autoValue functions or default
  * values from defaultValue. Modifies the referenced object in place.
  */
-function setAutoValues(autoValueFunctions, mongoObject, isModifier, extendedAutoValueContext) {
+function setAutoValues(autoValueFunctions, mongoObject, isModifier, isUpsert, extendedAutoValueContext) {
   const sortedAutoValueFunctions = sortAutoValueFunctions(autoValueFunctions);
 
   sortedAutoValueFunctions.forEach(({ func, fieldName, closestSubschemaFieldName }) => {
@@ -45,6 +45,7 @@ function setAutoValues(autoValueFunctions, mongoObject, isModifier, extendedAuto
       extendedAutoValueContext,
       func,
       isModifier,
+      isUpsert,
       mongoObject,
     });
 

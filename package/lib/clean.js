@@ -18,6 +18,8 @@ import setAutoValues from './clean/setAutoValues';
  * @param {Boolean} [options.trimStrings=true] - Trim string values?
  * @param {Boolean} [options.getAutoValues=true] - Inject automatic and default values?
  * @param {Boolean} [options.isModifier=false] - Is doc a modifier object?
+ * @param {Boolean} [options.isUpsert=false] - Will the modifier object be used to do an upsert? This is used
+ *   to determine whether $setOnInsert should be added to it for defaultValues.
  * @param {Boolean} [options.mongoObject] - If you already have the mongoObject instance, pass it to improve performance
  * @param {Object} [options.extendAutoValueContext] - This object will be added to the `this` context of autoValue functions.
  * @returns {Object} The modified doc.
@@ -30,6 +32,7 @@ function clean(ss, doc, options = {}) {
   // By default, doc will be filtered and autoconverted
   options = {
     isModifier: looksLikeModifier(doc),
+    isUpsert: false,
     ...ss._cleanOptions,
     ...options,
   };
@@ -125,7 +128,7 @@ function clean(ss, doc, options = {}) {
   }
 
   // Set automatic values
-  options.getAutoValues && setAutoValues(ss.autoValueFunctions(), mongoObject, options.isModifier, options.extendAutoValueContext);
+  options.getAutoValues && setAutoValues(ss.autoValueFunctions(), mongoObject, options.isModifier, options.isUpsert, options.extendAutoValueContext);
 
   // Ensure we don't have any operators set to an empty object
   // since MongoDB 2.6+ will throw errors.
