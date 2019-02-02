@@ -2,6 +2,7 @@ import extend from 'extend';
 import MongoObject from 'mongo-object';
 import omit from 'lodash.omit';
 import every from 'lodash.every';
+import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import uniq from 'lodash.uniq';
 import MessageBox from 'message-box';
@@ -567,8 +568,8 @@ class SimpleSchema {
     if (this.allowsKey(`${key}.$`)) {
       key = `${key}.$`;
     }
-
-    return [...this.get(key, 'allowedValues')];
+    const allowedValues = this.get(key, 'allowedValues');
+    return isEmpty(allowedValues) ? null : [...allowedValues];
   }
 
   newContext() {
