@@ -589,6 +589,10 @@ describe('clean', function () {
       field: {
         type: SimpleSchema.oneOf(String, Number, Date),
       },
+      nested: {
+        type: Object,
+      },
+      'nested.field': SimpleSchema.oneOf(String, Number, Date),
     });
 
     function doTest(given, expected) {
@@ -642,11 +646,28 @@ describe('clean', function () {
       it('should not convert a string', function () {
         doTest({ $set: { field: 'I am a string' } }, { $set: { field: 'I am a string' } });
       });
+      it('should not convert a nested string', function () {
+        doTest({ $set: { field: 'I am a string' } }, { $set: { field: 'I am a string' } });
+      });
       it('should not convert a number', function () {
         doTest({ $set: { field: 12345 } }, { $set: { field: 12345 } });
       });
       it('should not convert a Date', function () {
         doTest({ $set: { field: new Date(12345) } }, { $set: { field: new Date(12345) } });
+      });
+      describe('nested operator', function () {
+        it('should not convert a string', function () {
+          doTest({ $set: { 'nested.field': 'I am a string' } }, { $set: { 'nested.field': 'I am a string' } });
+        });
+        it('should not convert a nested string', function () {
+          doTest({ $set: { 'nested.field': 'I am a string' } }, { $set: { 'nested.field': 'I am a string' } });
+        });
+        it('should not convert a number', function () {
+          doTest({ $set: { 'nested.field': 12345 } }, { $set: { 'nested.field': 12345 } });
+        });
+        it('should not convert a Date', function () {
+          doTest({ $set: { 'nested.field': new Date(12345) } }, { $set: { 'nested.field': new Date(12345) } });
+        });
       });
       it('should convert a Date if no Date in oneOf', function () {
         const schemaNoDate = new SimpleSchema({
