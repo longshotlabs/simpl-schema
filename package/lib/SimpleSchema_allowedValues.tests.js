@@ -5,7 +5,7 @@ import expect from 'expect';
 import friendsSchema from './testHelpers/friendsSchema';
 import testSchema from './testHelpers/testSchema';
 import expectErrorLength from './testHelpers/expectErrorLength';
-import 'babel-polyfill';
+import '@babel/polyfill';
 
 describe('SimpleSchema - allowedValues', function () {
   describe('normal', function () {

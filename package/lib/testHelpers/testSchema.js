@@ -1,6 +1,6 @@
 import { SimpleSchema } from '../SimpleSchema';
 import Address from './Address';
-import 'babel-polyfill';
+import '@babel/polyfill';
 
 const testSchema = new SimpleSchema({
   string: {

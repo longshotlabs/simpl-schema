@@ -24,10 +24,11 @@
     "lint": "eslint .",
     "lintAndTest": "npm run lint && npm test",
     "prepublishOnly": "npm run lintAndTest && npm run copyFiles && npm run build",
-    "test": "mocha --compilers js:babel-core/register --recursive \"lib/**/*.tests.js\"",
+    "test": "mocha --require @babel/register --recursive \"lib/**/*.tests.js\"",
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
+    "babel-plugin-transform-class-properties": "6.24.1",
     "clone": "^2.1.1",
     "extend": "^3.0.1",
     "lodash.every": "^4.6.0",
@@ -44,13 +45,15 @@
     "mongo-object": "^0.1.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^6.0.4",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-react": "^6.5.0",
-    "babel-preset-stage-0": "^6.5.0",
+    "@babel/cli": "7.0.0",
+    "@babel/core": "7.0.0",
+    "@babel/plugin-proposal-class-properties": "7.3.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.0.0",
+    "@babel/polyfill": "7.2.5",
+    "@babel/preset-env": "7.0.0",
+    "@babel/register": "7.0.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "8.2.3",
     "eslint": "^2.13.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.7.0",
@@ -61,8 +64,22 @@
   },
   "babel": {
     "presets": [
-      "es2015",
-      "stage-0"
+      [
+        "@babel/env",
+        {
+          "targets": {
+            "node": "8"
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": false
+        }
+      ]
     ]
   },
   "eslintConfig": {
