@@ -5,6 +5,7 @@ import { looksLikeModifier } from './utility';
 import { SimpleSchema } from './SimpleSchema';
 import convertToProperType from './clean/convertToProperType';
 import setAutoValues from './clean/setAutoValues';
+import typeValidator from './validation/typeValidator';
 
 /**
  * @param {SimpleSchema} ss - A SimpleSchema instance
@@ -77,15 +78,27 @@ function clean(ss, doc, options = {}) {
       }
 
       const outerDef = ss.schema(gKey);
-      const def = outerDef && outerDef.type.definitions[0];
+      const defs = outerDef && outerDef.type.definitions;
+      const def = defs && defs[0];
 
       // Autoconvert values if requested and if possible
       if (options.autoConvert && def) {
-        const newVal = convertToProperType(val, def.type);
-        if (newVal !== undefined && newVal !== val) {
-          SimpleSchema.debug && console.info(`SimpleSchema.clean: autoconverted value ${val} from ${typeof val} to ${typeof newVal} for ${gKey}`);
-          val = newVal;
-          this.updateValue(newVal);
+        const isValidType = defs.some(definition => {
+          const errors = typeValidator.call({
+            valueShouldBeChecked: true,
+            definition,
+            value: val,
+          });
+          return errors === undefined;
+        });
+
+        if (!isValidType) {
+          const newVal = convertToProperType(val, def.type);
+          if (newVal !== undefined && newVal !== val) {
+            SimpleSchema.debug && console.info(`SimpleSchema.clean: autoconverted value ${val} from ${typeof val} to ${typeof newVal} for ${gKey}`);
+            val = newVal;
+            this.updateValue(newVal);
+          }
         }
       }
 

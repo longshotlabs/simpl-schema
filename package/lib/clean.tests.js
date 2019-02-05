@@ -530,4 +530,124 @@ describe('clean', function () {
       }],
     });
   });
+
+  describe('with SimpleSchema.oneOf(String, Number, Date)', function () {
+    const oneOfSchema = new SimpleSchema({
+      field: {
+        type: SimpleSchema.oneOf(String, Number, Date),
+      },
+      nested: {
+        type: Object,
+      },
+      'nested.field': SimpleSchema.oneOf(String, Number, Date),
+    });
+
+    function doTest(given, expected) {
+      const cleanObj = oneOfSchema.clean(given, { mutate: true });
+      expect(cleanObj).toEqual(expected);
+    }
+
+    it('should not convert a string', function () {
+      doTest({ field: 'I am a string' }, { field: 'I am a string' });
+    });
+    it('should not convert a number', function () {
+      doTest({ field: 12345 }, { field: 12345 });
+    });
+    it('should not convert a Date', function () {
+      doTest({ field: new Date(12345) }, { field: new Date(12345) });
+    });
+    it('should convert a Date if no Date in oneOf', function () {
+      const schemaNoDate = new SimpleSchema({
+        field: {
+          type: SimpleSchema.oneOf(String, Number),
+        },
+      });
+      const date = new Date(12345);
+      const dateStrng = date.toString();
+
+      const cleanObj = schemaNoDate.clean({ field: date }, { mutate: true });
+      expect(cleanObj).toEqual({ field: dateStrng });
+    });
+    it('should convert a String if no String in oneOf', function () {
+      const schemaNoDate = new SimpleSchema({
+        field: {
+          type: SimpleSchema.oneOf(Number, Date),
+        },
+      });
+
+      const cleanObj = schemaNoDate.clean({ field: '12345' }, { mutate: true });
+      expect(cleanObj).toEqual({ field: 12345 });
+    });
+    it('should convert a Number if no Number in oneOf', function () {
+      const schemaNoDate = new SimpleSchema({
+        field: {
+          type: SimpleSchema.oneOf(String, Date),
+        },
+      });
+
+      const cleanObj = schemaNoDate.clean({ field: 12345 }, { mutate: true });
+      expect(cleanObj).toEqual({ field: '12345' });
+    });
+
+    describe('with modifiers', function () {
+      it('should not convert a string', function () {
+        doTest({ $set: { field: 'I am a string' } }, { $set: { field: 'I am a string' } });
+      });
+      it('should not convert a nested string', function () {
+        doTest({ $set: { field: 'I am a string' } }, { $set: { field: 'I am a string' } });
+      });
+      it('should not convert a number', function () {
+        doTest({ $set: { field: 12345 } }, { $set: { field: 12345 } });
+      });
+      it('should not convert a Date', function () {
+        doTest({ $set: { field: new Date(12345) } }, { $set: { field: new Date(12345) } });
+      });
+      describe('nested operator', function () {
+        it('should not convert a string', function () {
+          doTest({ $set: { 'nested.field': 'I am a string' } }, { $set: { 'nested.field': 'I am a string' } });
+        });
+        it('should not convert a nested string', function () {
+          doTest({ $set: { 'nested.field': 'I am a string' } }, { $set: { 'nested.field': 'I am a string' } });
+        });
+        it('should not convert a number', function () {
+          doTest({ $set: { 'nested.field': 12345 } }, { $set: { 'nested.field': 12345 } });
+        });
+        it('should not convert a Date', function () {
+          doTest({ $set: { 'nested.field': new Date(12345) } }, { $set: { 'nested.field': new Date(12345) } });
+        });
+      });
+      it('should convert a Date if no Date in oneOf', function () {
+        const schemaNoDate = new SimpleSchema({
+          field: {
+            type: SimpleSchema.oneOf(String, Number),
+          },
+        });
+        const date = new Date(12345);
+        const dateString = date.toString();
+
+        const cleanObj = schemaNoDate.clean({ $set: { field: date } }, { mutate: true });
+        expect(cleanObj).toEqual({ $set: { field: dateString } });
+      });
+      it('should convert a String if no String in oneOf', function () {
+        const schemaNoDate = new SimpleSchema({
+          field: {
+            type: SimpleSchema.oneOf(Number, Date),
+          },
+        });
+
+        const cleanObj = schemaNoDate.clean({ $set: { field: '12345' } }, { mutate: true });
+        expect(cleanObj).toEqual({ $set: { field: 12345 } });
+      });
+      it('should convert a Number if no Number in oneOf', function () {
+        const schemaNoDate = new SimpleSchema({
+          field: {
+            type: SimpleSchema.oneOf(String, Date),
+          },
+        });
+
+        const cleanObj = schemaNoDate.clean({ $set: { field: 12345 } }, { mutate: true });
+        expect(cleanObj).toEqual({ $set: { field: '12345' } });
+      });
+    });
+  });
 });

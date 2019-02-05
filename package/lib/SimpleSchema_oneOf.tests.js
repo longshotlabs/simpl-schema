@@ -7,20 +7,32 @@ describe('SimpleSchema', function () {
   describe('oneOf', function () {
     it('allows either type', function () {
       const schema = new SimpleSchema({
-        foo: SimpleSchema.oneOf(String, Number),
+        foo: SimpleSchema.oneOf(String, Number, Date),
       });
 
-      expect(function () {
-        schema.validate({ foo: 1 });
+      const test1 = { foo: 1 };
+      expect(function test1func () {
+        schema.validate(test1);
       }).toNotThrow();
+      expect(test1.foo).toBeA('number');
 
-      expect(function () {
-        schema.validate({ foo: 'bar' });
+      const test2 = { foo: 'bar' };
+      expect(function test2func () {
+        schema.validate(test2);
       }).toNotThrow();
+      expect(test2.foo).toBeA('string');
 
-      expect(function () {
-        schema.validate({ foo: false });
+      const test3 = { foo: new Date() };
+      expect(function test2func () {
+        schema.validate(test3);
+      }).toNotThrow();
+      expect(test3.foo instanceof Date).toBe(true);
+
+      const test4 = { foo: false };
+      expect(function test3func () {
+        schema.validate(test4);
       }).toThrow();
+      expect(test4.foo).toBeA('boolean');
     });
 
     it.skip('allows either type including schemas', function () {
