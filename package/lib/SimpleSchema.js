@@ -1,12 +1,13 @@
+import clone from 'clone';
+import every from 'lodash.every';
 import extend from 'extend';
+import includes from 'lodash.includes';
+import isEmpty from 'lodash.isempty';
+import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
 import omit from 'lodash.omit';
-import every from 'lodash.every';
 import pick from 'lodash.pick';
 import uniq from 'lodash.uniq';
-import MessageBox from 'message-box';
-import includes from 'lodash.includes';
-import clone from 'clone';
 import humanize from './humanize.js';
 import ValidationContext from './ValidationContext';
 import SimpleSchemaGroup from './SimpleSchemaGroup';
@@ -567,8 +568,8 @@ class SimpleSchema {
     if (this.allowsKey(`${key}.$`)) {
       key = `${key}.$`;
     }
-
-    return [...this.get(key, 'allowedValues')];
+    const allowedValues = this.get(key, 'allowedValues');
+    return isEmpty(allowedValues) ? null : [...allowedValues];
   }
 
   newContext() {
@@ -895,7 +896,7 @@ function getDefaultAutoValueFunction(defaultValue) {
     if (this.operator === null) return defaultValue;
 
     // Handle the case when pulling an object from an array the object contains a field
-    // which has a defaultValue. We don't wan't the default value to be returned in this case
+    // which has a defaultValue. We don't want the default value to be returned in this case
     if (this.operator === '$pull') return;
 
     // Handle the case where we are $pushing an object into an array of objects and we
@@ -905,9 +906,8 @@ function getDefaultAutoValueFunction(defaultValue) {
     // If parent is set, we should update this position instead of $setOnInsert
     if (this.parentField().isSet) return defaultValue;
 
-    // We don't know whether it's an upsert, but if it's not, this seems to be ignored,
-    // so this is a safe way to make sure the default value is added on upsert insert.
-    return { $setOnInsert: defaultValue };
+    // Make sure the default value is added on upsert insert
+    if (this.isUpsert) return { $setOnInsert: defaultValue };
   };
 }
 
@@ -946,6 +946,10 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
 
     if (Array.isArray(type)) {
       throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an array. Change it to Array.`);
+    }
+
+    if (type.constructor === Object && isEmpty(type)) {
+      throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an object. Change it to Object`);
     }
 
     if (type === Array) couldBeArray = true;

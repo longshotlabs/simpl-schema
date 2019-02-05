@@ -28,6 +28,7 @@ export default class AutoValueRunner {
       extendedAutoValueContext,
       func,
       isModifier,
+      isUpsert,
       mongoObject,
     } = this.options;
 
@@ -51,6 +52,8 @@ export default class AutoValueRunner {
       field(fName) {
         return getFieldInfo(mongoObject, closestSubschemaFieldName + fName);
       },
+      isModifier,
+      isUpsert,
       isSet: (value !== undefined),
       key: affectedKey,
       operator,

@@ -681,6 +681,19 @@ An array or a `Set` of values that are allowed. A key will be invalid if its val
 
 You can use `schema.getAllowedValuesForKey(key)` to get the allowed values array for a key.
 
+**Note**: If you wish to restrict the items allowed in an `Array`, the `allowedValues` property must be on the array item definition.
+```javascript
+const schema = new SimpleSchema({
+  myArray: {
+    type: Array
+  },
+  'myArray.$': {
+    type: String,
+    allowedValues: ['foo', 'bar']
+  }
+});
+```
+
 ### regEx
 
 *Can also be a function that returns a regular expression or an array of them*
