@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.5.5](#155)
 - [1.5.4](#154)
 - [1.5.3](#153)
 - [1.5.2](#152)
@@ -37,6 +38,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.5.5
+
+- Fix #294 - Now auto-converting values during cleaning does not convert if the value type is any of the types in a `oneOf` type
 
 ## 1.5.4
 
