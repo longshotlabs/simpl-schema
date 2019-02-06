@@ -209,7 +209,7 @@ function doValidation({
       ));
 
       // Perform validation for this key
-      def = schema.getDefinition(affectedKey);
+      def = schema.getDefinition(affectedKey, null, { foo: 'bar' });
       if (shouldValidateKey) {
         validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject);
       }
