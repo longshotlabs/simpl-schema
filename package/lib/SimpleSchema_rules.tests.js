@@ -12,7 +12,7 @@ describe('SimpleSchema - Rules', function () {
       bar: {
         type: Number,
         max() {
-          return this.foo;
+          return this.obj.foo;
         },
       },
     }).newContext();
