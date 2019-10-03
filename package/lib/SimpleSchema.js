@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import clone from 'clone';
 import every from 'lodash.every';
 import extend from 'extend';
