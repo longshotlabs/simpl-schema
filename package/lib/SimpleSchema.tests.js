@@ -1062,70 +1062,140 @@ describe('SimpleSchema', function () {
     const schema = new SimpleSchema({
       testAny: SimpleSchema.Any,
     });
-    it('can be used to allow a key with string', function () {
-      expectValid(schema, {
-        testAny: 'string',
-      });
-    });
-    it('can be used to allow a key with 42', function () {
-      expectValid(schema, {
-        testAny: 42,
-      });
-    });
-    it('can be used to allow a key with 3.1415', function () {
-      expectValid(schema, {
-        testAny: 3.1415,
-      });
-    });
-    it('can be used to allow a key with []', function () {
-      expectValid(schema, {
-        testAny: [],
+    describe('can be used to allow a key with type', function () {
+      const dataTypes = [
+        ["String 'string'", 'string'],
+        ['Number 42', 42],
+        ['Number 3.1415', 3.1415],
+        ['Array []', []],
+        ["Array ['string']", ['string']],
+        ['Object { }', { }],
+        ['Object { test: true }', { test: true }],
+        ['Number NaN', NaN],
+        ['Date new Date()', new Date()],
+        ['Boolean true', true],
+        ['Boolean false', false],
+      ];
+
+      dataTypes.forEach(([label, type]) => {
+        describe(label, function () {
+          it("on it's own", function () {
+            expectValid(schema, { testAny: type });
+          });
+
+          it('as a nested key', function () {
+            expectValid(
+              new SimpleSchema({ testNested: schema }),
+              { testNested: { testAny: { test: type } } }
+            );
+          });
+        });
       });
     });
 
-    it('can be used to allow a key with ["string"]', function () {
-      expectValid(schema, {
-        testAny: ['string'],
+    describe('with modifiers', function() {
+      const shouldBeValidModifiers = [
+        '$set',
+        '$setOnInsert',
+        '$inc',
+        '$dec',
+        '$min',
+        '$max',
+        '$mul',
+        '$pop',
+        '$pull',
+        '$pullAll',
+      ];
+      shouldBeValidModifiers.forEach(mod => {
+        describe(mod, function () {
+          it(`can be used for ${mod} modifiers`, function() {
+            expectValid(
+              schema,
+              { [mod]: { testAny: 3.1415 } },
+              { modifier: true }
+            );
+          });
+          it(`can be used for nested ${mod} modifiers`, function() {
+            const parentSchema = new SimpleSchema({ parent: schema });
+            expectValid(
+              parentSchema,
+              { [mod]: { parent: { testAny: 3.1415 } } },
+              { modifier: true }
+            );
+          });
+          it(`can be used for nested ${mod} modifiers with dot notation`, function() {
+            const parentSchema = new SimpleSchema({ parent: schema });
+            expectValid(
+              parentSchema,
+              { [mod]: { 'parent.testAny': 3.1415 } },
+              { modifier: true }
+            );
+          });
+        });
       });
-    });
-    it('can be used to allow a key with { }', function () {
-      expectValid(schema, {
-        testAny: {},
+
+      // Special cases where we don't expect it to work like the rest:
+      describe('$unset', function () {
+        it('can be used for $unset modifiers', function() {
+          expectErrorOfTypeLength(
+            SimpleSchema.ErrorTypes.REQUIRED,
+            schema,
+            { $unset: { testAny: 1 } },
+            { modifier: true }
+          ).toEqual(1);
+        });
+        it('can be used for nested $unset modifiers', function() {
+          const parentSchema = new SimpleSchema({ parent: schema });
+          expectErrorOfTypeLength(
+            SimpleSchema.ErrorTypes.REQUIRED,
+            parentSchema,
+            { $unset: { parent: 1 } },
+            { modifier: true }
+          ).toEqual(1);
+        });
+        it('can be used for nested $unset modifiers with dot notation', function() {
+          const parentSchema = new SimpleSchema({ parent: schema });
+          expectErrorOfTypeLength(
+            SimpleSchema.ErrorTypes.REQUIRED,
+            parentSchema,
+            { $unset: { 'parent.testAny': 1 } },
+            { modifier: true }
+          ).toEqual(1);
+        });
       });
-    });
-    it('can be used to allow a key with { test: true }', function () {
-      expectValid(schema, {
-        testAny: { test: true },
+      describe('$addToSet', function () {
+        it('can be used for $addToSet modifiers', function() {
+          expectValid(
+            schema,
+            { $addToSet: { testAny: 1 } },
+            { modifier: true }
+          );
+        });
+        it('can be used for nested $addToSet modifiers with dot notation', function() {
+          const parentSchema = new SimpleSchema({ parent: schema });
+          expectValid(
+            parentSchema,
+            { $addToSet: { 'parent.testAny': 3.1415 } },
+            { modifier: true }
+          );
+        });
       });
-    });
-    it('can be used to allow a key with { test: true }', function () {
-      expectValid(
-        new SimpleSchema({
-          testNested: schema,
-        }),
-        {
-          testNested: { testAny: { test: true } },
-        }
-      );
-    });
-    it('can be used to allow a key with NaN', function () {
-      expectValid(schema, {
-        testAny: NaN,
-      });
-    });
-    it('can be used to allow a key with new Date()', function () {
-      expectValid(schema, {
-        testAny: new Date(),
-      });
-    });
-    it('can be used to allow a key with true', function () {
-      expectValid(schema, {
-        testAny: true,
-      });
-    });
-    it('can be used to allow a key with false', function () {
-      expectValid(schema, {
-        testAny: false,
+      describe('$push', function () {
+        it('can be used for $push modifiers', function() {
+          expectValid(
+            schema,
+            { $push: { testAny: 1 } },
+            { modifier: true }
+            );
+        });
+        it('can be used for nested $push modifiers with dot notation', function() {
+          const parentSchema = new SimpleSchema({ parent: schema });
+          expectValid(
+            parentSchema,
+            { $push: { 'parent.testAny': 3.1415 } },
+            { modifier: true }
+          );
+        });
       });
     });
   });

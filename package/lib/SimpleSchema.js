@@ -372,8 +372,6 @@ class SimpleSchema {
           testKeySchema.type.definitions.forEach(typeDef => {
             if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
             if (typeDef.type.keyIsInBlackBox(remainder)) isInBlackBox = true;
-            // Also consider parents with type: SimpleSchema.Any as blackboxed
-            if (typeDef.type === SimpleSchema.Any) isInBlackBox = true;
           });
         }
       }
