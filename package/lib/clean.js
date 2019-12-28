@@ -48,9 +48,10 @@ function clean(ss, doc, options = {}) {
     const removedPositions = []; // For removing now-empty objects after
 
     mongoObject.forEachNode(function eachNode() {
-      // The value of a $unset is irrelevant, so no point in cleaning it.
-      // Also we do not care if fields not in the schema are unset.
-      if (this.operator === '$unset') return;
+      // We avoid cleaning operator fields
+      // as this would match them to their corresponding schema types which 
+      // in turn would mess up the query 
+      if (this.operator) return;
 
       const gKey = this.genericKey;
       if (!gKey) return;
