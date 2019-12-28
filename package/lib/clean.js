@@ -56,6 +56,7 @@ function clean(ss, doc, options = {}) {
       if (!gKey) return;
 
       let val = this.value;
+      const operator = this.operator;
       if (val === undefined) return;
 
       let p;
@@ -88,6 +89,7 @@ function clean(ss, doc, options = {}) {
             valueShouldBeChecked: true,
             definition,
             value: val,
+            operator,
           });
           return errors === undefined;
         });

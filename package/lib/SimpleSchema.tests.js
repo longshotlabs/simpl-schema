@@ -1057,4 +1057,26 @@ describe('SimpleSchema', function () {
 
     expect(foo instanceof SimpleSchema).toBe(true);
   });
+
+  it('skips cleaning $pop fields', function() {
+    expect(function() {
+      const arraySchema = new SimpleSchema({
+        myArray: Array,
+        'myArray.$': Date,
+      });
+
+      const context = arraySchema.newContext();
+      const cleaned = context.clean({
+        $pop: {
+          myArray: -1,
+        },
+      }, { modifier: true });
+
+      expect(cleaned).toEqual({
+        $pop: {
+          myArray: -1,
+        },
+      });
+    });
+  });
 });

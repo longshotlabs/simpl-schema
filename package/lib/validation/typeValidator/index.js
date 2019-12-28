@@ -31,6 +31,8 @@ export default function typeValidator() {
   if (expectedType === Array) return doArrayChecks(def, keyValue);
 
   if (expectedType instanceof Function) {
+    if (typeof keyValue === 'number' && this.operator === '$pop') return undefined;
+
     // Generic constructor checks
     if (!(keyValue instanceof expectedType)) return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: expectedType.name };
 
