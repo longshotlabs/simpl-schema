@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.5.7](#157)
 - [1.5.6](#156)
 - [1.5.5](#155)
 - [1.5.4](#154)
@@ -39,6 +40,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.5.7
+
+Update Babel config in an attempt to fully support IE11s
 
 ## 1.5.6
 
