@@ -21,15 +21,15 @@ export default class ValidationContext {
         Object.keys(schema).forEach(key => {
           const schemaElement = schema[key];
           schemaElement.type.definitions && schemaElement.type.definitions.forEach(def => {
-            if(typeof def.type === "object") {
+            if (typeof def.type === 'object') {
               addDeps(def.type._schema, keys.concat(key));
             } else {
-              const fullKey = keys.concat(key).join(".");
+              const fullKey = keys.concat(key).join('.');
               this._deps[fullKey] = new tracker.Dependency();
             }
-          })
+          });
         });
-      }
+      };
       addDeps(this._schema);
     }
   }
