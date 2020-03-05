@@ -353,18 +353,18 @@ class SimpleSchema {
       this._schema[key].type.definitions.forEach(typeDef => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
         typeDef.type._blackboxKeys.forEach(blackboxKey => {
-          blackboxKeys.push(`${key}.${blackboxKey}`);
+          blackboxKeys.add(`${key}.${blackboxKey}`);
         });
       });
     });
-    return uniq(blackboxKeys);
+    return uniq(Array.from(blackboxKeys));
   }
 
   // Check if the key is a nested dot-syntax key inside of a blackbox object
   keyIsInBlackBox(key) {
     let isInBlackBox = false;
     forEachKeyAncestor(MongoObject.makeKeyGeneric(key), (ancestor, remainder) => {
-      if (this._blackboxKeys.indexOf(ancestor) > -1) {
+      if (this._blackboxKeys.has(ancestor)) {
         isInBlackBox = true;
       } else {
         const testKeySchema = this.schema(ancestor);
@@ -397,7 +397,7 @@ class SimpleSchema {
       if (compare2 !== `${loopKey}.`) return false;
 
       // Black box handling
-      if (this._blackboxKeys.indexOf(loopKey) > -1) {
+      if (this._blackboxKeys.has(loopKey)) {
         // If the test key is the black box key + ".$", then the test
         // key is NOT allowed because black box keys are by definition
         // only for objects, and not for arrays.
@@ -499,7 +499,7 @@ class SimpleSchema {
     // Set/Reset all of these
     this._schemaKeys = Object.keys(this._schema);
     this._autoValues = [];
-    this._blackboxKeys = [];
+    this._blackboxKeys = new Set();
     this._firstLevelSchemaKeys = [];
     this._objectKeys = {};
 
@@ -520,7 +520,7 @@ class SimpleSchema {
       // XXX For now if any oneOf type is blackbox, then the whole field is.
       every(definition.type.definitions, (oneOfDef) => {
         if (oneOfDef.blackbox === true) {
-          this._blackboxKeys.push(fieldName);
+          this._blackboxKeys.add(fieldName);
           return false; // exit loop
         }
         return true;
