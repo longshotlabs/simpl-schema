@@ -8,7 +8,6 @@ import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
-import uniq from 'lodash.uniq';
 import humanize from './humanize.js';
 import ValidationContext from './ValidationContext';
 import SimpleSchemaGroup from './SimpleSchemaGroup';
@@ -357,7 +356,7 @@ class SimpleSchema {
         });
       });
     });
-    return uniq(Array.from(blackboxKeys));
+    return blackboxKeys;
   }
 
   // Check if the key is a nested dot-syntax key inside of a blackbox object
