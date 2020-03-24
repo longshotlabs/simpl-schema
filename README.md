@@ -1235,15 +1235,15 @@ messages: {
                     case (SimpleSchema.RegEx.IPv6.toString()):
                         return "Cette adresse IPv6 est invalide";
                     case (SimpleSchema.RegEx.Url.toString()):
-                        return "Cette URL is invalide";
+                        return "Cette URL est invalide";
                     case (SimpleSchema.RegEx.Id.toString()):
                         return "Cet identifiant alphanumérique est invalide";
                     case (SimpleSchema.RegEx.ZipCode.toString()):
-                        return "Ce code ZIP est invalide";
+                        return "Ce code postal est invalide";
                     case (SimpleSchema.RegEx.Phone.toString()):
                         return "Ce numéro de téléphone est invalide";
                     default:
-                        return "Ce champ a échoué la validation par Regex";
+                        return "Ce champ n'a pas passé la validation Regex";
                 }
             },
     }
