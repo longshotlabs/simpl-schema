@@ -1186,7 +1186,7 @@ describe('SimpleSchema', function () {
             schema,
             { $push: { testAny: 1 } },
             { modifier: true }
-            );
+          );
         });
         it('can be used for nested $push modifiers with dot notation', function() {
           const parentSchema = new SimpleSchema({ parent: schema });
