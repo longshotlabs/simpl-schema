@@ -518,7 +518,8 @@ class SimpleSchema {
       // Keep list of all blackbox keys for passing to MongoObject constructor
       // XXX For now if any oneOf type is blackbox, then the whole field is.
       every(definition.type.definitions, (oneOfDef) => {
-        if (oneOfDef.blackbox === true) {
+        // XXX If the type is SS.Any, also consider it a blackbox
+        if (oneOfDef.blackbox === true || oneOfDef.type === SimpleSchema.Any) {
           this._blackboxKeys.add(fieldName);
           return false; // exit loop
         }
@@ -808,6 +809,8 @@ class SimpleSchema {
   static oneOf(...definitions) {
     return new SimpleSchemaGroup(...definitions);
   }
+
+  static Any = '___Any___';
 
   static RegEx = regExpObj;
 

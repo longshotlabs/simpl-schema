@@ -123,6 +123,9 @@ function doValidation({
     // Loop through each of the definitions in the SimpleSchemaGroup.
     // If any return true, we're valid.
     const fieldIsValid = def.type.some(typeDef => {
+      // If the type is SimpleSchema.Any, then it is valid:
+      if (typeDef === SimpleSchema.Any) return true;
+
       const finalValidatorContext = {
         ...validatorContext,
 
