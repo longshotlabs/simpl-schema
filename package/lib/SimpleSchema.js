@@ -347,16 +347,16 @@ class SimpleSchema {
 
   // Returns an array of all the blackbox keys, including those in subschemas
   blackboxKeys() {
-    const blackboxKeys = this._blackboxKeys;
+    const blackboxKeys = new Set(this._blackboxKeys);
     this._schemaKeys.forEach((key) => {
       this._schema[key].type.definitions.forEach(typeDef => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
-        typeDef.type._blackboxKeys.forEach(blackboxKey => {
+        typeDef.type.blackboxKeys().forEach(blackboxKey => {
           blackboxKeys.add(`${key}.${blackboxKey}`);
         });
       });
     });
-    return blackboxKeys;
+    return Array.from(blackboxKeys);
   }
 
   // Check if the key is a nested dot-syntax key inside of a blackbox object
