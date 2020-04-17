@@ -694,19 +694,19 @@ describe('autoValue', function () {
       tax: {
         type: Number,
         optional: true,
-        autoValue(doc) {
-          return 0.5
-        }
+        autoValue() {
+          return 0.5;
+        },
       },
       total: {
         type: Number,
         optional: true,
-        autoValue(doc) {
+        autoValue() {
           const amount = this.field('amount').value || 0;
           const tax = this.field('tax').value || 0;
           return amount * (1 + tax);
-        }
-      }
+        },
+      },
     }, {
       clean: {
         filter: false,
@@ -717,7 +717,7 @@ describe('autoValue', function () {
     expect(schema.clean({ amount: 1 })).toEqual({
       amount: 1,
       tax: 0.5,
-      total: 1.5
+      total: 1.5,
     });
   });
 

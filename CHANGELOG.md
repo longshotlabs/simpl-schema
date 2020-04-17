@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.5.9](#159)
 - [1.5.8](#158)
 - [1.5.7](#157)
 - [1.5.6](#156)
@@ -41,6 +42,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.5.9
+
+Fix issues with autoValues not being available in other autoValues
 
 ## 1.5.8
 
