@@ -68,7 +68,7 @@ describe('SimpleSchema', function () {
       },
       longId: {
         type: String,
-        regEx: SimpleSchema.RegEx.idOf(32),
+        regEx: SimpleSchema.RegEx.idOfLength(32),
         optional: true,
       },
     });
@@ -336,7 +336,7 @@ describe('SimpleSchema', function () {
     },
   };
 
-  it('SimpleSchema.RegEx.idOf', function () {
+  it('SimpleSchema.RegEx.Id', function () {
     const idExpr = SimpleSchema.RegEx.Id;
     const isTrue = (s) => expect(idExpr.test(s)).toBe(true);
     const isFalse = (s) => expect(idExpr.test(s)).toBe(false);
@@ -347,9 +347,9 @@ describe('SimpleSchema', function () {
     isFalse('01234567891011123'); // invalid chars
   });
 
-  it('SimpleSchema.RegEx.IdOf', function () {
-    const idOf = SimpleSchema.RegEx.idOf;
-    const expectThrows = (min, max) => expect(() => idOf(min, max)).toThrow(/Expected a non-negative safe integer/);
+  it('SimpleSchema.RegEx.idOfLength', function () {
+    const idOfLength = SimpleSchema.RegEx.idOfLength;
+    const expectThrows = (min, max) => expect(() => idOfLength(min, max)).toThrow(/Expected a non-negative safe integer/);
 
     // lets add some fuzzing to see if there are some unexpected edge cases
     // when generating the id RegExp pattern using SimpleSchema.RegEx.IdOf
@@ -383,25 +383,25 @@ describe('SimpleSchema', function () {
     const isFalse = (expr, s) => expect(expr.test(s)).toBe(false);
 
     // arbitrary length ids
-    const anyLen = idOf(0, null);
+    const anyLen = idOfLength(0, null);
     for (let i = 1; i < 100; i++) {
       isTrue(anyLen, Random.id(i));
     }
 
     // fixed length ids
-    isTrue(idOf(17), Random.id());
-    isTrue(idOf(32), Random.id(32));
-    isFalse(idOf(16), Random.id()); // greater
-    isFalse(idOf(32), Random.id()); // less
+    isTrue(idOfLength(17), Random.id());
+    isTrue(idOfLength(32), Random.id(32));
+    isFalse(idOfLength(16), Random.id()); // greater
+    isFalse(idOfLength(32), Random.id()); // less
 
     // range of length ids with fixed upper bound
-    isTrue(idOf(8, 128), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz');
-    isFalse(idOf(8, 128), '1234567890abcdefghijklmnopqrstuvwxyz'); // invalid chars
-    isFalse(idOf(8, 128), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz%$/(='); // invalid chars 2
+    isTrue(idOfLength(8, 128), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz');
+    isFalse(idOfLength(8, 128), '1234567890abcdefghijklmnopqrstuvwxyz'); // invalid chars
+    isFalse(idOfLength(8, 128), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz%$/(='); // invalid chars 2
 
     // range of length ids with arbitrary upper bound
-    isTrue(idOf(8, null), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz');
-    isFalse(idOf(8, null), '1234567890abcdefghijklmnopqrstuvwxyz'); // invalid chars
-    isFalse(idOf(8, null), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz%$/(='); // invalid chars 2
+    isTrue(idOfLength(8, null), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz');
+    isFalse(idOfLength(8, null), '1234567890abcdefghijklmnopqrstuvwxyz'); // invalid chars
+    isFalse(idOfLength(8, null), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz%$/(='); // invalid chars 2
   });
 });
