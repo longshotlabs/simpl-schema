@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.6.0](#160)
 - [1.5.9](#159)
 - [1.5.8](#158)
 - [1.5.7](#157)
@@ -42,6 +43,14 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.6.0
+
+- Removes all `lodash` packages
+- Replaces `extend` package with `deep-extend`, which is smaller and is the same package used by the `message-box` dependency
+- Improve the performance of handling fields with `blackbox: true` (thanks @cwouam)
+- Add a `this` context for all rule functions (see README) (thanks @Neobii)
+- Add a `this` context for all whole-doc validator functions (see README) (thanks @bhunjadi)
 
 ## 1.5.9
 
