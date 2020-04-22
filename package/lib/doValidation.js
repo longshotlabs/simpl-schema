@@ -1,7 +1,6 @@
 import MongoObject from 'mongo-object';
 import omit from 'lodash.omit';
 import isObject from 'lodash.isobject';
-import includes from 'lodash.includes';
 import { SimpleSchema } from './SimpleSchema';
 import {
   appendAffectedKey,
@@ -290,7 +289,7 @@ function doValidation({
         if (isUpsert && (op === '$set' || op === '$setOnInsert')) {
           const presentKeys = Object.keys(opObj);
           schema.objectKeys().forEach((schemaKey) => {
-            if (!includes(presentKeys, schemaKey)) {
+            if (!presentKeys.includes(schemaKey)) {
               checkObj({
                 val: undefined,
                 affectedKey: schemaKey,
@@ -338,9 +337,9 @@ function doValidation({
   const addedFieldNames = [];
   validationErrors = validationErrors.filter((errObj) => {
     // Remove error types the user doesn't care about
-    if (includes(ignoreTypes, errObj.type)) return false;
+    if (ignoreTypes.includes(errObj.type)) return false;
     // Make sure there is only one error per fieldName
-    if (includes(addedFieldNames, errObj.name)) return false;
+    if (addedFieldNames.includes(errObj.name)) return false;
 
     addedFieldNames.push(errObj.name);
     return true;

@@ -1,4 +1,3 @@
-import includes from 'lodash.includes';
 import { SimpleSchema } from '../SimpleSchema';
 
 export default function allowedValuesValidator() {
@@ -12,7 +11,7 @@ export default function allowedValuesValidator() {
   if (typeof Set === 'function' && allowedValues instanceof Set) {
     isAllowed = allowedValues.has(this.value);
   } else {
-    isAllowed = includes(allowedValues, this.value);
+    isAllowed = allowedValues.includes(this.value);
   }
 
   return isAllowed ? true : SimpleSchema.ErrorTypes.VALUE_NOT_ALLOWED;

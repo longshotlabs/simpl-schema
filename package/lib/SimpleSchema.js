@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import clone from 'clone';
 import deepExtend from 'deep-extend';
-import includes from 'lodash.includes';
 import isEmpty from 'lodash.isempty';
 import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
@@ -219,7 +218,7 @@ class SimpleSchema {
 
     const getPropIterator = (obj, newObj) => {
       return (prop) => {
-        if (Array.isArray(propList) && !includes(propList, prop)) return;
+        if (Array.isArray(propList) && !propList.includes(prop)) return;
         const val = obj[prop];
         // For any options that support specifying a function, evaluate the functions
         if (propsThatCanBeFunction.indexOf(prop) > -1 && typeof val === 'function') {
@@ -740,7 +739,7 @@ class SimpleSchema {
 
     if (!def) return undefined;
 
-    if (includes(schemaDefinitionOptions, prop)) {
+    if (schemaDefinitionOptions.includes(prop)) {
       return def[prop];
     }
 

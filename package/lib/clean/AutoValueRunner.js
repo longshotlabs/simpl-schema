@@ -1,5 +1,4 @@
 import clone from 'clone';
-import includes from 'lodash.includes';
 import { getParentOfKey } from '../utility';
 
 function getFieldInfo(mongoObject, key) {
@@ -33,7 +32,7 @@ export default class AutoValueRunner {
     } = this.options;
 
     // If already called for this key, skip it
-    if (includes(this.doneKeys, affectedKey)) return;
+    if (this.doneKeys.includes(affectedKey)) return;
 
     const fieldParentName = getParentOfKey(affectedKey, true);
     const parentFieldInfo = getFieldInfo(mongoObject, fieldParentName.slice(0, -1));
