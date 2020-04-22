@@ -83,7 +83,7 @@ export default class AutoValueRunner {
       let op;
       let newValue;
       if (autoValue && typeof autoValue === 'object') {
-        const avOperator = Object.keys(autoValue).find(avProp => avProp.substring(0, 1) === '$');
+        const avOperator = Object.keys(autoValue).find((avProp) => avProp.substring(0, 1) === '$');
         if (avOperator) {
           op = avOperator;
           newValue = autoValue[avOperator];

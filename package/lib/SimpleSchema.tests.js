@@ -1,7 +1,7 @@
-/* eslint-disable func-names, prefer-arrow-callback */
+/* eslint-disable func-names, prefer-arrow-callback, class-methods-use-this */
 
-import { SimpleSchema } from './SimpleSchema';
 import expect from 'expect';
+import { SimpleSchema } from './SimpleSchema';
 import testSchema from './testHelpers/testSchema';
 import expectValid from './testHelpers/expectValid';
 import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength';
@@ -877,7 +877,7 @@ describe('SimpleSchema', function () {
       string: String,
     });
 
-    SimpleSchema.defineValidationErrorTransform(error => {
+    SimpleSchema.defineValidationErrorTransform((error) => {
       error.message = 'validationErrorTransform';
       return error;
     });
@@ -904,7 +904,7 @@ describe('SimpleSchema', function () {
       string: 'String',
     };
 
-    SimpleSchema.addDocValidator(obj => {
+    SimpleSchema.addDocValidator((obj) => {
       expect(obj).toEqual(validatedObject);
       return errorArray;
     });
@@ -930,7 +930,7 @@ describe('SimpleSchema', function () {
       string: 'String',
     };
 
-    schema.addDocValidator(obj => {
+    schema.addDocValidator((obj) => {
       expect(obj).toEqual(validatedObject);
       return errorArray;
     });
@@ -1086,7 +1086,7 @@ describe('SimpleSchema', function () {
           it('as a nested key', function () {
             expectValid(
               new SimpleSchema({ testNested: schema }),
-              { testNested: { testAny: { test: type } } }
+              { testNested: { testAny: { test: type } } },
             );
           });
         });
@@ -1106,13 +1106,13 @@ describe('SimpleSchema', function () {
         '$pull',
         '$pullAll',
       ];
-      shouldBeValidModifiers.forEach(mod => {
+      shouldBeValidModifiers.forEach((mod) => {
         describe(mod, function () {
           it(`can be used for ${mod} modifiers`, function() {
             expectValid(
               schema,
               { [mod]: { testAny: 3.1415 } },
-              { modifier: true }
+              { modifier: true },
             );
           });
           it(`can be used for nested ${mod} modifiers`, function() {
@@ -1120,7 +1120,7 @@ describe('SimpleSchema', function () {
             expectValid(
               parentSchema,
               { [mod]: { parent: { testAny: 3.1415 } } },
-              { modifier: true }
+              { modifier: true },
             );
           });
           it(`can be used for nested ${mod} modifiers with dot notation`, function() {
@@ -1128,7 +1128,7 @@ describe('SimpleSchema', function () {
             expectValid(
               parentSchema,
               { [mod]: { 'parent.testAny': 3.1415 } },
-              { modifier: true }
+              { modifier: true },
             );
           });
         });
@@ -1141,7 +1141,7 @@ describe('SimpleSchema', function () {
             SimpleSchema.ErrorTypes.REQUIRED,
             schema,
             { $unset: { testAny: 1 } },
-            { modifier: true }
+            { modifier: true },
           ).toEqual(1);
         });
         it('can be used for nested $unset modifiers', function() {
@@ -1150,7 +1150,7 @@ describe('SimpleSchema', function () {
             SimpleSchema.ErrorTypes.REQUIRED,
             parentSchema,
             { $unset: { parent: 1 } },
-            { modifier: true }
+            { modifier: true },
           ).toEqual(1);
         });
         it('can be used for nested $unset modifiers with dot notation', function() {
@@ -1159,7 +1159,7 @@ describe('SimpleSchema', function () {
             SimpleSchema.ErrorTypes.REQUIRED,
             parentSchema,
             { $unset: { 'parent.testAny': 1 } },
-            { modifier: true }
+            { modifier: true },
           ).toEqual(1);
         });
       });
@@ -1168,7 +1168,7 @@ describe('SimpleSchema', function () {
           expectValid(
             schema,
             { $addToSet: { testAny: 1 } },
-            { modifier: true }
+            { modifier: true },
           );
         });
         it('can be used for nested $addToSet modifiers with dot notation', function() {
@@ -1176,7 +1176,7 @@ describe('SimpleSchema', function () {
           expectValid(
             parentSchema,
             { $addToSet: { 'parent.testAny': 3.1415 } },
-            { modifier: true }
+            { modifier: true },
           );
         });
       });
@@ -1185,7 +1185,7 @@ describe('SimpleSchema', function () {
           expectValid(
             schema,
             { $push: { testAny: 1 } },
-            { modifier: true }
+            { modifier: true },
           );
         });
         it('can be used for nested $push modifiers with dot notation', function() {
@@ -1193,7 +1193,7 @@ describe('SimpleSchema', function () {
           expectValid(
             parentSchema,
             { $push: { 'parent.testAny': 3.1415 } },
-            { modifier: true }
+            { modifier: true },
           );
         });
       });

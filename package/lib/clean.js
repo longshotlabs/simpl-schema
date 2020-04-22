@@ -61,8 +61,8 @@ function clean(ss, doc, options = {}) {
       let p;
 
       // Filter out props if necessary
-      if ((options.filter && !ss.allowsKey(gKey)) ||
-          (options.removeNullsFromArrays && this.isArrayItem && val === null)) {
+      if ((options.filter && !ss.allowsKey(gKey))
+          || (options.removeNullsFromArrays && this.isArrayItem && val === null)) {
         // XXX Special handling for $each; maybe this could be made nicer
         if (this.position.slice(-7) === '[$each]') {
           mongoObject.removeValueForPosition(this.position.slice(0, -7));
@@ -83,7 +83,7 @@ function clean(ss, doc, options = {}) {
 
       // Autoconvert values if requested and if possible
       if (options.autoConvert && def) {
-        const isValidType = defs.some(definition => {
+        const isValidType = defs.some((definition) => {
           const errors = typeValidator.call({
             valueShouldBeChecked: true,
             definition,
@@ -146,7 +146,7 @@ function clean(ss, doc, options = {}) {
   // Ensure we don't have any operators set to an empty object
   // since MongoDB 2.6+ will throw errors.
   if (options.isModifier) {
-    Object.keys(cleanDoc || {}).forEach(op => {
+    Object.keys(cleanDoc || {}).forEach((op) => {
       if (isEmpty(cleanDoc[op])) delete cleanDoc[op];
     });
   }

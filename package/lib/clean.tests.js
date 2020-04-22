@@ -317,7 +317,7 @@ describe('clean', function () {
     it('9', getTest(
       { $push: { 'blackBoxObject.email.verificationTokens': { token: 'Hi' } } },
       { $push: { 'blackBoxObject.email.verificationTokens': { token: 'Hi' } } },
-      true
+      true,
     ));
   });
 

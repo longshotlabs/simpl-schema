@@ -19,7 +19,7 @@ class Address {
     return JSON.stringify(this) === JSON.stringify(other);
   }
 
-  typeName() {
+  typeName() { // eslint-disable-line class-methods-use-this
     return 'Address';
   }
 

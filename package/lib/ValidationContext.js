@@ -1,6 +1,5 @@
 import MongoObject from 'mongo-object';
-import doValidation from './doValidation.js';
-import findWhere from 'lodash.findwhere';
+import doValidation from './doValidation';
 
 export default class ValidationContext {
   constructor(ss) {
@@ -22,20 +21,20 @@ export default class ValidationContext {
 
   _markKeyChanged(key) {
     const genericKey = MongoObject.makeKeyGeneric(key);
-    if (this._deps.hasOwnProperty(genericKey)) this._deps[genericKey].changed();
+    if (Object.prototype.hasOwnProperty.call(this._deps, genericKey)) this._deps[genericKey].changed();
   }
 
   _markKeysChanged(keys) {
     if (!keys || !Array.isArray(keys) || !keys.length) return;
 
-    keys.forEach(key => this._markKeyChanged(key));
+    keys.forEach((key) => this._markKeyChanged(key));
 
     this._depsAny && this._depsAny.changed();
   }
 
   setValidationErrors(errors) {
-    const previousValidationErrors = this._validationErrors.map(o => o.name);
-    const newValidationErrors = errors.map(o => o.name);
+    const previousValidationErrors = this._validationErrors.map((o) => o.name);
+    const newValidationErrors = errors.map((o) => o.name);
 
     this._validationErrors = errors;
 
@@ -45,9 +44,9 @@ export default class ValidationContext {
   }
 
   addValidationErrors(errors) {
-    const newValidationErrors = errors.map(o => o.name);
+    const newValidationErrors = errors.map((o) => o.name);
 
-    errors.forEach(error => this._validationErrors.push(error));
+    errors.forEach((error) => this._validationErrors.push(error));
 
     // Mark all new as changed
     this._markKeysChanged(newValidationErrors);
@@ -60,7 +59,10 @@ export default class ValidationContext {
 
   getErrorForKey(key, genericKey = MongoObject.makeKeyGeneric(key)) {
     const errors = this._validationErrors;
-    return findWhere(errors, { name: key }) || findWhere(errors, { name: genericKey });
+    const errorForKey = errors.find((error) => error.name === key);
+    if (errorForKey) return errorForKey;
+
+    return errors.find((error) => error.name === genericKey);
   }
 
   _keyIsInvalid(key, genericKey) {
@@ -69,13 +71,13 @@ export default class ValidationContext {
 
   // Like the internal one, but with deps
   keyIsInvalid(key, genericKey = MongoObject.makeKeyGeneric(key)) {
-    if (this._deps.hasOwnProperty(genericKey)) this._deps[genericKey].depend();
+    if (Object.prototype.hasOwnProperty.call(this._deps, genericKey)) this._deps[genericKey].depend();
 
     return this._keyIsInvalid(key, genericKey);
   }
 
   keyErrorMessage(key, genericKey = MongoObject.makeKeyGeneric(key)) {
-    if (this._deps.hasOwnProperty(genericKey)) this._deps[genericKey].depend();
+    if (Object.prototype.hasOwnProperty.call(this._deps, genericKey)) this._deps[genericKey].depend();
 
     const errorObj = this.getErrorForKey(key, genericKey);
     if (!errorObj) return '';
@@ -87,7 +89,7 @@ export default class ValidationContext {
    * Validates the object against the simple schema and sets a reactive array of error objects
    */
   validate(obj, {
-    extendedCustomContext: extendedCustomContext = {},
+    extendedCustomContext = {},
     ignore: ignoreTypes = [],
     keys: keysToValidate,
     modifier: isModifier = false,
@@ -110,10 +112,12 @@ export default class ValidationContext {
       // We have only revalidated the listed keys, so if there
       // are any other existing errors that are NOT in the keys list,
       // we should keep these errors.
+      /* eslint-disable no-restricted-syntax */
       for (const error of this._validationErrors) {
-        const wasValidated = keysToValidate.some(key => key === error.name || error.name.startsWith(`${key}.`));
+        const wasValidated = keysToValidate.some((key) => key === error.name || error.name.startsWith(`${key}.`));
         if (!wasValidated) validationErrors.push(error);
       }
+      /* eslint-enable no-restricted-syntax */
     }
 
     this.setValidationErrors(validationErrors);

@@ -10,9 +10,9 @@ import { SimpleSchema } from '../SimpleSchema';
 function convertToProperType(value, type) {
   // Can't and shouldn't convert arrays or objects or null
   if (
-    Array.isArray(value) ||
-    (value && (typeof value === 'function' || typeof value === 'object') && !(value instanceof Date)) ||
-    value === null
+    Array.isArray(value)
+    || (value && (typeof value === 'function' || typeof value === 'object') && !(value instanceof Date))
+    || value === null
   ) return value;
 
   // Convert to String type
@@ -49,7 +49,7 @@ function convertToProperType(value, type) {
     if (typeof value === 'string') {
       // Convert exact string 'true' and 'false' to true and false respectively
       if (value.toLowerCase() === 'true') return true;
-      else if (value.toLowerCase() === 'false') return false;
+      if (value.toLowerCase() === 'false') return false;
     } else if (typeof value === 'number' && !isNaN(value)) { // NaN can be error, so skipping it
       return Boolean(value);
     }

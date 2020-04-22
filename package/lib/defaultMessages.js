@@ -1,5 +1,4 @@
 import regExpObj from './regExp';
-import find from 'lodash.find';
 
 const regExpMessages = [
   { exp: regExpObj.Email, msg: 'must be a valid email address' },
@@ -41,7 +40,7 @@ const defaultMessages = {
         // See if there's one where exp matches this expression
         let msgObj;
         if (regExp) {
-          msgObj = find(regExpMessages, (o) => o.exp && o.exp.toString() === regExp);
+          msgObj = regExpMessages.find((o) => o.exp && o.exp.toString() === regExp);
         }
 
         const regExpMessage = msgObj ? msgObj.msg : 'failed regular expression validation';

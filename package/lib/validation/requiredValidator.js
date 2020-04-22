@@ -11,7 +11,9 @@ import { getKeysWithValueInObj } from '../utility';
 //     * We're validating a document (as opposed to a modifier).
 //     * We're validating a key under the $set operator in a modifier, and it's an upsert.
 export default function requiredValidator() {
-  const { definition, isInArrayItemObject, isInSubObject, key, obj, operator, value } = this;
+  const {
+    definition, isInArrayItemObject, isInSubObject, key, obj, operator, value,
+  } = this;
   const { optional } = definition;
 
   if (optional) return;

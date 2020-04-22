@@ -24,7 +24,7 @@ export default function doStringChecks(def, keyValue) {
   // If regEx is an array of regular expressions, does the string match all of them?
   if (Array.isArray(def.regEx)) {
     let regExError;
-    def.regEx.every(re => {
+    def.regEx.every((re) => {
       if (!re.test(keyValue)) {
         regExError = { type: SimpleSchema.ErrorTypes.FAILED_REGULAR_EXPRESSION, regExp: re.toString() };
         return false;

@@ -1,7 +1,7 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import { SimpleSchema } from './SimpleSchema';
 import expect from 'expect';
+import { SimpleSchema } from './SimpleSchema';
 
 describe('SimpleSchema', function () {
   describe('getObjectSchema', function () {

@@ -1,7 +1,7 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import { SimpleSchema, schemaDefinitionOptions } from './SimpleSchema';
 import expect from 'expect';
+import { SimpleSchema, schemaDefinitionOptions } from './SimpleSchema';
 
 describe('SimpleSchema - Extend Schema Definition', function () {
   it('throws an error when the schema definition includes an unrecognized key', function () {

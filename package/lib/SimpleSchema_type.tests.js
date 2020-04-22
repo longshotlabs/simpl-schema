@@ -1,12 +1,12 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
+import expect from 'expect';
 import expectErrorLength from './testHelpers/expectErrorLength';
 import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength';
 import friendsSchema from './testHelpers/friendsSchema';
 import testSchema from './testHelpers/testSchema';
 import { SimpleSchema } from './SimpleSchema';
 import Address from './testHelpers/Address';
-import expect from 'expect';
 
 describe('SimpleSchema - type', function () {
   it('typed array', function () {

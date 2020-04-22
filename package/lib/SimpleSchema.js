@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import clone from 'clone';
-import every from 'lodash.every';
-import extend from 'extend';
+import deepExtend from 'deep-extend';
 import includes from 'lodash.includes';
 import isEmpty from 'lodash.isempty';
 import MessageBox from 'message-box';
@@ -9,7 +8,7 @@ import MongoObject from 'mongo-object';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import uniq from 'lodash.uniq';
-import humanize from './humanize.js';
+import humanize from './humanize';
 import ValidationContext from './ValidationContext';
 import SimpleSchemaGroup from './SimpleSchemaGroup';
 import regExpObj from './regExp';
@@ -110,7 +109,7 @@ class SimpleSchema {
     forEachKeyAncestor(genericKey, (ancestor) => {
       const def = this._schema[ancestor];
       if (!def) return;
-      def.type.definitions.forEach(typeDef => {
+      def.type.definitions.forEach((typeDef) => {
         if (SimpleSchema.isSimpleSchema(typeDef.type)) {
           func(typeDef.type, ancestor, genericKey.slice(ancestor.length + 1));
         }
@@ -194,7 +193,7 @@ class SimpleSchema {
       const keySchema = this._schema[key];
       mergedSchema[key] = keySchema;
 
-      keySchema.type.definitions.forEach(typeDef => {
+      keySchema.type.definitions.forEach((typeDef) => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
         const childSchema = typeDef.type.mergedSchema();
         Object.keys(childSchema).forEach((subKey) => {
@@ -242,7 +241,7 @@ class SimpleSchema {
     // Resolve all the types and convert to a normal array to make it easier
     // to use.
     if (defs.type) {
-      result.type = defs.type.definitions.map(typeDef => {
+      result.type = defs.type.definitions.map((typeDef) => {
         const newTypeDef = {};
         Object.keys(typeDef).forEach(getPropIterator(typeDef, newTypeDef));
         return newTypeDef;
@@ -327,7 +326,7 @@ class SimpleSchema {
     let result = [].concat(this._autoValues);
 
     this._schemaKeys.forEach((key) => {
-      this._schema[key].type.definitions.forEach(typeDef => {
+      this._schema[key].type.definitions.forEach((typeDef) => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
         result = result.concat(typeDef.type.autoValueFunctions().map(({
           func,
@@ -350,9 +349,9 @@ class SimpleSchema {
   blackboxKeys() {
     const blackboxKeys = this._blackboxKeys;
     this._schemaKeys.forEach((key) => {
-      this._schema[key].type.definitions.forEach(typeDef => {
+      this._schema[key].type.definitions.forEach((typeDef) => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
-        typeDef.type._blackboxKeys.forEach(blackboxKey => {
+        typeDef.type._blackboxKeys.forEach((blackboxKey) => {
           blackboxKeys.push(`${key}.${blackboxKey}`);
         });
       });
@@ -369,7 +368,7 @@ class SimpleSchema {
       } else {
         const testKeySchema = this.schema(ancestor);
         if (testKeySchema) {
-          testKeySchema.type.definitions.forEach(typeDef => {
+          testKeySchema.type.definitions.forEach((typeDef) => {
             if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
             if (typeDef.type.keyIsInBlackBox(remainder)) isInBlackBox = true;
           });
@@ -384,7 +383,7 @@ class SimpleSchema {
   // The key string should have $ in place of any numeric array positions.
   allowsKey(key) {
     // Loop through all keys in the schema
-    return this._schemaKeys.some(loopKey => {
+    return this._schemaKeys.some((loopKey) => {
       // If the schema key is the test key, it's allowed.
       if (loopKey === key) return true;
 
@@ -407,7 +406,7 @@ class SimpleSchema {
       // Subschemas
       let allowed = false;
       const subKey = key.slice(loopKey.length + 1);
-      fieldSchema.type.definitions.forEach(typeDef => {
+      fieldSchema.type.definitions.forEach((typeDef) => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
         if (typeDef.type.allowsKey(subKey)) allowed = true;
       });
@@ -436,7 +435,7 @@ class SimpleSchema {
    * @returns The new SimpleSchema instance (chainable)
    */
   _copyWithSchema(schema) {
-    const cl = new SimpleSchema(schema, clone(this._constructorOptions, false, 1));
+    const cl = new SimpleSchema(schema, { ...this._constructorOptions });
     cl._cleanOptions = this._cleanOptions;
     cl.messageBox = this.messageBox.clone();
     return cl;
@@ -466,8 +465,8 @@ class SimpleSchema {
       schemaObj = schema._schema;
       this._validators = this._validators.concat(schema._validators);
       this._docValidators = this._docValidators.concat(schema._docValidators);
-      this._cleanOptions = extend(false, this._cleanOptions, schema._cleanOptions);
-      this._constructorOptions = extend(false, this._constructorOptions, schema._constructorOptions);
+      Object.assign(this._cleanOptions, schema._cleanOptions);
+      Object.assign(this._constructorOptions, schema._constructorOptions);
     } else {
       schemaObj = expandShorthand(schema);
     }
@@ -478,7 +477,7 @@ class SimpleSchema {
 
       // Merge/extend with any existing definition
       if (this._schema[fieldName]) {
-        if (!this._schema.hasOwnProperty(fieldName)) {
+        if (!Object.prototype.hasOwnProperty.call(this._schema, fieldName)) {
           // fieldName is actually a method from Object itself!
           throw new Error(`${fieldName} key is actually the name of a method on Object, please rename it`);
         }
@@ -508,7 +507,7 @@ class SimpleSchema {
       // Make sure parent has a definition in the schema. No implied objects!
       if (fieldName.indexOf('.') > -1) {
         const parentFieldName = fieldName.slice(0, fieldName.lastIndexOf('.'));
-        if (!this._schema.hasOwnProperty(parentFieldName)) throw new Error(`"${fieldName}" is in the schema but "${parentFieldName}" is not`);
+        if (!Object.prototype.hasOwnProperty.call(this._schema, parentFieldName)) throw new Error(`"${fieldName}" is in the schema but "${parentFieldName}" is not`);
       }
 
       const definition = this._schema[fieldName];
@@ -518,14 +517,15 @@ class SimpleSchema {
 
       // Keep list of all blackbox keys for passing to MongoObject constructor
       // XXX For now if any oneOf type is blackbox, then the whole field is.
-      every(definition.type.definitions, (oneOfDef) => {
+      /* eslint-disable no-restricted-syntax */
+      for (const oneOfDef of definition.type.definitions) {
         // XXX If the type is SS.Any, also consider it a blackbox
         if (oneOfDef.blackbox === true || oneOfDef.type === SimpleSchema.Any) {
           this._blackboxKeys.push(fieldName);
-          return false; // exit loop
+          break;
         }
-        return true;
-      });
+      }
+      /* eslint-enable no-restricted-syntax */
 
       // Keep list of autoValue functions
       if (typeof definition.autoValue === 'function') {
@@ -611,7 +611,7 @@ class SimpleSchema {
     // obj can be an array, in which case we validate each object in it and
     // throw as soon as one has an error
     const objects = Array.isArray(obj) ? obj : [obj];
-    objects.forEach(oneObj => {
+    objects.forEach((oneObj) => {
       const validationContext = this.newContext();
       const isValid = validationContext.validate(oneObj, options);
 
@@ -625,12 +625,13 @@ class SimpleSchema {
 
       const error = new Error(message);
 
-      error.name = error.errorType = 'ClientError';
+      error.errorType = 'ClientError';
+      error.name = 'ClientError';
       error.error = 'validation-error';
 
       // Add meaningful error messages for each validation error.
       // Useful for display messages when using 'mdg:validated-method'.
-      error.details = errors.map(errorDetail => ({ ...errorDetail, message: this.messageForError(errorDetail) }));
+      error.details = errors.map((errorDetail) => ({ ...errorDetail, message: this.messageForError(errorDetail) }));
 
       // The primary use for the validationErrorTransform is to convert the
       // vanilla Error into a Meteor.Error until DDP is able to pass
@@ -696,7 +697,7 @@ class SimpleSchema {
     Object.keys(labels).forEach((key) => {
       const label = labels[key];
       if (typeof label !== 'string' && typeof label !== 'function') return;
-      if (!this._schema.hasOwnProperty(key)) return;
+      if (!Object.prototype.hasOwnProperty.call(this._schema, key)) return;
 
       this._schema[key].label = label;
       this._depsLabels[key] && this._depsLabels[key].changed();
@@ -743,7 +744,7 @@ class SimpleSchema {
       return def[prop];
     }
 
-    return (def.type.find(props => props[prop]) || {})[prop];
+    return (def.type.find((props) => props[prop]) || {})[prop];
   }
 
   // shorthand for getting defaultValue
@@ -786,7 +787,7 @@ class SimpleSchema {
   static extendOptions(options) {
     // For backwards compatibility we still take an object here, but we only care about the names
     if (!Array.isArray(options)) options = Object.keys(options);
-    options.forEach(option => {
+    options.forEach((option) => {
       schemaDefinitionOptions.push(option);
     });
   }
@@ -817,11 +818,13 @@ class SimpleSchema {
 
   // Global custom validators
   static _validators = [];
+
   static addValidator(func) {
     SimpleSchema._validators.push(func);
   }
 
   static _docValidators = [];
+
   static addDocValidator(func) {
     SimpleSchema._docValidators.push(func);
   }
@@ -850,10 +853,11 @@ class SimpleSchema {
 
   // Backwards compatibility
   static _makeGeneric = MongoObject.makeKeyGeneric;
+
   static ValidationContext = ValidationContext;
 
   static setDefaultMessages = (messages) => {
-    extend(true, defaultMessages, messages);
+    deepExtend(defaultMessages, messages);
   };
 }
 
@@ -872,7 +876,7 @@ function checkSchemaOverlap(schema) {
 
       Object.keys(def.type._schema).forEach((subKey) => {
         const newKey = `${key}.${subKey}`;
-        if (schema.hasOwnProperty(newKey)) {
+        if (Object.prototype.hasOwnProperty.call(schema, newKey)) {
           throw new Error(`The type for "${key}" is set to a SimpleSchema instance that defines "${key}.${subKey}", but the parent SimpleSchema instance also tries to define "${key}.${subKey}"`);
         }
       });
@@ -961,7 +965,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
     if (SimpleSchema.isSimpleSchema(type)) {
       Object.keys(type._schema).forEach((subKey) => {
         const newKey = `${fieldName}.${subKey}`;
-        if (fullSchemaObj.hasOwnProperty(newKey)) {
+        if (Object.prototype.hasOwnProperty.call(fullSchemaObj, newKey)) {
           throw new Error(`The type for "${fieldName}" is set to a SimpleSchema instance that defines "${newKey}", but the parent SimpleSchema instance also tries to define "${newKey}"`);
         }
       });
@@ -970,7 +974,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
 
   // If at least one of the possible types is Array, then make sure we have a
   // definition for the array items, too.
-  if (couldBeArray && !fullSchemaObj.hasOwnProperty(`${fieldName}.$`)) {
+  if (couldBeArray && !Object.prototype.hasOwnProperty.call(fullSchemaObj, `${fieldName}.$`)) {
     throw new Error(`"${fieldName}" is Array type but the schema does not include a "${fieldName}.$" definition for the array items"`);
   }
 
@@ -993,26 +997,24 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
   // REQUIREDNESS
   if (fieldName.endsWith('.$')) {
     definition.optional = true;
-  } else {
-    if (!definition.hasOwnProperty('optional')) {
-      if (definition.hasOwnProperty('required')) {
-        if (typeof definition.required === 'function') {
-          definition.optional = function optional(...args) {
-            return !definition.required.apply(this, args);
-          };
-        } else {
-          definition.optional = !definition.required;
-        }
+  } else if (!Object.prototype.hasOwnProperty.call(definition, 'optional')) {
+    if (Object.prototype.hasOwnProperty.call(definition, 'required')) {
+      if (typeof definition.required === 'function') {
+        definition.optional = function optional(...args) {
+          return !definition.required.apply(this, args);
+        };
       } else {
-        definition.optional = (options.requiredByDefault === false);
+        definition.optional = !definition.required;
       }
+    } else {
+      definition.optional = (options.requiredByDefault === false);
     }
   }
 
   delete definition.required;
 
   // LABELS
-  if (!definition.hasOwnProperty('label')) {
+  if (!Object.prototype.hasOwnProperty.call(definition, 'label')) {
     if (options.defaultLabel) {
       definition.label = options.defaultLabel;
     } else if (SimpleSchema.defaultLabel) {
@@ -1030,7 +1032,7 @@ function getPickOrOmit(type) {
     this._schemaKeys.forEach((key) => {
       // Pick/omit it if it IS in the array of keys they want OR if it
       // STARTS WITH something that is in the array plus a period
-      const includeIt = args.some(wantedField => key === wantedField || key.indexOf(`${wantedField}.`) === 0);
+      const includeIt = args.some((wantedField) => key === wantedField || key.indexOf(`${wantedField}.`) === 0);
 
       if ((includeIt && type === 'pick') || (!includeIt && type === 'omit')) {
         newSchema[key] = this._schema[key];

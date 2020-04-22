@@ -30,18 +30,14 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
-    "extend": "^3.0.2",
-    "lodash.every": "^4.6.0",
-    "lodash.find": "^4.6.0",
-    "lodash.findwhere": "^3.1.0",
+    "deep-extend": "^0.6.0",
     "lodash.includes": "^4.3.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isobject": "^3.0.2",
     "lodash.omit": "^4.5.0",
     "lodash.pick": "^4.4.0",
-    "lodash.union": "^4.6.0",
     "lodash.uniq": "^4.5.0",
-    "message-box": "^0.2.2",
+    "message-box": "^0.2.3",
     "mongo-object": "^0.1.4"
   },
   "devDependencies": {
@@ -56,10 +52,8 @@
     "babel-eslint": "10.0.3",
     "babel-plugin-add-module-exports": "^1.0.2",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^9.0.1",
-    "eslint-plugin-import": "^1.7.0",
-    "eslint-plugin-jsx-a11y": "^1.5.3",
-    "eslint-plugin-react": "^5.2.2",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
     "expect": "^1.20.1",
     "mocha": "^7.1.1"
   },
@@ -83,7 +77,7 @@
     ]
   },
   "eslintConfig": {
-    "extends": "airbnb",
+    "extends": "airbnb-base",
     "parser": "babel-eslint",
     "env": {
       "node": true,
@@ -92,8 +86,13 @@
     "rules": {
       "arrow-body-style": 0,
       "consistent-return": 0,
+      "import/no-cycle": 0,
+      "import/no-extraneous-dependencies": 0,
       "max-len": 0,
+      "no-continue": 0,
       "no-param-reassign": 0,
+      "no-plusplus": 0,
+      "no-restricted-globals": 0,
       "no-underscore-dangle": 0,
       "no-useless-escape": 0,
       "no-use-before-define": [
@@ -102,9 +101,7 @@
       ],
       "no-unused-expressions": 0,
       "no-console": 0,
-      "space-before-function-paren": 0,
-      "react/prefer-stateless-function": 0,
-      "react/no-multi-comp": 0
+      "space-before-function-paren": 0
     }
   }
 }

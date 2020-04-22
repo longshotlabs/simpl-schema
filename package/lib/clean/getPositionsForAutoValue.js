@@ -54,9 +54,9 @@ export default function getPositionsForAutoValue({ fieldName, isModifier, mongoO
   const parentPositions = mongoObject.getPositionsInfoForGenericKey(parentPath);
 
   if (parentPositions.length) {
-    parentPositions.forEach(info => {
+    parentPositions.forEach((info) => {
       const childPosition = `${info.position}[${lastPartWithBraces}]`;
-      if (!positions.find(i => i.position === childPosition)) {
+      if (!positions.find((i) => i.position === childPosition)) {
         positions.push({
           key: `${info.key}.${lastPart}`,
           value: undefined,
@@ -67,7 +67,7 @@ export default function getPositionsForAutoValue({ fieldName, isModifier, mongoO
     });
   } else if (parentPath.slice(-2) !== '.$') {
     // positions that will create parentPath
-    mongoObject.getPositionsThatCreateGenericKey(parentPath).forEach(info => {
+    mongoObject.getPositionsThatCreateGenericKey(parentPath).forEach((info) => {
       const { operator, position } = info;
       let wouldBePosition;
       if (operator) {
@@ -87,7 +87,7 @@ export default function getPositionsForAutoValue({ fieldName, isModifier, mongoO
         const lastPartWithBraces2 = lastPart2.replace(/\./g, '][');
         wouldBePosition = `${position.slice(0, position.lastIndexOf('['))}[${lastPartWithBraces2}]`;
       }
-      if (!positions.find(i => i.position === wouldBePosition)) {
+      if (!positions.find((i) => i.position === wouldBePosition)) {
         positions.push({
           key: MongoObject._positionToKey(wouldBePosition),
           value: undefined,

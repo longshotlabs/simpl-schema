@@ -1,9 +1,9 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
+import expect from 'expect';
 import { SimpleSchema, ValidationContext } from './SimpleSchema';
 import expectErrorLength from './testHelpers/expectErrorLength';
 import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength';
-import expect from 'expect';
 
 const schema = new SimpleSchema({
   password: {

@@ -1,10 +1,10 @@
-import { SimpleSchema } from '../SimpleSchema';
 import includes from 'lodash.includes';
+import { SimpleSchema } from '../SimpleSchema';
 
 export default function allowedValuesValidator() {
   if (!this.valueShouldBeChecked) return;
 
-  const allowedValues = this.definition.allowedValues;
+  const { allowedValues } = this.definition;
   if (!allowedValues) return;
 
   let isAllowed;

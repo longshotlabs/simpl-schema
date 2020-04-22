@@ -1,10 +1,11 @@
 import MongoObject from 'mongo-object';
-import extend from 'extend';
 
 class SimpleSchemaGroup {
   constructor(...definitions) {
-    this.definitions = definitions.map(definition => {
-      if (MongoObject.isBasicObject(definition)) return extend(true, {}, definition);
+    this.definitions = definitions.map((definition) => {
+      if (MongoObject.isBasicObject(definition)) {
+        return { ...definition };
+      }
 
       if (definition instanceof RegExp) {
         return {
@@ -13,9 +14,7 @@ class SimpleSchemaGroup {
         };
       }
 
-      return {
-        type: definition,
-      };
+      return { type: definition };
     });
   }
 
@@ -32,7 +31,7 @@ class SimpleSchemaGroup {
     this.definitions = this.definitions.map((def, index) => {
       const otherDef = otherGroup.definitions[index];
       if (!otherDef) return def;
-      return extend(true, {}, def, otherDef);
+      return { ...def, ...otherDef };
     });
   }
 }

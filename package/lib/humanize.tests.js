@@ -1,7 +1,7 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import humanize from './humanize';
 import expect from 'expect';
+import humanize from './humanize';
 
 describe('humanize', function () {
   it('works', function () {

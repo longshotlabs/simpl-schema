@@ -1,10 +1,14 @@
 import MongoObject from 'mongo-object';
 import omit from 'lodash.omit';
 import isObject from 'lodash.isobject';
-import union from 'lodash.union';
 import includes from 'lodash.includes';
 import { SimpleSchema } from './SimpleSchema';
-import { appendAffectedKey, getParentOfKey, looksLikeModifier, isObjectWeShouldTraverse } from './utility';
+import {
+  appendAffectedKey,
+  getParentOfKey,
+  looksLikeModifier,
+  isObjectWeShouldTraverse,
+} from './utility';
 import typeValidator from './validation/typeValidator';
 import requiredValidator from './validation/requiredValidator';
 import allowedValuesValidator from './validation/allowedValuesValidator';
@@ -81,7 +85,7 @@ function doValidation({
 
     const validatorContext = {
       addValidationErrors(errors) {
-        errors.forEach(error => fieldValidationErrors.push(error));
+        errors.forEach((error) => fieldValidationErrors.push(error));
       },
       field(fName) {
         return getFieldInfo(fName);
@@ -105,8 +109,8 @@ function doValidation({
       // Value checks are not necessary for null or undefined values,
       // except for null array items, or for $unset or $rename values
       valueShouldBeChecked: (
-        op !== '$unset' && op !== '$rename' &&
-        ((val !== undefined && val !== null) || (affectedKeyGeneric.slice(-2) === '.$' && val === null))
+        op !== '$unset' && op !== '$rename'
+        && ((val !== undefined && val !== null) || (affectedKeyGeneric.slice(-2) === '.$' && val === null))
       ),
       ...(extendedCustomContext || {}),
     };
@@ -122,7 +126,7 @@ function doValidation({
 
     // Loop through each of the definitions in the SimpleSchemaGroup.
     // If any return true, we're valid.
-    const fieldIsValid = def.type.some(typeDef => {
+    const fieldIsValid = def.type.some((typeDef) => {
       // If the type is SimpleSchema.Any, then it is valid:
       if (typeDef === SimpleSchema.Any) return true;
 
@@ -146,7 +150,7 @@ function doValidation({
 
       // We use _.every just so that we don't continue running more validator
       // functions after the first one returns false or an error string.
-      return fieldValidators.every(validator => {
+      return fieldValidators.every((validator) => {
         const result = validator.call(finalValidatorContext);
 
         // If the validator returns a string, assume it is the
@@ -204,11 +208,11 @@ function doValidation({
       // to get the schema for this key.
       affectedKeyGeneric = MongoObject.makeKeyGeneric(affectedKey);
 
-      const shouldValidateKey = !keysToValidate || keysToValidate.some(keyToValidate => (
-        keyToValidate === affectedKey ||
-        keyToValidate === affectedKeyGeneric ||
-        affectedKey.startsWith(`${keyToValidate}.`) ||
-        affectedKeyGeneric.startsWith(`${keyToValidate}.`)
+      const shouldValidateKey = !keysToValidate || keysToValidate.some((keyToValidate) => (
+        keyToValidate === affectedKey
+        || keyToValidate === affectedKeyGeneric
+        || affectedKey.startsWith(`${keyToValidate}.`)
+        || affectedKeyGeneric.startsWith(`${keyToValidate}.`)
       ));
 
       // Perform validation for this key
@@ -244,17 +248,22 @@ function doValidation({
       // Get list of present keys
       const presentKeys = Object.keys(val);
 
-      // Check all present keys plus all keys defined by the schema.
-      // This allows us to detect extra keys not allowed by the schema plus
-      // any missing required keys, and to run any custom functions for other keys.
-      const keysToCheck = union(presentKeys, childKeys);
-
       // If this object is within an array, make sure we check for
       // required as if it's not a modifier
       isInArrayItemObject = (affectedKeyGeneric && affectedKeyGeneric.slice(-2) === '.$');
 
-      // Check all keys in the merged list
-      keysToCheck.forEach(key => {
+      const checkedKeys = [];
+
+      // Check all present keys plus all keys defined by the schema.
+      // This allows us to detect extra keys not allowed by the schema plus
+      // any missing required keys, and to run any custom functions for other keys.
+      /* eslint-disable no-restricted-syntax */
+      for (const key of [...presentKeys, ...childKeys]) {
+        // `childKeys` and `presentKeys` may contain the same keys, so make
+        // sure we run only once per unique key
+        if (checkedKeys.indexOf(key) !== -1) continue;
+        checkedKeys.push(key);
+
         checkObj({
           val: val[key],
           affectedKey: appendAffectedKey(affectedKey, key),
@@ -262,7 +271,8 @@ function doValidation({
           isInArrayItemObject,
           isInSubObject: true,
         });
-      });
+      }
+      /* eslint-enable no-restricted-syntax */
     }
   }
 
@@ -279,7 +289,7 @@ function doValidation({
         // so we check them all with undefined value to force any 'required' checks to fail
         if (isUpsert && (op === '$set' || op === '$setOnInsert')) {
           const presentKeys = Object.keys(opObj);
-          schema.objectKeys().forEach(schemaKey => {
+          schema.objectKeys().forEach((schemaKey) => {
             if (!includes(presentKeys, schemaKey)) {
               checkObj({
                 val: undefined,
@@ -319,14 +329,14 @@ function doValidation({
 
   // Custom whole-doc validators
   const docValidators = schema._docValidators.concat(SimpleSchema._docValidators);
-  docValidators.forEach(func => {
+  docValidators.forEach((func) => {
     const errors = func(obj);
     if (!Array.isArray(errors)) throw new Error('Custom doc validator must return an array of error objects');
     if (errors.length) validationErrors = validationErrors.concat(errors);
   });
 
   const addedFieldNames = [];
-  validationErrors = validationErrors.filter(errObj => {
+  validationErrors = validationErrors.filter((errObj) => {
     // Remove error types the user doesn't care about
     if (includes(ignoreTypes, errObj.type)) return false;
     // Make sure there is only one error per fieldName
