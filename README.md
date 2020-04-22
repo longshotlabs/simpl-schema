@@ -753,15 +753,20 @@ The `autoValue` option allows you to specify a function that is called by `simpl
 
 An `autoValue` function `this` context provides a variety of properties and methods to help you determine what you should return:
 
-- `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
 - `this.closestSubschemaFieldName`: If your schema is used as a subschema in another schema, this will be set to the name of the key that references the schema. Otherwise it will be `null`.
+- `this.field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
+- `this.genericKey`: The generic schema key for which the autoValue is running (`$` in place of actual array index).
+- `this.isInArrayItemObject`: True if we're traversing an object that's in an array.
+- `this.isInSubObject`: True if we're traversing an object that's somewhere within another object.
+- `this.isModifier`: True if this is running on a MongoDB modifier object.
 - `this.isSet`: True if the field is already set in the document or modifier
+- `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
+- `this.obj`: The full object.
+- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
+- `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
+- `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
 - `this.unset()`: Call this method to prevent the original value from being used when you return undefined.
 - `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
-- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
-- `this.field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
-- `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
-- `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 
 If an `autoValue` function does not return anything (i.e., returns `undefined`), the field's value will be whatever the document or modifier says it should be. If that field is already in the document or modifier, it stays in the document or modifier with the same value. If it's not in the document or modifier, it's still not there. If you don't want it to be in the doc or modifier, you must call `this.unset()`.
 
@@ -776,7 +781,18 @@ Any other return value will be used as the field's value. You may also return sp
 
 You may have noticed that many of the rule properties can be set to functions that return the value. If you do this, the `this` context within those functions will have the following properties:
 
-- `this.key`: The schema key for which the function is running. This is usually known, but if your function is shared among various keys or is within an array, or if your schema is used as a subschema in another schema, this can be useful.
+- `this.field()`: Use this method to get information about other fields. Pass a field name (schema key) as the only argument. The return object will have `isSet`, `value`, and `operator` properties for that field.
+- `this.genericKey`: The generic schema key for which the autoValue is running (`$` in place of actual array index).
+- `this.isInArrayItemObject`: True if we're traversing an object that's in an array.
+- `this.isInSubObject`: True if we're traversing an object that's somewhere within another object.
+- `this.isModifier`: True if this is running on a MongoDB modifier object.
+- `this.isSet`: True if the field is already set in the document or modifier
+- `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
+- `this.obj`: The full object.
+- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
+- `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
+- `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+- `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
 
 ### Getting field properties
 
@@ -987,6 +1003,17 @@ schema.addDocValidator(obj => {
   ];
 });
 ```
+
+Whole-document validators have the following available on `this` context:
+
+- `this.ignoreTypes`: The value of the `ignore` option that was passed to `validate`.
+- `this.isModifier`: True if this is running on a MongoDB modifier object.
+- `this.isUpsert`: True if this is running on a MongoDB modifier object that is for an upsert.
+- `this.keysToValidate`: The value of the `keys` option that was passed to `validate`.
+- `this.mongoObject`: The `MongoObject` instance.
+- `this.obj`: The full object.
+- `this.schema`: The schema instance.
+- `this.validationContext`: The `ValidationContext` instance.
 
 ### Manually Adding a Validation Error
 

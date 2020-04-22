@@ -350,8 +350,19 @@ function doValidation({
 
   // Custom whole-doc validators
   const docValidators = schema._docValidators.concat(SimpleSchema._docValidators);
+  const docValidatorContext = {
+    ignoreTypes,
+    isModifier,
+    isUpsert,
+    keysToValidate,
+    mongoObject,
+    obj,
+    schema,
+    validationContext,
+    ...(extendedCustomContext || {}),
+  };
   docValidators.forEach((func) => {
-    const errors = func(obj);
+    const errors = func.call(docValidatorContext, obj);
     if (!Array.isArray(errors)) throw new Error('Custom doc validator must return an array of error objects');
     if (errors.length) validationErrors = validationErrors.concat(errors);
   });
