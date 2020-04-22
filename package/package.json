@@ -1,6 +1,6 @@
 {
   "name": "simpl-schema",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "A schema validation package that supports direct validation of MongoDB update modifier objects.",
   "author": "Eric Dobbertin <aldeed@gmail.com>",
   "license": "MIT",
@@ -20,7 +20,7 @@
   "main": "./dist/main.js",
   "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
   "scripts": {
-    "build": "rm -rf dist/** && babel lib --out-dir dist --ignore *.tests.js,testHelpers/*",
+    "build": "rm -rf dist/** && babel lib --out-dir dist --ignore 'lib/**/*.tests.js,lib/testHelpers/*'",
     "copyFiles": "cp ../README.md ./README.md && cp ../LICENSE ./LICENSE",
     "lint": "eslint .",
     "lintAndTest": "npm run lint && npm test",
