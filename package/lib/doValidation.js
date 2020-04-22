@@ -241,7 +241,7 @@ function doValidation({
           operator,
         });
       });
-    } else if (isObjectWeShouldTraverse(val) && (!def || schema._blackboxKeys.indexOf(affectedKey) === -1)) {
+    } else if (isObjectWeShouldTraverse(val) && (!def || !schema._blackboxKeys.has(affectedKey))) {
       // Loop through object keys
 
       // Get list of present keys

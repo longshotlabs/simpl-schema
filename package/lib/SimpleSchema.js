@@ -342,25 +342,25 @@ class SimpleSchema {
 
   // Returns an array of all the blackbox keys, including those in subschemas
   blackboxKeys() {
-    const blackboxKeys = this._blackboxKeys;
+    const blackboxKeys = new Set(this._blackboxKeys);
 
     this._schemaKeys.forEach((key) => {
       this._schema[key].type.definitions.forEach((typeDef) => {
         if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
-        typeDef.type._blackboxKeys.forEach((blackboxKey) => {
-          blackboxKeys.push(`${key}.${blackboxKey}`);
+        typeDef.type.blackboxKeys().forEach((blackboxKey) => {
+          blackboxKeys.add(`${key}.${blackboxKey}`);
         });
       });
     });
 
-    return [...(new Set(blackboxKeys))];
+    return Array.from(blackboxKeys);
   }
 
   // Check if the key is a nested dot-syntax key inside of a blackbox object
   keyIsInBlackBox(key) {
     let isInBlackBox = false;
     forEachKeyAncestor(MongoObject.makeKeyGeneric(key), (ancestor, remainder) => {
-      if (this._blackboxKeys.indexOf(ancestor) > -1) {
+      if (this._blackboxKeys.has(ancestor)) {
         isInBlackBox = true;
       } else {
         const testKeySchema = this.schema(ancestor);
@@ -393,7 +393,7 @@ class SimpleSchema {
       if (compare2 !== `${loopKey}.`) return false;
 
       // Black box handling
-      if (this._blackboxKeys.indexOf(loopKey) > -1) {
+      if (this._blackboxKeys.has(loopKey)) {
         // If the test key is the black box key + ".$", then the test
         // key is NOT allowed because black box keys are by definition
         // only for objects, and not for arrays.
@@ -499,7 +499,7 @@ class SimpleSchema {
     // Set/Reset all of these
     this._schemaKeys = Object.keys(this._schema);
     this._autoValues = [];
-    this._blackboxKeys = [];
+    this._blackboxKeys = new Set();
     this._firstLevelSchemaKeys = [];
     this._objectKeys = {};
 
@@ -522,7 +522,7 @@ class SimpleSchema {
       for (const oneOfDef of definition.type.definitions) {
         // XXX If the type is SS.Any, also consider it a blackbox
         if (oneOfDef.blackbox === true || oneOfDef.type === SimpleSchema.Any) {
-          this._blackboxKeys.push(fieldName);
+          this._blackboxKeys.add(fieldName);
           break;
         }
       }
