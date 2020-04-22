@@ -34,7 +34,6 @@
     "deep-extend": "^0.6.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isobject": "^3.0.2",
-    "lodash.omit": "^4.5.0",
     "lodash.pick": "^4.4.0",
     "message-box": "^0.2.3",
     "mongo-object": "^0.1.4"

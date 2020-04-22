@@ -4,7 +4,6 @@ import deepExtend from 'deep-extend';
 import isEmpty from 'lodash.isempty';
 import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
-import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import humanize from './humanize';
 import ValidationContext from './ValidationContext';
@@ -481,10 +480,14 @@ class SimpleSchema {
           // fieldName is actually a method from Object itself!
           throw new Error(`${fieldName} key is actually the name of a method on Object, please rename it`);
         }
+
+        const { type, ...definitionWithoutType } = definition;
+
         this._schema[fieldName] = {
           ...this._schema[fieldName],
-          ...(omit(definition, 'type')),
+          ...definitionWithoutType,
         };
+
         if (definition.type) this._schema[fieldName].type.extend(definition.type);
       } else {
         this._schema[fieldName] = definition;

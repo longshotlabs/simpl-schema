@@ -1,5 +1,4 @@
 import MongoObject from 'mongo-object';
-import omit from 'lodash.omit';
 import isObject from 'lodash.isobject';
 import { SimpleSchema } from './SimpleSchema';
 import {
@@ -129,13 +128,15 @@ function doValidation({
       // If the type is SimpleSchema.Any, then it is valid:
       if (typeDef === SimpleSchema.Any) return true;
 
+      const { type, ...definitionWithoutType } = def;
+
       const finalValidatorContext = {
         ...validatorContext,
 
         // Take outer definition props like "optional" and "label"
         // and add them to inner props like "type" and "min"
         definition: {
-          ...omit(def, 'type'),
+          ...definitionWithoutType,
           ...typeDef,
         },
       };
