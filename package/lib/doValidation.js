@@ -214,8 +214,30 @@ function doValidation({
         || affectedKeyGeneric.startsWith(`${keyToValidate}.`)
       ));
 
+      const functionsContext = {
+        field(fName) {
+          return getFieldInfo(fName);
+        },
+        genericKey: affectedKeyGeneric,
+        isInArrayItemObject,
+        isInSubObject,
+        isModifier,
+        isSet: (val !== undefined),
+        key: affectedKey,
+        obj,
+        operator,
+        parentField() {
+          return getFieldInfo(fieldParentName);
+        },
+        siblingField(fName) {
+          return getFieldInfo(fieldParentNameWithEndDot + fName);
+        },
+        value: val,
+        ...(extendedCustomContext || {}),
+      };
+
       // Perform validation for this key
-      def = schema.getDefinition(affectedKey);
+      def = schema.getDefinition(affectedKey, null, functionsContext);
       if (shouldValidateKey) {
         validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject);
       }
