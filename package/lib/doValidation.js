@@ -1,5 +1,4 @@
 import MongoObject from 'mongo-object';
-import isObject from 'lodash.isobject';
 import { SimpleSchema } from './SimpleSchema';
 import {
   appendAffectedKey,
@@ -28,7 +27,7 @@ function doValidation({
   validationContext,
 }) {
   // First do some basic checks of the object, and throw errors if necessary
-  if (!isObject(obj)) {
+  if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) {
     throw new Error('The first argument of validate() must be an object');
   }
 

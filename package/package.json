@@ -32,7 +32,6 @@
   "dependencies": {
     "clone": "^2.1.2",
     "deep-extend": "^0.6.0",
-    "lodash.isobject": "^3.0.2",
     "lodash.pick": "^4.4.0",
     "message-box": "^0.2.3",
     "mongo-object": "^0.1.4"
