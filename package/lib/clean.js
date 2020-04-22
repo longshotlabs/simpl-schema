@@ -1,7 +1,6 @@
 import clone from 'clone';
-import isEmpty from 'lodash.isempty';
 import MongoObject from 'mongo-object';
-import { looksLikeModifier } from './utility';
+import { isEmptyObject, looksLikeModifier } from './utility';
 import { SimpleSchema } from './SimpleSchema';
 import convertToProperType from './clean/convertToProperType';
 import setAutoValues from './clean/setAutoValues';
@@ -133,7 +132,7 @@ function clean(ss, doc, options = {}) {
       if (lastBrace !== -1) {
         const removedPositionParent = removedPosition.slice(0, lastBrace);
         const value = mongoObject.getValueForPosition(removedPositionParent);
-        if (isEmpty(value)) mongoObject.removeValueForPosition(removedPositionParent);
+        if (isEmptyObject(value)) mongoObject.removeValueForPosition(removedPositionParent);
       }
     });
 
@@ -147,7 +146,10 @@ function clean(ss, doc, options = {}) {
   // since MongoDB 2.6+ will throw errors.
   if (options.isModifier) {
     Object.keys(cleanDoc || {}).forEach((op) => {
-      if (isEmpty(cleanDoc[op])) delete cleanDoc[op];
+      const operatorValue = cleanDoc[op];
+      if (typeof operatorValue === 'object' && operatorValue !== null && isEmptyObject(operatorValue)) {
+        delete cleanDoc[op];
+      }
     });
   }
 

@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import clone from 'clone';
 import deepExtend from 'deep-extend';
-import isEmpty from 'lodash.isempty';
 import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
 import pick from 'lodash.pick';
@@ -11,7 +10,7 @@ import SimpleSchemaGroup from './SimpleSchemaGroup';
 import regExpObj from './regExp';
 import clean from './clean';
 import expandShorthand from './expandShorthand';
-import { forEachKeyAncestor } from './utility';
+import { forEachKeyAncestor, isEmptyObject } from './utility';
 import defaultMessages from './defaultMessages';
 
 // Exported for tests
@@ -574,7 +573,12 @@ class SimpleSchema {
       key = `${key}.$`;
     }
     const allowedValues = this.get(key, 'allowedValues');
-    return isEmpty(allowedValues) ? null : [...allowedValues];
+
+    if (Array.isArray(allowedValues) || allowedValues instanceof Set) {
+      return [...allowedValues]
+    }
+
+    return null;
   }
 
   newContext() {
@@ -924,7 +928,12 @@ function getDefaultAutoValueFunction(defaultValue) {
 
 // Mutates def into standardized object with SimpleSchemaGroup type
 function standardizeDefinition(def) {
-  const standardizedDef = omit(def, oneOfProps);
+  const standardizedDef = Object.keys(def).reduce((newDef, prop) => {
+    if (!oneOfProps.includes(prop)) {
+      newDef[prop] = def[prop];
+    }
+    return newDef;
+  }, {});
 
   // Internally, all definition types are stored as groups for simplicity of access.
   // If we are extending, there may not actually be def.type, but it's okay because
@@ -959,7 +968,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
       throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an array. Change it to Array.`);
     }
 
-    if (type.constructor === Object && isEmpty(type)) {
+    if (type.constructor === Object && isEmptyObject(type)) {
       throw new Error(`Invalid definition for ${fieldName} field: "type" may not be an object. Change it to Object`);
     }
 
