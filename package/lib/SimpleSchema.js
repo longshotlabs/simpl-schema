@@ -3,7 +3,6 @@ import clone from 'clone';
 import deepExtend from 'deep-extend';
 import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
-import pick from 'lodash.pick';
 import humanize from './humanize';
 import ValidationContext from './ValidationContext';
 import SimpleSchemaGroup from './SimpleSchemaGroup';
@@ -575,7 +574,7 @@ class SimpleSchema {
     const allowedValues = this.get(key, 'allowedValues');
 
     if (Array.isArray(allowedValues) || allowedValues instanceof Set) {
-      return [...allowedValues]
+      return [...allowedValues];
     }
 
     return null;
@@ -941,7 +940,12 @@ function standardizeDefinition(def) {
   if (def.type && def.type instanceof SimpleSchemaGroup) {
     standardizedDef.type = def.type.clone();
   } else {
-    const groupProps = pick(def, oneOfProps);
+    const groupProps = Object.keys(def).reduce((newDef, prop) => {
+      if (oneOfProps.includes(prop)) {
+        newDef[prop] = def[prop];
+      }
+      return newDef;
+    }, {});
     standardizedDef.type = new SimpleSchemaGroup(groupProps);
   }
 
