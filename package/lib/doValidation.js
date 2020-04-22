@@ -35,6 +35,18 @@ function doValidation({
     throw new Error('When the validation object contains mongo operators, you must set the modifier option to true');
   }
 
+  function getFieldInfo(key) {
+    // Create mongoObject if necessary, cache for speed
+    if (!mongoObject) mongoObject = new MongoObject(obj, schema.blackboxKeys());
+
+    const keyInfo = mongoObject.getInfoForKey(key) || {};
+    return {
+      isSet: (keyInfo.value !== undefined),
+      value: keyInfo.value,
+      operator: keyInfo.operator || null,
+    };
+  }
+
   let validationErrors = [];
 
   // Validation function called for each affected key
@@ -65,18 +77,6 @@ function doValidation({
     // Prepare the context object for the validator functions
     const fieldParentNameWithEndDot = getParentOfKey(affectedKey, true);
     const fieldParentName = fieldParentNameWithEndDot.slice(0, -1);
-
-    function getFieldInfo(key) {
-      // Create mongoObject if necessary, cache for speed
-      if (!mongoObject) mongoObject = new MongoObject(obj, schema.blackboxKeys());
-
-      const keyInfo = mongoObject.getInfoForKey(key) || {};
-      return {
-        isSet: (keyInfo.value !== undefined),
-        value: keyInfo.value,
-        operator: keyInfo.operator || null,
-      };
-    }
 
     const fieldValidationErrors = [];
 
@@ -213,6 +213,10 @@ function doValidation({
         || affectedKey.startsWith(`${keyToValidate}.`)
         || affectedKeyGeneric.startsWith(`${keyToValidate}.`)
       ));
+
+      // Prepare the context object for the rule functions
+      const fieldParentNameWithEndDot = getParentOfKey(affectedKey, true);
+      const fieldParentName = fieldParentNameWithEndDot.slice(0, -1);
 
       const functionsContext = {
         field(fName) {
