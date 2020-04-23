@@ -479,7 +479,7 @@ class SimpleSchema {
           throw new Error(`${fieldName} key is actually the name of a method on Object, please rename it`);
         }
 
-        const { type, ...definitionWithoutType } = definition;
+        const { type, ...definitionWithoutType } = definition; // eslint-disable-line no-unused-vars
 
         this._schema[fieldName] = {
           ...this._schema[fieldName],

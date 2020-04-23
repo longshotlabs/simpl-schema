@@ -1,3 +1,4 @@
+/* global Promise */
 /* eslint-disable func-names, prefer-arrow-callback, class-methods-use-this */
 
 import expect from 'expect';

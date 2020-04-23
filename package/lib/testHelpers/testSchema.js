@@ -1,3 +1,4 @@
+/* global Set */
 import { SimpleSchema } from '../SimpleSchema';
 import Address from './Address';
 import '@babel/polyfill';

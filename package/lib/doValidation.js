@@ -127,7 +127,7 @@ function doValidation({
       // If the type is SimpleSchema.Any, then it is valid:
       if (typeDef === SimpleSchema.Any) return true;
 
-      const { type, ...definitionWithoutType } = def;
+      const { type, ...definitionWithoutType } = def; // eslint-disable-line no-unused-vars
 
       const finalValidatorContext = {
         ...validatorContext,

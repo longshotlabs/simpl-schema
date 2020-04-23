@@ -79,8 +79,9 @@
     ],
     "parser": "babel-eslint",
     "env": {
-      "node": true,
-      "mocha": true
+      "es6": true,
+      "mocha": true,
+      "shared-node-browser": true
     },
     "rules": {
       "arrow-body-style": 0,
