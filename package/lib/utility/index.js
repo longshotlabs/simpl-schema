@@ -7,3 +7,4 @@ export { default as getParentOfKey } from './getParentOfKey';
 export { default as isEmptyObject } from './isEmptyObject';
 export { default as isObjectWeShouldTraverse } from './isObjectWeShouldTraverse';
 export { default as looksLikeModifier } from './looksLikeModifier';
+export { default as merge } from './merge';

@@ -1,4 +1,3 @@
-/* global Set */
 import { SimpleSchema } from '../SimpleSchema';
 
 export default function allowedValuesValidator() {

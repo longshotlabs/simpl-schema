@@ -1,4 +1,3 @@
-/* global Set */
 /* eslint-disable func-names, prefer-arrow-callback */
 
 import expect from 'expect';

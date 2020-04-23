@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import clone from 'clone';
-import deepExtend from 'deep-extend';
 import MessageBox from 'message-box';
 import MongoObject from 'mongo-object';
 import humanize from './humanize';
@@ -9,7 +8,7 @@ import SimpleSchemaGroup from './SimpleSchemaGroup';
 import regExpObj from './regExp';
 import clean from './clean';
 import expandShorthand from './expandShorthand';
-import { forEachKeyAncestor, isEmptyObject } from './utility';
+import { forEachKeyAncestor, isEmptyObject, merge } from './utility';
 import defaultMessages from './defaultMessages';
 
 // Exported for tests
@@ -863,7 +862,7 @@ class SimpleSchema {
   static ValidationContext = ValidationContext;
 
   static setDefaultMessages = (messages) => {
-    deepExtend(defaultMessages, messages);
+    merge(defaultMessages, messages);
   };
 }
 

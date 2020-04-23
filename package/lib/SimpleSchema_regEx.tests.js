@@ -348,7 +348,7 @@ describe('SimpleSchema', function () {
   });
 
   it('SimpleSchema.RegEx.idOfLength', function () {
-    const idOfLength = SimpleSchema.RegEx.idOfLength;
+    const { idOfLength } = SimpleSchema.RegEx;
     const expectThrows = (min, max) => expect(() => idOfLength(min, max)).toThrow(/Expected a non-negative safe integer/);
 
     // lets add some fuzzing to see if there are some unexpected edge cases

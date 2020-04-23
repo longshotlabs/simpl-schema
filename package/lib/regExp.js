@@ -22,7 +22,7 @@ const rxWeakDomain = `(?:${[rxNameDomain, rxIPv4, rxIPv6].join('|')})`;
 // set only min for fixed length
 // character list: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L88
 // string length: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L143
-const isValidBound = (value, lower) => !value || Number.isSafeInteger(value) && value > lower;
+const isValidBound = (value, lower) => !value || (Number.isSafeInteger(value) && value > lower);
 const idOfLength = (min, max) => {
   if (!isValidBound(min, 0)) throw new Error(`Expected a non-negative safe integer, got ${min}`);
   if (!isValidBound(max, min)) throw new Error(`Expected a non-negative safe integer greater than 1 and greater than min, got ${max}`);
