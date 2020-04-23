@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.6.2](#162)
 - [1.6.1](#161)
 - [1.6.0](#160)
 - [1.5.9](#159)
@@ -44,6 +45,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.6.2
+
+Remove `deep-extend` dependency to fix undefined `Buffer` errors
 
 ## 1.6.1
 
