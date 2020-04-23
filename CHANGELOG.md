@@ -48,7 +48,8 @@
 
 ## 1.6.2
 
-Remove `deep-extend` dependency to fix undefined `Buffer` errors
+- Adds `SimpleSchema.regEx.idOfLength` for variable length IDs
+- Removes `deep-extend` dependency to fix undefined `Buffer` errors
 
 ## 1.6.1
 
