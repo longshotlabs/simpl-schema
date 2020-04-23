@@ -14,6 +14,26 @@ const rxIPv6 = '(?:(?:[\\dA-Fa-f]{1,4}(?::|$)){8}' // full adress
   + '[\\dA-Fa-f]{0,4}(?:::?(?:[\\dA-Fa-f]{1,4}|$)){1,6})'; // and short adress
 // this allows domains (also localhost etc) and ip adresses
 const rxWeakDomain = `(?:${[rxNameDomain, rxIPv4, rxIPv6].join('|')})`;
+// unique id from the random package also used by minimongo
+// min and max are used to set length boundaries
+// set both for explicit lower and upper bounds
+// set min as integer and max to null for explicit lower bound and arbitrary upper bound
+// set none for arbitrary length
+// set only min for fixed length
+// character list: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L88
+// string length: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L143
+const isValidBound = (value, lower) => !value || Number.isSafeInteger(value) && value > lower;
+const idOfLength = (min, max) => {
+  if (!isValidBound(min, 0)) throw new Error(`Expected a non-negative safe integer, got ${min}`);
+  if (!isValidBound(max, min)) throw new Error(`Expected a non-negative safe integer greater than 1 and greater than min, got ${max}`);
+  let bounds;
+  if (min && max) bounds = `${min},${max}`;
+  else if (min && max === null) bounds = `${min},`;
+  else if (min && !max) bounds = `${min}`;
+  else if (!min && !max) bounds = '0,';
+  else throw new Error(`Unexpected state for min (${min}) and max (${max})`);
+  return new RegExp(`^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{${bounds}}$`);
+};
 
 const regEx = {
   // We use the RegExp suggested by W3C in http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
@@ -33,10 +53,9 @@ const regEx = {
   // URL RegEx from https://gist.github.com/dperini/729294
   // http://mathiasbynens.be/demo/url-regex
   Url: /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i,
-  // unique id from the random package also used by minimongo
-  // character list: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L88
-  // string length: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L143
-  Id: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/,
+  // default id is defined with exact 17 chars of length
+  Id: idOfLength(17),
+  idOfLength,
   // allows for a 5 digit zip code followed by a whitespace or dash and then 4 more digits
   // matches 11111 and 11111-1111 and 11111 1111
   ZipCode: /^\d{5}(?:[-\s]\d{4})?$/,

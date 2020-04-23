@@ -66,6 +66,11 @@ describe('SimpleSchema', function () {
         regEx: SimpleSchema.RegEx.Id,
         optional: true,
       },
+      longId: {
+        type: String,
+        regEx: SimpleSchema.RegEx.idOfLength(32),
+        optional: true,
+      },
     });
 
     const c1 = schema.newContext();
@@ -122,6 +127,12 @@ describe('SimpleSchema', function () {
     });
     expect(c1.validationErrors().length).toEqual(1);
     expect(c1.keyErrorMessage('id')).toEqual('ID must be a valid alphanumeric ID');
+
+    c1.validate({
+      longId: '%#$%',
+    });
+    expect(c1.validationErrors().length).toEqual(1);
+    expect(c1.keyErrorMessage('longId')).toEqual('Long ID failed regular expression validation');
   });
 
   it('Optional regEx in subobject', function () {
@@ -308,5 +319,89 @@ describe('SimpleSchema', function () {
     isTrue('BCDF:45AB:1245:75B9::0987:1234:1324');
     isFalse('BCDF:45AB:1245:75B9:0987:1234:1324');
     isTrue('::1');
+  });
+
+  // this is a simple fake-random id generator that generates the
+  // ids with numbers that are expected to be valid for the Id and IdOf regexp
+  const Random = {
+    UNMISTAKABLE_CHARS: '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz',
+    id (charsCount = 17) {
+      let id = '';
+      const len = Random.UNMISTAKABLE_CHARS.length;
+      for (let i = 0; i < charsCount; i++) {
+        const index = Math.floor(Math.random() * len);
+        id += Random.UNMISTAKABLE_CHARS[index];
+      }
+      return id;
+    },
+  };
+
+  it('SimpleSchema.RegEx.Id', function () {
+    const idExpr = SimpleSchema.RegEx.Id;
+    const isTrue = (s) => expect(idExpr.test(s)).toBe(true);
+    const isFalse = (s) => expect(idExpr.test(s)).toBe(false);
+
+    isTrue(Random.id());
+    isFalse(Random.id(16)); // less
+    isFalse(Random.id(18)); // greater
+    isFalse('01234567891011123'); // invalid chars
+  });
+
+  it('SimpleSchema.RegEx.idOfLength', function () {
+    const idOfLength = SimpleSchema.RegEx.idOfLength;
+    const expectThrows = (min, max) => expect(() => idOfLength(min, max)).toThrow(/Expected a non-negative safe integer/);
+
+    // lets add some fuzzing to see if there are some unexpected edge cases
+    // when generating the id RegExp pattern using SimpleSchema.RegEx.IdOf
+    const randomMinValues = (fn, times) => (new Array(times)).forEach(() => expectThrows(fn()));
+    const randomMaxValues = (min, fn, times) => (new Array(times)).forEach(() => expectThrows(min, fn()));
+
+    // unexpected min values
+
+    // no negatives
+    randomMinValues(() => -1 * Math.floor(Math.random() * 100), 100);
+    // no floating point numbers
+    randomMinValues(() => Math.random(), 100);
+    // only Number.MAX_SAFE_INTEGER
+    expectThrows(9007199254740992);
+
+    // unexpected max values
+
+    // not less than min
+    expectThrows(10, 9);
+    // no negatives
+    randomMaxValues(10, () => -1 * Math.floor(Math.random() * 100), 100);
+    // no negatives
+    randomMaxValues(10, () => -1 * Math.floor(Math.random() * 100), 100);
+    // no floating point numbers
+    randomMaxValues(10, () => Math.random(), 100);
+    // only Number.MAX_SAFE_INTEGER
+    expectThrows(10, 9007199254740992);
+
+
+    const isTrue = (expr, s) => expect(expr.test(s)).toBe(true);
+    const isFalse = (expr, s) => expect(expr.test(s)).toBe(false);
+
+    // arbitrary length ids
+    const anyLen = idOfLength(0, null);
+    for (let i = 1; i < 100; i++) {
+      isTrue(anyLen, Random.id(i));
+    }
+
+    // fixed length ids
+    isTrue(idOfLength(17), Random.id());
+    isTrue(idOfLength(32), Random.id(32));
+    isFalse(idOfLength(16), Random.id()); // greater
+    isFalse(idOfLength(32), Random.id()); // less
+
+    // range of length ids with fixed upper bound
+    isTrue(idOfLength(8, 128), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz');
+    isFalse(idOfLength(8, 128), '1234567890abcdefghijklmnopqrstuvwxyz'); // invalid chars
+    isFalse(idOfLength(8, 128), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz%$/(='); // invalid chars 2
+
+    // range of length ids with arbitrary upper bound
+    isTrue(idOfLength(8, null), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz');
+    isFalse(idOfLength(8, null), '1234567890abcdefghijklmnopqrstuvwxyz'); // invalid chars
+    isFalse(idOfLength(8, null), '23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz%$/(='); // invalid chars 2
   });
 });
