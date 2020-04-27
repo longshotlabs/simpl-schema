@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.7.0](#170)
 - [1.6.2](#162)
 - [1.6.1](#161)
 - [1.6.0](#160)
@@ -45,6 +46,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.7.0
+
+If an array item (field ending with `.$`) has `optional: true`, this now allows it to have `null` items without any validation error being thrown. Previously adding `optional: true` to an array item had no effect.
 
 ## 1.6.2
 
