@@ -103,11 +103,11 @@ function doValidation({
       },
       validationContext,
       value: val,
-      // Value checks are not necessary for null or undefined values,
-      // except for null array items, or for $unset or $rename values
+      // Value checks are not necessary for null or undefined values, except
+      // for non-optional null array items, or for $unset or $rename values
       valueShouldBeChecked: (
         op !== '$unset' && op !== '$rename'
-        && ((val !== undefined && val !== null) || (affectedKeyGeneric.slice(-2) === '.$' && val === null))
+        && ((val !== undefined && val !== null) || (affectedKeyGeneric.slice(-2) === '.$' && val === null && !def.optional))
       ),
       ...(extendedCustomContext || {}),
     };

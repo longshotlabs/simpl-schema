@@ -874,6 +874,20 @@ describe('SimpleSchema - type', function () {
       }, { modifier: true }).toEqual(1);
     });
 
+    it('sparse arrays', function () {
+      const schema = new SimpleSchema({
+        sparse: Array,
+        'sparse.$': {
+          type: String,
+          optional: true,
+        },
+      });
+
+      expectErrorLength(schema, {
+        sparse: ['1', null, '2', null],
+      }).toEqual(0);
+    });
+
     it('ignores slice', function () {
       expectErrorLength(testSchema, {
         $push: {
