@@ -91,6 +91,28 @@ describe('SimpleSchema', function () {
       }).toNotThrow();
     });
 
+    it('works when one is an array', function () {
+      const schema = new SimpleSchema({
+        foo: SimpleSchema.oneOf(String, Array),
+        'foo.$': {
+          type: String,
+          optional: true,
+        },
+      });
+
+      expect(function () {
+        schema.validate({
+          foo: 'bar',
+        });
+      }).toNotThrow();
+
+      expect(function () {
+        schema.validate({
+          foo: ['bar', 'bin'],
+        });
+      }).toNotThrow();
+    });
+
     it('is invalid if neither min value is met', function () {
       const schema = new SimpleSchema({
         foo: SimpleSchema.oneOf({
