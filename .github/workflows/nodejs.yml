@@ -21,5 +21,10 @@ jobs:
         uses: CanyLink/setup-meteor@v1
         with:
           meteor-release: ${{ matrix.meteor }}
+
+      - defaults:
+            run:
+              shell: bash
+              working-directory: package
       - run: meteor npm install
       - run: meteor npm test
