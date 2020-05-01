@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Setup meteor
-        uses: CanyLink/setup-meteor@v1.0.3
+        uses: CanyLink/setup-meteor@v1
         with:
           meteor-release: ${{ matrix.meteor }}
       - run: meteor npm install
