@@ -1,0 +1,25 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        meteor: [ '1.8.2', '1.9.3', '1.10.2' ]
+    name: Meteor ${{ matrix.meteor }} sample
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup meteor
+        uses: CanyLink/setup-meteor@v1
+        with:
+          meteor-release: ${{ matrix.meteor }}
+      - run: meteor npm install
+      - run: meteor npm test
