@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
-    "message-box": "^0.2.5",
+    "message-box": "^0.2.6",
     "mongo-object": "^0.1.4"
   },
   "devDependencies": {
