@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.7.1](#171)
 - [1.7.0](#170)
 - [1.6.2](#162)
 - [1.6.1](#161)
@@ -46,6 +47,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.7.1
+
+Update `message-box` dependency to fix IE11 support
 
 ## 1.7.0
 
