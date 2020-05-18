@@ -1,6 +1,6 @@
 {
   "name": "simpl-schema",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "A schema validation package that supports direct validation of MongoDB update modifier objects.",
   "author": "Eric Dobbertin <aldeed@gmail.com>",
   "license": "MIT",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
-    "message-box": "^0.2.6",
+    "message-box": "^0.2.7",
     "mongo-object": "^0.1.4"
   },
   "devDependencies": {
