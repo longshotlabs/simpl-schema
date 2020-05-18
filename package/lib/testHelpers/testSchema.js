@@ -2,6 +2,17 @@ import { SimpleSchema } from '../SimpleSchema';
 import Address from './Address';
 import '@babel/polyfill';
 
+const refSchema = new SimpleSchema({
+  string: {
+    type: String,
+    optional: true,
+  },
+  number: {
+    type: Number,
+    optional: true,
+  },
+});
+
 const testSchema = new SimpleSchema({
   string: {
     type: String,
@@ -182,6 +193,26 @@ const testSchema = new SimpleSchema({
     type: Object,
     optional: true,
     blackbox: true,
+  },
+  objectArray: {
+    type: Array,
+    optional: true,
+  },
+  'objectArray.$': {
+    type: Object,
+    optional: true,
+  },
+  refObject: {
+    type: refSchema,
+    optional: true,
+  },
+  refSchemaArray: {
+    type: Array,
+    optional: true,
+  },
+  'refSchemaArray.$': {
+    type: refSchema,
+    optional: true,
   },
 });
 
