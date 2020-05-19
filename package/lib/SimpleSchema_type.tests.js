@@ -952,4 +952,360 @@ describe('SimpleSchema - type', function () {
       }, { modifier: true }).toEqual(0);
     });
   });
+
+  describe('object', function () {
+    it('normal', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: {},
+      }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: { number: 1 },
+      }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: [],
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: new Set(),
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: new Map(),
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: new Date(),
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: NaN,
+      }).toEqual(1);
+    });
+
+    it('modifier with $setOnInsert', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: {} },
+      }, { modifier: true, upsert: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: { number: 1 } },
+      }, { modifier: true, upsert: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: [] },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: new Set() },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: new Map() },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: new Date() },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { sub: NaN },
+      }, { modifier: true, upsert: true }).toEqual(1);
+    });
+
+    it('modifier with $set', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: {} },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: { number: 1 } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: [] },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: new Set() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: new Map() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: new Date() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { sub: NaN },
+      }, { modifier: true }).toEqual(1);
+    });
+
+    it('modifier with $push', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: {} },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { number: 1 } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: [] },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: new Set() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: new Map() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: new Date() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: NaN },
+      }, { modifier: true }).toEqual(1);
+    });
+
+    it('modifier with $addToSet', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: {} },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: { number: 1 } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: [] },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: new Set() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: new Map() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: new Date() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { objectArray: NaN },
+      }, { modifier: true }).toEqual(1);
+    });
+
+    it('modifier with $push + $each', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { $each: [{}, { number: 1 }] } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { $each: [{}, []] } },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { $each: [new Set(), new Set()] } },
+      }, { modifier: true }).toEqual(2);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { $each: [new Map(), new Map()] } },
+      }, { modifier: true }).toEqual(2);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { $each: [new Date(), {}] } },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { objectArray: { $each: [NaN, NaN] } },
+      }, { modifier: true }).toEqual(2);
+    });
+  });
+
+  describe('simple schema instance', function () {
+    it('normal', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: {},
+      }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: { string: 'test', number: 1 },
+      }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: [],
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: new Set(),
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: new Map(),
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: new Date(),
+      }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: NaN,
+      }).toEqual(1);
+    });
+
+    it('modifier with $setOnInsert', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: {} },
+      }, { modifier: true, upsert: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: { string: 'test', number: 1 } },
+      }, { modifier: true, upsert: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: [] },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: new Set() },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: new Map() },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: new Date() },
+      }, { modifier: true, upsert: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $setOnInsert: { refObject: NaN },
+      }, { modifier: true, upsert: true }).toEqual(1);
+    });
+
+    it('modifier with $set', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: {} },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: { string: 'test', number: 1 } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: [] },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: new Set() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: new Map() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: new Date() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $set: { refObject: NaN },
+      }, { modifier: true }).toEqual(1);
+    });
+
+    it('modifier with $push', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: {} },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { string: 'test', number: 1 } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: [] },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: new Set() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: new Map() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: new Date() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: NaN },
+      }, { modifier: true }).toEqual(1);
+    });
+
+    it('modifier with $addToSet', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: {} },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: { string: 'test', number: 1 } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: [] },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: new Set() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: new Map() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: new Date() },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $addToSet: { refSchemaArray: NaN },
+      }, { modifier: true }).toEqual(1);
+    });
+
+    it('modifier with $push + $each', function () {
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { $each: [{}, { number: 1 }, { string: 'test', number: 1 }] } },
+      }, { modifier: true }).toEqual(0);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { $each: [{}, []] } },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { $each: [new Set(), new Set()] } },
+      }, { modifier: true }).toEqual(2);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { $each: [new Map(), new Map()] } },
+      }, { modifier: true }).toEqual(2);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { $each: [new Date(), {}] } },
+      }, { modifier: true }).toEqual(1);
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        $push: { refSchemaArray: { $each: [NaN, NaN] } },
+      }, { modifier: true }).toEqual(2);
+    });
+  });
 });
