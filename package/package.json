@@ -6,12 +6,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aldeed/node-simple-schema.git"
+    "url": "https://github.com/aldeed/simpl-schema.git",
+    "directory": "package"
   },
   "bugs": {
-    "url": "https://github.com/aldeed/node-simple-schema/issues"
+    "url": "https://github.com/aldeed/simpl-schema/issues"
   },
-  "homepage": "https://github.com/aldeed/node-simple-schema",
+  "homepage": "https://github.com/aldeed/simpl-schema",
   "files": [
     "dist",
     "LICENSE",
