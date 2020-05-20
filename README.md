@@ -1,6 +1,6 @@
 # SimpleSchema (simpl-schema NPM package)
 
-[![Backers on Open Collective](https://opencollective.com/simple-schema-js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/simple-schema-js/sponsors/badge.svg)](#sponsors) [![CircleCI](https://circleci.com/gh/aldeed/simple-schema-js/tree/master.svg?style=svg)](https://circleci.com/gh/aldeed/simple-schema-js/tree/master)
+[![Backers on Open Collective](https://opencollective.com/simple-schema-js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/simple-schema-js/sponsors/badge.svg)](#sponsors) [![Lint, Test, and (Maybe) Publish](https://github.com/aldeed/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push)](https://github.com/aldeed/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
 
 SimpleSchema validates JavaScript objects to ensure they match a schema. It can also clean the objects to automatically convert types, remove unsupported properties, and add automatic values such that the object is then more likely to pass validation.
 
