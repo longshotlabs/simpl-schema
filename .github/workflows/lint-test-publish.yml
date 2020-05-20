@@ -1,0 +1,63 @@
+name: Lint, Test, and (Maybe) Publish
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: package
+    steps:
+    - name: Check out files
+      uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install package dependencies
+      run: npm ci
+    - name: Lint code
+      run: npm run lint --if-present
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: package
+    steps:
+    - name: Check out files
+      uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install package dependencies
+      run: npm ci
+    - name: Test code
+      run: npm run test --if-present
+
+  publish:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'aldeed' && github.ref == 'master' }}
+    needs: [lint, test]
+    steps:
+      - name: Check out files
+        uses: actions/checkout@v2
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install package dependencies
+        run: npm ci
+      - name: Semantic Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
