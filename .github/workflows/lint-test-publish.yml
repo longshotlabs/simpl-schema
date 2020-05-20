@@ -47,6 +47,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.repository_owner == 'aldeed' && github.ref == 'refs/heads/master' }}
     needs: [lint, test]
+    defaults:
+      run:
+        shell: bash
+        working-directory: package
     steps:
       - name: Check out files
         uses: actions/checkout@v2
