@@ -1,6 +1,6 @@
 {
   "name": "simpl-schema",
-  "version": "1.7.2",
+  "version": "0.0.0-development",
   "description": "A schema validation package that supports direct validation of MongoDB update modifier objects.",
   "author": "Eric Dobbertin <aldeed@gmail.com>",
   "license": "MIT",
@@ -50,7 +50,8 @@
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.10.0",
     "expect": "^1.20.1",
-    "mocha": "^7.1.1"
+    "mocha": "^7.1.1",
+    "semantic-release": "^17.0.7"
   },
   "babel": {
     "presets": [
@@ -102,5 +103,13 @@
       "no-console": 0,
       "space-before-function-paren": 0
     }
+  },
+  "release": {
+    "branches": [
+      "master"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
