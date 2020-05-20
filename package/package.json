@@ -24,7 +24,7 @@
     "copyFiles": "cp ../README.md ./README.md && cp ../LICENSE ./LICENSE",
     "lint": "eslint .",
     "lintAndTest": "npm run lint && npm test",
-    "prepublishOnly": "npm run lintAndTest && npm run copyFiles && npm run build",
+    "prepublishOnly": "npm run copyFiles && npm run build",
     "test": "mocha --require @babel/register --recursive \"lib/**/*.tests.js\"",
     "test:file": "mocha --require @babel/register --watch",
     "test:watch": "npm test -- --watch"
