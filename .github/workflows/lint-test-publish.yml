@@ -45,7 +45,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'aldeed' && github.ref == 'master' }}
+    if: ${{ github.event_name == 'push' && github.repository_owner == 'aldeed' && github.ref == 'refs/heads/master' }}
     needs: [lint, test]
     steps:
       - name: Check out files
