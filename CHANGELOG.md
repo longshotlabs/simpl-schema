@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.7.3 and higher](#173-and-higher)
 - [1.7.2](#172)
 - [1.7.1](#171)
 - [1.7.0](#170)
@@ -48,6 +49,10 @@
 - [0.0.4](#004)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.7.3 and higher
+
+Release notes for versions 1.7.3 and higher can be found at https://github.com/aldeed/simpl-schema/releases
 
 ## 1.7.2
 
