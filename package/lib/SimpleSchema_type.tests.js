@@ -969,11 +969,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         sub: new Set(),
-      }).toEqual(1);
+      }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         sub: new Map(),
-      }).toEqual(1);
+      }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         sub: new Date(),
@@ -999,11 +999,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $setOnInsert: { sub: new Set() },
-      }, { modifier: true, upsert: true }).toEqual(1);
+      }, { modifier: true, upsert: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $setOnInsert: { sub: new Map() },
-      }, { modifier: true, upsert: true }).toEqual(1);
+      }, { modifier: true, upsert: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $setOnInsert: { sub: new Date() },
@@ -1029,11 +1029,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $set: { sub: new Set() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $set: { sub: new Map() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $set: { sub: new Date() },
@@ -1059,11 +1059,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { objectArray: new Set() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { objectArray: new Map() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { objectArray: new Date() },
@@ -1089,11 +1089,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $addToSet: { objectArray: new Set() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $addToSet: { objectArray: new Map() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $addToSet: { objectArray: new Date() },
@@ -1115,11 +1115,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { objectArray: { $each: [new Set(), new Set()] } },
-      }, { modifier: true }).toEqual(2);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { objectArray: { $each: [new Map(), new Map()] } },
-      }, { modifier: true }).toEqual(2);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { objectArray: { $each: [new Date(), {}] } },
@@ -1147,11 +1147,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         refObject: new Set(),
-      }).toEqual(1);
+      }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         refObject: new Map(),
-      }).toEqual(1);
+      }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         refObject: new Date(),
@@ -1177,11 +1177,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $setOnInsert: { refObject: new Set() },
-      }, { modifier: true, upsert: true }).toEqual(1);
+      }, { modifier: true, upsert: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $setOnInsert: { refObject: new Map() },
-      }, { modifier: true, upsert: true }).toEqual(1);
+      }, { modifier: true, upsert: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $setOnInsert: { refObject: new Date() },
@@ -1207,11 +1207,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $set: { refObject: new Set() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $set: { refObject: new Map() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $set: { refObject: new Date() },
@@ -1237,11 +1237,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { refSchemaArray: new Set() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { refSchemaArray: new Map() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { refSchemaArray: new Date() },
@@ -1267,11 +1267,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $addToSet: { refSchemaArray: new Set() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $addToSet: { refSchemaArray: new Map() },
-      }, { modifier: true }).toEqual(1);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $addToSet: { refSchemaArray: new Date() },
@@ -1293,11 +1293,11 @@ describe('SimpleSchema - type', function () {
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { refSchemaArray: { $each: [new Set(), new Set()] } },
-      }, { modifier: true }).toEqual(2);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { refSchemaArray: { $each: [new Map(), new Map()] } },
-      }, { modifier: true }).toEqual(2);
+      }, { modifier: true }).toEqual(0);
 
       expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
         $push: { refSchemaArray: { $each: [new Date(), {}] } },
