@@ -53,7 +53,6 @@ describe('SimpleSchema', function () {
       let isValid = combinedSchema.namedContext().validate({
         item: 'foo',
       });
-      console.log(combinedSchema.namedContext().validationErrors());
       expect(isValid).toBe(true);
 
       isValid = combinedSchema.namedContext().validate({
@@ -62,7 +61,6 @@ describe('SimpleSchema', function () {
           partNo: 'ttt',
         },
       });
-      console.log(combinedSchema.namedContext().validationErrors());
       expect(isValid).toBe(true);
 
       isValid = combinedSchema.namedContext().validate({
@@ -71,7 +69,6 @@ describe('SimpleSchema', function () {
           partNo: 'ttt',
         },
       });
-      console.log(combinedSchema.namedContext().validationErrors());
       expect(isValid).toBe(true);
     });
 
@@ -126,6 +123,48 @@ describe('SimpleSchema', function () {
           foo: ['bar', 1],
         });
       }).toThrow();
+    });
+
+    it('works when one is a schema', function () {
+      const objSchema = new SimpleSchema({
+        _id: String
+      });
+
+      const schema = new SimpleSchema({
+        foo: SimpleSchema.oneOf(String, objSchema)
+      });
+
+      expect(function () {
+        schema.validate({
+          foo: 'bar',
+        });
+      }).toNotThrow();
+
+      expect(function () {
+        schema.validate({
+          foo: 1,
+        });
+      }).toThrow();
+
+      expect(function () {
+        schema.validate({
+          foo: [],
+        });
+      }).toThrow();
+
+      expect(function () {
+        schema.validate({
+          foo: {},
+        });
+      }).toThrow();
+
+      expect(function () {
+        schema.validate({
+          foo: {
+            _id: "ID"
+          },
+        });
+      }).toNotThrow();
     });
 
     it('is invalid if neither min value is met', function () {
