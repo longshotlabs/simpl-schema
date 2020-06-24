@@ -127,11 +127,11 @@ describe('SimpleSchema', function () {
 
     it('works when one is a schema', function () {
       const objSchema = new SimpleSchema({
-        _id: String
+        _id: String,
       });
 
       const schema = new SimpleSchema({
-        foo: SimpleSchema.oneOf(String, objSchema)
+        foo: SimpleSchema.oneOf(String, objSchema),
       });
 
       expect(function () {
@@ -161,7 +161,7 @@ describe('SimpleSchema', function () {
       expect(function () {
         schema.validate({
           foo: {
-            _id: "ID"
+            _id: 'ID',
           },
         });
       }).toNotThrow();

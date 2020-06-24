@@ -204,8 +204,8 @@ describe('defaultValue', function () {
       const schema = new SimpleSchema({
         bool: {
           type: Boolean,
-          defaultValue: true
-        }
+          defaultValue: true,
+        },
       });
 
       const result = schema.clean({});
@@ -216,8 +216,8 @@ describe('defaultValue', function () {
       const schema = new SimpleSchema({
         bool: {
           type: Boolean,
-          defaultValue: false
-        }
+          defaultValue: false,
+        },
       });
 
       const result = schema.clean({});
