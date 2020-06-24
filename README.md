@@ -420,6 +420,36 @@ const schema = new SimpleSchema({
 });
 ```
 
+When one of the allowed types is an object, use a subschema. Don't mix the object property definitions in with the main schema.
+
+Correct:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+const objSchema = new SimpleSchema({
+  _id: String
+});
+
+const schema = new SimpleSchema({
+  foo: SimpleSchema.oneOf(String, objSchema)
+});
+```
+
+Incorrect:
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+const schema = new SimpleSchema({
+  foo: SimpleSchema.oneOf(String, Object),
+  'foo._id': {
+    type: String,
+    optional: true
+  }
+});
+```
+
 NOTE: Multiple definitions is still an experimental feature and may not work as you expect in complex situations, such as where one of the valid definitions is an object or array. By reporting any weirdness you experience, you can help make it more robust.
 
 ### Extending Schemas
