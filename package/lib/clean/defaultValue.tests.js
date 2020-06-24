@@ -199,6 +199,30 @@ describe('defaultValue', function () {
 
       expect(result).toEqual({ a: { b: 'Other' } });
     });
+
+    it('adds boolean true default value', function () {
+      const schema = new SimpleSchema({
+        bool: {
+          type: Boolean,
+          defaultValue: true
+        }
+      });
+
+      const result = schema.clean({});
+      expect(result).toEqual({ bool: true });
+    });
+
+    it('adds boolean false default value', function () {
+      const schema = new SimpleSchema({
+        bool: {
+          type: Boolean,
+          defaultValue: false
+        }
+      });
+
+      const result = schema.clean({});
+      expect(result).toEqual({ bool: false });
+    });
   });
 
   describe('modifier object', function () {
