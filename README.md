@@ -825,6 +825,7 @@ You may have noticed that many of the rule properties can be set to functions th
 - `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
 - `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 - `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
+- `this.validationContext`: The current validation context
 - `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
 
 ### Getting field properties
