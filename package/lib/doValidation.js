@@ -236,6 +236,7 @@ function doValidation({
         siblingField(fName) {
           return getFieldInfo(fieldParentNameWithEndDot + fName);
         },
+        validationContext,
         value: val,
         ...(extendedCustomContext || {}),
       };
