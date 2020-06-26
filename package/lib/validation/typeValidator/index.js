@@ -24,7 +24,7 @@ export default function typeValidator() {
 
   if (expectedType === Object || SimpleSchema.isSimpleSchema(expectedType)) {
     // Is it an object?
-    if (keyValue === Object(keyValue) && !Array.isArray(keyValue) && !(keyValue instanceof Date)) return;
+    if (keyValue === Object(keyValue) && typeof keyValue[Symbol.iterator] !== 'function' && !(keyValue instanceof Date)) return;
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Object' };
   }
 
