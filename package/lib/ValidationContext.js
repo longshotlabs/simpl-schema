@@ -2,7 +2,12 @@ import MongoObject from 'mongo-object';
 import doValidation from './doValidation';
 
 export default class ValidationContext {
-  constructor(ss) {
+  /**
+   * @param {SimpleSchema} ss SimpleSchema instance to use for validation
+   * @param {String} [name] Optional context name, accessible on context.name.
+   */
+  constructor(ss, name) {
+    this.name = name;
     this._simpleSchema = ss;
     this._schema = ss.schema();
     this._schemaKeys = Object.keys(this._schema);

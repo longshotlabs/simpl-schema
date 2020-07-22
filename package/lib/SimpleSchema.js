@@ -586,7 +586,7 @@ class SimpleSchema {
   namedContext(name) {
     if (typeof name !== 'string') name = 'default';
     if (!this._validationContexts[name]) {
-      this._validationContexts[name] = new ValidationContext(this);
+      this._validationContexts[name] = new ValidationContext(this, name);
     }
     return this._validationContexts[name];
   }
