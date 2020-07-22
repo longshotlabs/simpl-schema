@@ -1161,6 +1161,8 @@ is a reactive method.
 
 Call `myContext.reset()` if you need to reset the validation context, clearing out any invalid field messages and making it valid.
 
+`myContext.name` is set to the context name, if it is a named context. Create named contexts by calling `schema.namedContext(name)` or `new ValidationContext(schema, name)`.
+
 ## Other SimpleSchema Methods
 
 Call `MySchema.schema([key])` to get the schema definition object. If you specify a key, then only the schema definition for that key is returned.
