@@ -93,7 +93,7 @@ class SimpleSchema {
     this.extend(schema);
 
     // Clone raw definition and save if keepRawDefinition is active
-    this._rawDefinition = keepRawDefinition && schema;
+    this._rawDefinition = keepRawDefinition ? schema : null;
 
     // Define default validation error messages
     this.messageBox = new MessageBox(clone(defaultMessages));
