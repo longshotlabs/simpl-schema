@@ -1060,7 +1060,7 @@ describe('SimpleSchema', function () {
 
   it('issue #390 - Should get null rawDefinition if keepRawDefiniton is false', function () {
     const foo = new SimpleSchema({
-      foo: String
+      foo: String,
     });
     expect(foo instanceof SimpleSchema).toBe(true);
     expect(foo.rawDefinition).toEqual(null);
@@ -1068,7 +1068,7 @@ describe('SimpleSchema', function () {
 
   it('issue #390 - Should get rawDefinition if keepRawDefiniton is true', function () {
     const foo = new SimpleSchema({
-      foo: String
+      foo: String,
     }, { keepRawDefinition: true });
     expect(foo instanceof SimpleSchema).toBe(true);
     expect(foo.rawDefinition).toEqual({ foo: String });
