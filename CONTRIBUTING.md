@@ -19,7 +19,7 @@
 
 ## Introduction
 
-First, thank you for considering contributing to simple-schema-js! It's people like you that make the open source community such a great community! 😊
+First, thank you for considering contributing to simpl-schema! It's people like you that make the open source community such a great community! 😊
 
 We welcome any type of contribution, not only code. You can help with
 
@@ -56,7 +56,7 @@ You can also reach us at hello@simple-schema-js.opencollective.com.
 
 ### Contributors
 
-Thank you to all the people who have already contributed to simple-schema-js!
+Thank you to all the people who have already contributed to simpl-schema!
 <a href="graphs/contributors"><img src="https://opencollective.com/simple-schema-js/contributors.svg?width=890" /></a>
 
 ### Backers

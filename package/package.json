@@ -107,7 +107,7 @@
   },
   "release": {
     "branches": [
-      "master"
+      "main"
     ],
     "tagFormat": "${version}"
   },
