@@ -116,7 +116,7 @@
       [
         "@semantic-release/github",
         {
-          "successComment": ":tada: This ${issue.pull_request ? 'PR' : 'issue'} is included in version ${nextRelease.version} :tada:\n\nThe release is available on:\n- [npm package (@latest dist-tag)](https://www.npmjs.com/package/simpl-schema/v/${nextRelease.version})\n- [GitHub release](https://github.com/aldeed/simpl-schema/releases/tag/${nextRelease.version})\n\nIf this makes you happy, please consider [becoming a sponsor](https://github.com/sponsors/aldeed).\n\nYour **[semantic-release](https://github.com/semantic-release/semantic-release)** bot :package::rocket:"
+          "successComment": ":tada: This ${issue.pull_request ? 'PR is included' : 'issue has been resolved'} in version ${nextRelease.version} :tada:\n\nThe release is available on:\n- [npm package (@latest dist-tag)](https://www.npmjs.com/package/simpl-schema/v/${nextRelease.version})\n- [GitHub release](https://github.com/aldeed/simpl-schema/releases/tag/${nextRelease.version})\n\nIf this makes you happy, please consider [becoming a sponsor](https://github.com/sponsors/aldeed).\n\nYour **[semantic-release](https://github.com/semantic-release/semantic-release)** bot :package::rocket:"
         }
       ]
     ],
