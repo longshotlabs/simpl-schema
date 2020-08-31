@@ -147,6 +147,42 @@ class SimpleSchema {
   }
 
   /**
+   * @param {String} key One specific or generic key for which to get the schema.
+   * @returns {[SimpleSchema, String]} Returns a 2-tuple.
+   *
+   *   First item: The SimpleSchema instance that actually defines the given key.
+   *
+   *   For example, if you have several nested objects, each their own SimpleSchema
+   *   instance, and you pass in 'outerObj.innerObj.innerestObj.name' as the key, you'll
+   *   get back the SimpleSchema instance for `outerObj.innerObj.innerestObj` key.
+   *
+   *   But if you pass in 'outerObj.innerObj.innerestObj.name' as the key and that key is
+   *   defined in the main schema without use of subschemas, then you'll get back the main schema.
+   *
+   *   Second item: The part of the key that is in the found schema.
+   *
+   *   Always returns a tuple (array) but the values may be `null`.
+   */
+  nearestSimpleSchemaInstance(key) {
+    if (!key) return [null, null];
+
+    const genericKey = MongoObject.makeKeyGeneric(key);
+    if (this._schema[genericKey]) return [this, genericKey];
+
+    // If not defined in this schema, see if it's defined in a subschema
+    let innerKey;
+    let nearestSimpleSchemaInstance;
+    this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+      if (!nearestSimpleSchemaInstance && simpleSchema._schema[subSchemaKey]) {
+        nearestSimpleSchemaInstance = simpleSchema;
+        innerKey = subSchemaKey;
+      }
+    });
+
+    return innerKey ? [nearestSimpleSchemaInstance, innerKey] : [null, null];
+  }
+
+  /**
    * @param {String} [key] One specific or generic key for which to get the schema.
    * @returns {Object} The entire schema object or just the definition for one key.
    *
@@ -702,10 +738,12 @@ class SimpleSchema {
     Object.keys(labels).forEach((key) => {
       const label = labels[key];
       if (typeof label !== 'string' && typeof label !== 'function') return;
-      if (!Object.prototype.hasOwnProperty.call(this._schema, key)) return;
 
-      this._schema[key].label = label;
-      this._depsLabels[key] && this._depsLabels[key].changed();
+      const [schemaInstance, innerKey] = this.nearestSimpleSchemaInstance(key);
+      if (!schemaInstance) return;
+
+      schemaInstance._schema[innerKey].label = label;
+      schemaInstance._depsLabels[innerKey] && schemaInstance._depsLabels[innerKey].changed();
     });
   }
 
