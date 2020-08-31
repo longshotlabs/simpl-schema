@@ -8,11 +8,9 @@
 - [Your First Contribution](#your-first-contribution)
 - [Submitting code](#submitting-code)
 - [Code review process](#code-review-process)
-- [Financial contributions](#financial-contributions)
 - [Questions](#questions)
 - [Credits](#credits)
   - [Contributors](#contributors)
-  - [Backers](#backers)
   - [Sponsors](#sponsors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->

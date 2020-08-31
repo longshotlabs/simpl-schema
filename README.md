@@ -31,7 +31,8 @@ There are also reasons not to choose this package. Because of all it does, this 
   - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
   - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
   - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
-  - [Set Default Cleaning Options](#set-default-cleaning-options)
+  - [Set Default Options for One Schema](#set-default-options-for-one-schema)
+  - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
   - [Explicitly Clean an Object](#explicitly-clean-an-object)
 - [Defining a Schema](#defining-a-schema)
   - [Shorthand Definitions](#shorthand-definitions)
@@ -90,7 +91,6 @@ There are also reasons not to choose this package. Because of all it does, this 
 - [Extending the Schema Options](#extending-the-schema-options)
 - [Add On Packages](#add-on-packages)
 - [Contributors](#contributors)
-- [Backers](#backers)
 - [Sponsors](#sponsors)
 - [License](#license)
 - [Contributing](#contributing)
@@ -249,7 +249,7 @@ Passing in `Tracker` causes the following functions to become reactive:
 
 TO DO
 
-### Set Default Cleaning Options
+### Set Default Options for One Schema
 
 ```js
 import SimpleSchema from 'simpl-schema';
@@ -258,15 +258,43 @@ const mySchema = new SimpleSchema({
   name: String,
 }, {
   clean: {
-    filter: true,
     autoConvert: true,
-    removeEmptyStrings: true,
-    trimStrings: true,
+    extendAutoValueContext: {},
+    filter: false,
     getAutoValues: true,
-    removeNullsFromArrays: true,
+    removeEmptyStrings: true,
+    removeNullsFromArrays: false,
+    trimStrings: true,
   },
+  humanizeAutoLabels: false,
+  requiredByDefault: true,
 });
 ```
+
+These options will be used every time you clean or validate with this particular SimpleSchema instance.
+
+### Set Default Options for All Schemas
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+SimpleSchema.constructorOptionDefaults({
+  clean: {
+    filter: false,
+  },
+  humanizeAutoLabels: false,
+});
+
+// If you don't pass in any options, it will return the current defaults.
+console.log(SimpleSchema.constructorOptionDefaults());
+```
+
+These options will be used every time you clean or validate with any SimpleSchema instance, but can be overridden by options passed in to the constructor for a single instance.
+
+Important notes:
+
+- You must call `SimpleSchema.constructorOptionDefaults` before any of your schemas are created, so put it in an entry-point file and/or at the top of your code file.
+- In a large, complex project where SimpleSchema instances might be created by various JavaScript packages, there may be multiple `SimpleSchema` objects. In other words, the `import SimpleSchema` line in one package might be pulling in the `SimpleSchema` object from one package while that line in another package pulls in a completely different `SimpleSchema` object. It will be difficult to know that this is happening unless you notice that your defaults are not being used by some of your schemas. To solve this, you can call `SimpleSchema.constructorOptionDefaults` multiple times or adjust your package dependencies to ensure that only one version of `simpl-schema` is pulled into your project.
 
 ### Explicitly Clean an Object
 
