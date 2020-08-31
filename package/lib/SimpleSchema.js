@@ -50,21 +50,18 @@ const propsThatCanBeFunction = [
 ];
 
 class SimpleSchema {
-  constructor(schema = {}, {
-    check,
-    clean: cleanOptions,
-    defaultLabel,
-    humanizeAutoLabels = true,
-    requiredByDefault = true,
-    tracker,
-  } = {}) {
+  constructor(schema = {}, options = {}) {
     // Stash the options object
     this._constructorOptions = {
-      check,
-      defaultLabel,
-      humanizeAutoLabels,
-      requiredByDefault,
-      tracker,
+      ...SimpleSchema._constructorOptionDefaults,
+      ...options,
+    };
+    delete this._constructorOptions.clean; // stored separately below
+
+    // Schema-level defaults for cleaning
+    this._cleanOptions = {
+      ...SimpleSchema._constructorOptionDefaults.clean,
+      ...(options.clean || {}),
     };
 
     // Custom validators for this instance
@@ -73,18 +70,6 @@ class SimpleSchema {
 
     // Named validation contexts
     this._validationContexts = {};
-
-    // Schema-level defaults for cleaning
-    this._cleanOptions = {
-      filter: true,
-      autoConvert: true,
-      removeEmptyStrings: true,
-      trimStrings: true,
-      getAutoValues: true,
-      removeNullsFromArrays: false,
-      extendAutoValueContext: {},
-      ...cleanOptions,
-    };
 
     // Clone, expanding shorthand, and store the schema object in this._schema
     this._schema = {};
@@ -870,6 +855,37 @@ class SimpleSchema {
 
   static addDocValidator(func) {
     SimpleSchema._docValidators.push(func);
+  }
+
+  // Global constructor options
+  static _constructorOptionDefaults = {
+    clean: {
+      autoConvert: true,
+      extendAutoValueContext: {},
+      filter: true,
+      getAutoValues: true,
+      removeEmptyStrings: true,
+      removeNullsFromArrays: false,
+      trimStrings: true,
+    },
+    humanizeAutoLabels: true,
+    requiredByDefault: true,
+  };
+
+  /**
+   * @summary Get/set default values for SimpleSchema constructor options
+   */
+  static constructorOptionDefaults(options) {
+    if (!options) return SimpleSchema._constructorOptionDefaults;
+
+    SimpleSchema._constructorOptionDefaults = {
+      ...SimpleSchema._constructorOptionDefaults,
+      ...options,
+      clean: {
+        ...SimpleSchema._constructorOptionDefaults.clean,
+        ...(options.clean || {}),
+      },
+    };
   }
 
   static ErrorTypes = {

@@ -918,6 +918,62 @@ describe('SimpleSchema', function () {
     SimpleSchema._docValidators = [];
   });
 
+  it('SimpleSchema.constructorOptionDefaults', function () {
+    const initialDefaults = SimpleSchema.constructorOptionDefaults();
+
+    // Default defaults
+    expect(initialDefaults).toEqual({
+      clean: {
+        autoConvert: true,
+        extendAutoValueContext: {},
+        filter: true,
+        getAutoValues: true,
+        removeEmptyStrings: true,
+        removeNullsFromArrays: false,
+        trimStrings: true,
+      },
+      humanizeAutoLabels: true,
+      requiredByDefault: true,
+    });
+
+    // Verify they are actually used
+    const schema = new SimpleSchema();
+    expect(schema._constructorOptions.humanizeAutoLabels).toBe(true);
+    expect(schema._cleanOptions.filter).toBe(true);
+
+    // Change some
+    SimpleSchema.constructorOptionDefaults({
+      humanizeAutoLabels: false,
+      clean: {
+        filter: false,
+      },
+    });
+
+    // Verify they are changed
+    const newDefaults = SimpleSchema.constructorOptionDefaults();
+    expect(newDefaults).toEqual({
+      clean: {
+        autoConvert: true,
+        extendAutoValueContext: {},
+        filter: false,
+        getAutoValues: true,
+        removeEmptyStrings: true,
+        removeNullsFromArrays: false,
+        trimStrings: true,
+      },
+      humanizeAutoLabels: false,
+      requiredByDefault: true,
+    });
+
+    // Verify they are actually used
+    const otherSchema = new SimpleSchema();
+    expect(otherSchema._constructorOptions.humanizeAutoLabels).toBe(false);
+    expect(otherSchema._cleanOptions.filter).toBe(false);
+
+    // Don't mess up other tests
+    SimpleSchema.constructorOptionDefaults(initialDefaults);
+  });
+
   it('addDocValidator', function () {
     const schema = new SimpleSchema({
       string: String,
