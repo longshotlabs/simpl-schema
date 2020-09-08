@@ -626,6 +626,28 @@ describe('SimpleSchema', function () {
 
       expect(mainSchema._schema['items.$'].type.definitions[0].type._schemaKeys).toEqual(['_id']);
     });
+
+    it('can extend array definition only, without array item definition', function () {
+      const schema = new SimpleSchema({
+        myArray: {
+          type: Array,
+        },
+        'myArray.$': {
+          type: String,
+          allowedValues: ['foo', 'bar'],
+        },
+      });
+
+      expect(schema._schema.myArray.type.definitions[0].minCount).toBe(undefined);
+
+      schema.extend({
+        myArray: {
+          minCount: 1,
+        },
+      });
+
+      expect(schema._schema.myArray.type.definitions[0].minCount).toBe(1);
+    });
   });
 
   it('empty required array is valid', function () {
