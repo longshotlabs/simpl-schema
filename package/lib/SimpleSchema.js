@@ -488,8 +488,11 @@ class SimpleSchema {
       schemaObj = expandShorthand(schema);
     }
 
+    const schemaKeys = Object.keys(schemaObj);
+    const combinedKeys = new Set([...Object.keys(this._schema), ...schemaKeys]);
+
     // Update all of the information cached on the instance
-    Object.keys(schemaObj).forEach((fieldName) => {
+    schemaKeys.forEach((fieldName) => {
       const definition = standardizeDefinition(schemaObj[fieldName]);
 
       // Merge/extend with any existing definition
@@ -511,7 +514,7 @@ class SimpleSchema {
         this._schema[fieldName] = definition;
       }
 
-      checkAndScrubDefinition(fieldName, this._schema[fieldName], this._constructorOptions, schemaObj);
+      checkAndScrubDefinition(fieldName, this._schema[fieldName], this._constructorOptions, combinedKeys);
     });
 
     checkSchemaOverlap(this._schema);
@@ -1005,8 +1008,16 @@ function standardizeDefinition(def) {
   return standardizedDef;
 }
 
-// Checks and mutates definition. Clone it first.
-function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) {
+/**
+ * @summary Checks and mutates definition. Clone it first.
+ *   Throws errors if any problems are found.
+ * @param {String} fieldName Name of field / key
+ * @param {Object} definition Field definition
+ * @param {Object} options Options
+ * @param {Set} allKeys Set of all field names / keys in entire schema
+ * @return {undefined} Void
+ */
+function checkAndScrubDefinition(fieldName, definition, options, allKeys) {
   if (!definition.type) throw new Error(`${fieldName} key is missing "type"`);
 
   // Validate the field definition
@@ -1034,7 +1045,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
     if (SimpleSchema.isSimpleSchema(type)) {
       Object.keys(type._schema).forEach((subKey) => {
         const newKey = `${fieldName}.${subKey}`;
-        if (Object.prototype.hasOwnProperty.call(fullSchemaObj, newKey)) {
+        if (allKeys.has(newKey)) {
           throw new Error(`The type for "${fieldName}" is set to a SimpleSchema instance that defines "${newKey}", but the parent SimpleSchema instance also tries to define "${newKey}"`);
         }
       });
@@ -1043,7 +1054,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
 
   // If at least one of the possible types is Array, then make sure we have a
   // definition for the array items, too.
-  if (couldBeArray && !Object.prototype.hasOwnProperty.call(fullSchemaObj, `${fieldName}.$`)) {
+  if (couldBeArray && !allKeys.has(`${fieldName}.$`)) {
     throw new Error(`"${fieldName}" is Array type but the schema does not include a "${fieldName}.$" definition for the array items"`);
   }
 
