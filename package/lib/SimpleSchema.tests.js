@@ -49,6 +49,14 @@ describe('SimpleSchema', function () {
     }).toThrow('"someArray" is Array type but the schema does not include a "someArray.$" definition for the array items');
   });
 
+  it('does not allow prototype pollution', function () {
+    const obj = {};
+    expect(obj.polluted).toBe(undefined);
+    const badObj = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+    SimpleSchema.setDefaultMessages(badObj);
+    expect(obj.polluted).toBe(undefined);
+  });
+
   describe('nesting', function () {
     it('throws an error if a nested schema defines a field that its parent also defines', function () {
       expect(function () {
