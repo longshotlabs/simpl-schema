@@ -334,7 +334,6 @@ describe('SimpleSchema', function () {
     });
 
     it('allows either type including schemas (mixed arrays)', function () {
-      // this test case is to ensure we correctly use a new "root" schema for nested objects
       const schemaTwo = new SimpleSchema({
         itemRef: String,
       });
@@ -349,6 +348,49 @@ describe('SimpleSchema', function () {
       });
       const isValid = combinedSchema.namedContext().validate({
         item: [{ itemRef: 'test' }, { itemRef: 2 }],
+      });
+      expect(isValid).toBe(true);
+    });
+
+    it('allows either type including schemas (maybe arrays)', function () {
+      const schemaOne = new SimpleSchema({
+        itemRef: Number,
+      });
+
+      const combinedSchema = new SimpleSchema({
+        item: SimpleSchema.oneOf(schemaOne, Array),
+        'item.$': schemaOne,
+      });
+      let isValid = combinedSchema.namedContext().validate({
+        item: [{ itemRef: 2 }],
+      });
+      expect(isValid).toBe(true);
+      isValid = combinedSchema.namedContext().validate({
+        item: { itemRef: 2 },
+      });
+      expect(isValid).toBe(true);
+    });
+
+    it('allows either type including schemas (maybe mixed arrays)', function () {
+      const schemaOne = new SimpleSchema({
+        itemRef: Object,
+        'itemRef.inner': Number,
+      });
+      const schemaTwo = new SimpleSchema({
+        itemRef: Object,
+        'itemRef.inner': String,
+      });
+
+      const combinedSchema = new SimpleSchema({
+        item: SimpleSchema.oneOf(schemaOne, Array),
+        'item.$': schemaTwo,
+      });
+      let isValid = combinedSchema.namedContext().validate({
+        item: [{ itemRef: { inner: 'test' } }],
+      });
+      expect(isValid).toBe(true);
+      isValid = combinedSchema.namedContext().validate({
+        item: { itemRef: { inner: 2 } },
       });
       expect(isValid).toBe(true);
     });

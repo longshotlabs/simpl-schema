@@ -47,7 +47,17 @@ function doValidation({
     };
   }
 
-  function recurse(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric) {
+  function recurse({
+    val,
+    affectedKey,
+    affectedKeyGeneric,
+    def,
+    operator,
+    isInArrayItemObject,
+    subSchema,
+    subSchemaAffectedKey,
+    subSchemaAffectedKeyGeneric,
+  }) {
     // If affectedKeyGeneric is undefined due to this being the first run of this
     // function, objectKeys will return the top-level keys.
     const childKeys = (subSchema || schema).objectKeys(subSchema ? subSchemaAffectedKeyGeneric : affectedKeyGeneric);
@@ -68,7 +78,8 @@ function doValidation({
           affectedKey: `${affectedKey}.${i}`,
           operator,
           subSchema,
-          subSchemaAffectedKey: subSchemaAffectedKey === undefined ? undefined : appendAffectedKey(subSchemaAffectedKey, i),
+          // wrap in quotes to protect against SimpleSchema.oneOf(schema, [schema])
+          subSchemaAffectedKey: subSchemaAffectedKey === undefined ? undefined : appendAffectedKey(subSchemaAffectedKey, `${i}`),
         });
         if (Array.isArray(ret)) {
           allErrors.push(...ret);
@@ -249,11 +260,26 @@ function doValidation({
       });
       const singleType = typeDef.type;
       if (singleType && (SimpleSchema.isSimpleSchema(singleType) || singleType === Array || singleType === Object)) {
-        let extraArgs = [subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric];
+        let innerSubSchema = subSchema;
+        let innerSubSchemaAffectedKey = subSchemaAffectedKey;
+        let innerSubSchemaAffectedKeyGeneric = subSchemaAffectedKeyGeneric;
         if (SimpleSchema.isSimpleSchema(singleType)) {
-          extraArgs = [singleType, '', ''];
+          innerSubSchema = singleType;
+          innerSubSchemaAffectedKey = '';
+          innerSubSchemaAffectedKeyGeneric = '';
         }
-        const ret = recurse(val, affectedKey, affectedKeyGeneric, def, op, isInArrayItemObject, ...extraArgs);
+        const ret = recurse({
+          val,
+          affectedKey,
+          affectedKeyGeneric,
+          def,
+          operator: op,
+          isInArrayItemObject,
+          subSchema: innerSubSchema,
+          subSchemaAffectedKey: innerSubSchemaAffectedKey,
+          subSchemaAffectedKeyGeneric: innerSubSchemaAffectedKeyGeneric,
+        });
+
         if (Array.isArray(ret)) {
           subFieldValidationErrors.push(...ret);
           return simpleResult && ret.length === 0;
@@ -329,9 +355,29 @@ function doValidation({
       if (shouldValidateKey) {
         return validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
       }
-      return recurse(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
+      return recurse({
+        val,
+        affectedKey,
+        affectedKeyGeneric,
+        def,
+        operator,
+        isInArrayItemObject,
+        subSchema,
+        subSchemaAffectedKey,
+        subSchemaAffectedKeyGeneric,
+      });
     }
-    return recurse(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
+    return recurse({
+      val,
+      affectedKey,
+      affectedKeyGeneric,
+      def,
+      operator,
+      isInArrayItemObject,
+      subSchema,
+      subSchemaAffectedKey,
+      subSchemaAffectedKeyGeneric,
+    });
   }
 
   function checkModifier(mod) {
