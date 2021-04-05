@@ -47,31 +47,92 @@ function doValidation({
     };
   }
 
-  let validationErrors = [];
+  function recurse(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric) {
+    // If affectedKeyGeneric is undefined due to this being the first run of this
+    // function, objectKeys will return the top-level keys.
+    const childKeys = (subSchema || schema).objectKeys(subSchema ? subSchemaAffectedKeyGeneric : affectedKeyGeneric);
+
+    // Temporarily convert missing objects to empty objects
+    // so that the looping code will be called and required
+    // descendent keys can be validated.
+    if ((val === undefined || val === null) && (!def || (!def.optional && childKeys && childKeys.length > 0))) {
+      val = {};
+    }
+    const allErrors = [];
+
+    // Loop through arrays
+    if (Array.isArray(val)) {
+      val.forEach((v, i) => {
+        const ret = checkObj({
+          val: v,
+          affectedKey: `${affectedKey}.${i}`,
+          operator,
+        });
+        if (Array.isArray(ret)) {
+          allErrors.push(...ret);
+        }
+      });
+    } else if (isObjectWeShouldTraverse(val) && (!def || !schema._blackboxKeys.has(affectedKey))) {
+      // Loop through object keys
+
+      // Get list of present keys
+      const presentKeys = Object.keys(val);
+
+      // If this object is within an array, make sure we check for
+      // required as if it's not a modifier
+      isInArrayItemObject = (affectedKeyGeneric && affectedKeyGeneric.slice(-2) === '.$');
+
+      const checkedKeys = [];
+
+      // Check all present keys plus all keys defined by the schema.
+      // This allows us to detect extra keys not allowed by the schema plus
+      // any missing required keys, and to run any custom functions for other keys.
+      /* eslint-disable no-restricted-syntax */
+      for (const key of [...presentKeys, ...childKeys]) {
+        // `childKeys` and `presentKeys` may contain the same keys, so make
+        // sure we run only once per unique key
+        if (checkedKeys.indexOf(key) !== -1) continue;
+        checkedKeys.push(key);
+
+        const ret = checkObj({
+          val: val[key],
+          affectedKey: appendAffectedKey(affectedKey, key),
+          operator,
+          isInArrayItemObject,
+          isInSubObject: true,
+          subSchema,
+          subSchemaAffectedKey: subSchemaAffectedKey === undefined ? undefined : appendAffectedKey(subSchemaAffectedKey, key),
+        });
+        if (Array.isArray(ret)) {
+          allErrors.push(...ret);
+        }
+      }
+      /* eslint-enable no-restricted-syntax */
+    }
+    return allErrors;
+  }
 
   // Validation function called for each affected key
-  function validate(val, affectedKey, affectedKeyGeneric, def, op, isInArrayItemObject, isInSubObject) {
+  function validate(val, affectedKey, affectedKeyGeneric, def, op, isInArrayItemObject, isInSubObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric) {
     // Get the schema for this key, marking invalid if there isn't one.
     if (!def) {
       // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
-      if (op === '$unset') return;
+      if (op === '$unset') return [];
 
-      validationErrors.push({
+      return [{
         name: affectedKey,
         type: SimpleSchema.ErrorTypes.KEY_NOT_IN_SCHEMA,
         value: val,
-      });
-      return;
+      }];
     }
 
     // For $rename, make sure that the new name is allowed by the schema
     if (op === '$rename' && !schema.allowsKey(val)) {
-      validationErrors.push({
+      return [{
         name: val,
         type: SimpleSchema.ErrorTypes.KEY_NOT_IN_SCHEMA,
         value: null,
-      });
-      return;
+      }];
     }
 
     // Prepare the context object for the validator functions
@@ -123,7 +184,10 @@ function doValidation({
 
     // Loop through each of the definitions in the SimpleSchemaGroup.
     // If any return true, we're valid.
+    const fieldTypeValidationErrors = [];
     const fieldIsValid = def.type.some((typeDef) => {
+      const subFieldValidationErrors = [];
+      fieldTypeValidationErrors.push(subFieldValidationErrors);
       // If the type is SimpleSchema.Any, then it is valid:
       if (typeDef === SimpleSchema.Any) return true;
 
@@ -149,13 +213,13 @@ function doValidation({
 
       // We use _.every just so that we don't continue running more validator
       // functions after the first one returns false or an error string.
-      return fieldValidators.every((validator) => {
+      const simpleResult = fieldValidators.every((validator) => {
         const result = validator.call(finalValidatorContext);
 
         // If the validator returns a string, assume it is the
         // error type.
         if (typeof result === 'string') {
-          fieldValidationErrors.push({
+          subFieldValidationErrors.push({
             name: affectedKey,
             type: result,
             value: val,
@@ -166,7 +230,7 @@ function doValidation({
         // If the validator returns an object, assume it is an
         // error object.
         if (typeof result === 'object' && result !== null) {
-          fieldValidationErrors.push({
+          subFieldValidationErrors.push({
             name: affectedKey,
             value: val,
             ...result,
@@ -181,10 +245,23 @@ function doValidation({
         // Any other return value we assume means it was valid
         return true;
       });
+      const singleType = typeDef.type;
+      if (singleType && (SimpleSchema.isSimpleSchema(singleType) || singleType === Array || singleType === Object)) {
+        let extraArgs = [subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric];
+        if (SimpleSchema.isSimpleSchema(singleType)) {
+          extraArgs = [singleType, '', ''];
+        }
+        const ret = recurse(val, affectedKey, affectedKeyGeneric, def, op, isInArrayItemObject, ...extraArgs);
+        if (Array.isArray(ret)) {
+          subFieldValidationErrors.push(...ret);
+          return simpleResult && ret.length === 0;
+        }
+      }
+      return simpleResult;
     });
 
     if (!fieldIsValid) {
-      validationErrors = validationErrors.concat(fieldValidationErrors);
+      return [].concat(...fieldTypeValidationErrors);
     }
   }
 
@@ -195,17 +272,21 @@ function doValidation({
     operator,
     isInArrayItemObject = false,
     isInSubObject = false,
+    subSchema,
+    subSchemaAffectedKey,
   }) {
     let affectedKeyGeneric;
+    let subSchemaAffectedKeyGeneric;
     let def;
 
     if (affectedKey) {
       // When we hit a blackbox key, we don't progress any further
-      if (schema.keyIsInBlackBox(affectedKey)) return;
+      if (schema.keyIsInBlackBox(affectedKey)) return [];
 
       // Make a generic version of the affected key, and use that
       // to get the schema for this key.
       affectedKeyGeneric = MongoObject.makeKeyGeneric(affectedKey);
+      subSchemaAffectedKeyGeneric = subSchemaAffectedKey && MongoObject.makeKeyGeneric(subSchemaAffectedKey);
 
       const shouldValidateKey = !keysToValidate || keysToValidate.some((keyToValidate) => (
         keyToValidate === affectedKey
@@ -242,68 +323,18 @@ function doValidation({
       };
 
       // Perform validation for this key
-      def = schema.getDefinition(affectedKey, null, functionsContext);
+      def = (subSchema || schema).getDefinition(subSchema ? subSchemaAffectedKey : affectedKey, null, functionsContext);
       if (shouldValidateKey) {
-        validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject);
+        return validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
       }
+      return recurse(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
     }
-
-    // If affectedKeyGeneric is undefined due to this being the first run of this
-    // function, objectKeys will return the top-level keys.
-    const childKeys = schema.objectKeys(affectedKeyGeneric);
-
-    // Temporarily convert missing objects to empty objects
-    // so that the looping code will be called and required
-    // descendent keys can be validated.
-    if ((val === undefined || val === null) && (!def || (!def.optional && childKeys && childKeys.length > 0))) {
-      val = {};
-    }
-
-    // Loop through arrays
-    if (Array.isArray(val)) {
-      val.forEach((v, i) => {
-        checkObj({
-          val: v,
-          affectedKey: `${affectedKey}.${i}`,
-          operator,
-        });
-      });
-    } else if (isObjectWeShouldTraverse(val) && (!def || !schema._blackboxKeys.has(affectedKey))) {
-      // Loop through object keys
-
-      // Get list of present keys
-      const presentKeys = Object.keys(val);
-
-      // If this object is within an array, make sure we check for
-      // required as if it's not a modifier
-      isInArrayItemObject = (affectedKeyGeneric && affectedKeyGeneric.slice(-2) === '.$');
-
-      const checkedKeys = [];
-
-      // Check all present keys plus all keys defined by the schema.
-      // This allows us to detect extra keys not allowed by the schema plus
-      // any missing required keys, and to run any custom functions for other keys.
-      /* eslint-disable no-restricted-syntax */
-      for (const key of [...presentKeys, ...childKeys]) {
-        // `childKeys` and `presentKeys` may contain the same keys, so make
-        // sure we run only once per unique key
-        if (checkedKeys.indexOf(key) !== -1) continue;
-        checkedKeys.push(key);
-
-        checkObj({
-          val: val[key],
-          affectedKey: appendAffectedKey(affectedKey, key),
-          operator,
-          isInArrayItemObject,
-          isInSubObject: true,
-        });
-      }
-      /* eslint-enable no-restricted-syntax */
-    }
+    return recurse(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
   }
 
   function checkModifier(mod) {
     // Loop through operators
+    const allErrors = [];
     Object.keys(mod).forEach((op) => {
       const opObj = mod[op];
       // If non-operators are mixed in, throw error
@@ -317,11 +348,14 @@ function doValidation({
           const presentKeys = Object.keys(opObj);
           schema.objectKeys().forEach((schemaKey) => {
             if (!presentKeys.includes(schemaKey)) {
-              checkObj({
+              const ret = checkObj({
                 val: undefined,
                 affectedKey: schemaKey,
                 operator: op,
               });
+              if (Array.isArray(ret)) {
+                allErrors.push(...ret);
+              }
             }
           });
         }
@@ -336,21 +370,27 @@ function doValidation({
               k = `${k}.0`;
             }
           }
-          checkObj({
+          const ret = checkObj({
             val: v,
             affectedKey: k,
             operator: op,
           });
+
+          if (Array.isArray(ret)) {
+            allErrors.push(...ret);
+          }
         });
       }
     });
+    return allErrors;
   }
 
+  let validationErrors;
   // Kick off the validation
   if (isModifier) {
-    checkModifier(obj);
+    validationErrors = checkModifier(obj) || [];
   } else {
-    checkObj({ val: obj });
+    validationErrors = checkObj({ val: obj }) || [];
   }
 
   // Custom whole-doc validators
