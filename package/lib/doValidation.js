@@ -426,9 +426,10 @@ function doValidation({
           }
 
           // if this key is in a oneOf - we need to fork and recurse to find the relevant key
-          const isOneOf = oneOfKeys.has(k);
+          const genericKey = MongoObject.makeKeyGeneric(k);
+          const isOneOf = oneOfKeys.has(genericKey);
           if (isOneOf) {
-            const subSchemaReferences = oneOfKeys.get(k);
+            const subSchemaReferences = oneOfKeys.get(genericKey);
             const perSchemaErrors = [];
             const isValid = subSchemaReferences.some(({ schema: subSchema, suffix }) => {
               const ret = checkObj({

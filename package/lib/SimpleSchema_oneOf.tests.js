@@ -460,10 +460,6 @@ describe('SimpleSchema', function () {
       expect(Array.from(schema.oneOfKeys().keys())).toEqual(['obj.$.thing', 'obj.$.thing.inner', 'obj.$.thing2', 'obj.$.thing2.inner']);
     });
 
-    it('allows either type including schemas (nested differing types - upsert', function() {
-      expect(true).toBe(false);
-    });
-
     it('allows simple types (modifier)', function () {
       const schema = new SimpleSchema({
         field: SimpleSchema.oneOf(String, Number),
@@ -489,6 +485,98 @@ describe('SimpleSchema', function () {
         },
       }, { modifier: true });
       expect(isValid).toBe(false);
+    });
+
+    it.only('allows either type including schemas (array nested differing types - modifier)', function () {
+      // this test case is to ensure we correctly use a new "root" schema for nested objects
+      const schemaTwo = new SimpleSchema({
+        itemRef: String,
+        partNo: String,
+        obj: Object,
+        'obj.inner': String,
+      });
+
+      const schemaOne = new SimpleSchema({
+        anotherIdentifier: String,
+        partNo: String,
+        obj: Object,
+        'obj.inner': Number,
+      });
+
+
+      const combinedSchema = new SimpleSchema({
+        item: Array,
+        'item.$': SimpleSchema.oneOf(schemaOne, schemaTwo),
+      });
+      let isValid = combinedSchema.namedContext().validate({
+        $push: {
+          item: {
+            itemRef: 'test',
+            partNo: 'test',
+            obj: {
+              inner: 'test',
+            },
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $push: {
+          item: {
+            anotherIdentifier: 'test',
+            partNo: 'test',
+            obj: {
+              inner: 3,
+            },
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $push: {
+          item: {
+            anotherIdentifier: 'test',
+            partNo: 'test',
+            obj: {
+              inner: false,
+            },
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(false);
+
+      isValid = combinedSchema.namedContext().validate({
+        $push: {
+          item: {
+            $each: [
+              {
+                anotherIdentifier: 'test',
+                partNo: 'test',
+                obj: {
+                  inner: 3,
+                },
+              },
+              {
+                itemRef: 'test',
+                partNo: 'test',
+                obj: {
+                  inner: 'test',
+                },
+              },
+            ],
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.0.obj.inner': 'test',
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
     });
 
     it('allows either type including schemas (nested differing types - modifier)', function () {
