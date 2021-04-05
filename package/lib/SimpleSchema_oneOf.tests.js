@@ -267,7 +267,91 @@ describe('SimpleSchema', function () {
         },
       });
       expect(isValid).toBe(false);
-    })
+    });
+
+    it('allows either type including schemas (nested arrays)', function () {
+      // this test case is to ensure we correctly use a new "root" schema for nested objects
+      const schemaTwo = new SimpleSchema({
+        itemRef: String,
+        partNo: String,
+        obj: Object,
+        'obj.inner': [String],
+      });
+
+      const schemaOne = new SimpleSchema({
+        anotherIdentifier: String,
+        partNo: String,
+        obj: Object,
+        'obj.inner': [Number],
+      });
+
+      const combinedSchema = new SimpleSchema({
+        item: SimpleSchema.oneOf(schemaOne, schemaTwo),
+      });
+      let isValid = combinedSchema.namedContext().validate({
+        item: {
+          itemRef: 'test',
+          partNo: 'test',
+          obj: {
+            inner: ['test'],
+          },
+        },
+      });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        item: {
+          anotherIdentifier: 'test',
+          partNo: 'test',
+          obj: {
+            inner: [2],
+          },
+        },
+      });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        item: {
+          itemRef: 'test',
+          partNo: 'test',
+          obj: {
+            inner: [2, 'test'],
+          },
+        },
+      });
+      expect(isValid).toBe(false);
+
+      isValid = combinedSchema.namedContext().validate({
+        item: {
+          anotherIdentifier: 'test',
+          partNo: 'test',
+          obj: {
+            inner: ['test', 2],
+          },
+        },
+      });
+      expect(isValid).toBe(false);
+    });
+
+    it('allows either type including schemas (mixed arrays)', function () {
+      // this test case is to ensure we correctly use a new "root" schema for nested objects
+      const schemaTwo = new SimpleSchema({
+        itemRef: String,
+      });
+
+      const schemaOne = new SimpleSchema({
+        itemRef: Number,
+      });
+
+      const combinedSchema = new SimpleSchema({
+        item: Array,
+        'item.$': SimpleSchema.oneOf(schemaOne, schemaTwo),
+      });
+      const isValid = combinedSchema.namedContext().validate({
+        item: [{ itemRef: 'test' }, { itemRef: 2 }],
+      });
+      expect(isValid).toBe(true);
+    });
 
     it('is valid as long as one min value is met', function () {
       const schema = new SimpleSchema({

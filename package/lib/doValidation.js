@@ -67,6 +67,8 @@ function doValidation({
           val: v,
           affectedKey: `${affectedKey}.${i}`,
           operator,
+          subSchema,
+          subSchemaAffectedKey: subSchemaAffectedKey === undefined ? undefined : appendAffectedKey(subSchemaAffectedKey, i),
         });
         if (Array.isArray(ret)) {
           allErrors.push(...ret);
