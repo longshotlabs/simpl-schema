@@ -360,6 +360,52 @@ class SimpleSchema {
     return result;
   }
 
+  // while potentially not very performant - this is only called once per validation for the total schema
+  // it is called per "key" of the original schema if that key is a oneOf, limited to the schema of the key.
+  // this is equivalent to at most once for the entire root schema.
+  recursiveKeys(startPrefix) {
+    const keys = new Set(Object.values(this._schemaKeys));
+    const recurse = (prefix) => {
+      keys.add(prefix);
+      this.objectKeys(prefix).forEach((suffix) => recurse(`${prefix}.${suffix}`));
+    };
+    Object.values(this._schemaKeys).filter((k) => k.endsWith('$')).forEach(recurse);
+    this.objectKeys(startPrefix).forEach(recurse);
+    return Array.from(keys);
+  }
+
+  // returns all keys that are internal to a oneOf - does not include the key that IS the oneOf.
+  // returns a map of the key => [{ prefix: String, suffix: String, schema: SimpleSchema }]
+  oneOfKeys() {
+    const oneOfKeys = new Map();
+    this._oneOfKeys.forEach((key) => {
+      if (this._schema[key].type.definitions.length > 1) {
+        this._schema[key].type.definitions.forEach((typeDef) => {
+          if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
+          typeDef.type.recursiveKeys().forEach((oneOfKey) => {
+            const fullKey = `${key}.${oneOfKey}`;
+            if (oneOfKeys.has(fullKey)) {
+              oneOfKeys.get(fullKey).push({
+                schema: typeDef.type,
+                prefix: key,
+                suffix: oneOfKey,
+              });
+            } else {
+              oneOfKeys.set(fullKey, [{
+                schema: typeDef.type,
+                prefix: key,
+                suffix: oneOfKey,
+              }]);
+            }
+          });
+        });
+      }
+    });
+
+    // most places we're going to use this, a set is better than an array
+    return oneOfKeys;
+  }
+
   // Returns an array of all the blackbox keys, including those in subschemas
   blackboxKeys() {
     const blackboxKeys = new Set(this._blackboxKeys);
@@ -523,6 +569,7 @@ class SimpleSchema {
     this._schemaKeys = Object.keys(this._schema);
     this._autoValues = [];
     this._blackboxKeys = new Set();
+    this._oneOfKeys = new Set();
     this._firstLevelSchemaKeys = [];
     this._objectKeys = {};
 
@@ -538,6 +585,10 @@ class SimpleSchema {
 
       // Keep list of all top level keys
       if (fieldName.indexOf('.') === -1) this._firstLevelSchemaKeys.push(fieldName);
+
+      if (definition.type.definitions.length > 1) {
+        this._oneOfKeys.add(fieldName);
+      }
 
       // Keep list of all blackbox keys for passing to MongoObject constructor
       // XXX For now if any oneOf type is blackbox, then the whole field is.

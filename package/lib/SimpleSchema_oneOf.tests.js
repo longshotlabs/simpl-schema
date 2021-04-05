@@ -395,6 +395,197 @@ describe('SimpleSchema', function () {
       expect(isValid).toBe(true);
     });
 
+    it('oneOfKeys returns the correct set of keys', () => {
+      let schema = new SimpleSchema({
+        str: String,
+        obj: Object,
+        'obj.inner': String,
+      });
+
+      expect(schema.oneOfKeys().size).toBe(0);
+      schema = new SimpleSchema({
+        str: String,
+        obj: Object,
+        'obj.inner': new SimpleSchema({
+          thing: String,
+        }),
+      });
+
+      expect(schema.oneOfKeys().size).toBe(0);
+      schema = new SimpleSchema({
+        str: String,
+        obj: Object,
+        'obj.inner': SimpleSchema.oneOf(
+          new SimpleSchema({
+            thing: String,
+          }),
+          new SimpleSchema({
+            thing2: String,
+          }),
+        ),
+      });
+
+      expect(Array.from(schema.oneOfKeys().keys())).toEqual(['obj.inner.thing', 'obj.inner.thing2']);
+      schema = new SimpleSchema({
+        str: String,
+        obj: Object,
+        'obj.inner': SimpleSchema.oneOf(
+          new SimpleSchema({
+            thing: Object,
+            'thing.inner': String,
+          }),
+          new SimpleSchema({
+            thing2: Object,
+            'thing2.inner': String,
+          }),
+        ),
+      });
+
+      expect(Array.from(schema.oneOfKeys().keys())).toEqual(['obj.inner.thing', 'obj.inner.thing.inner', 'obj.inner.thing2', 'obj.inner.thing2.inner']);
+      schema = new SimpleSchema({
+        str: String,
+        obj: Array,
+        'obj.$': SimpleSchema.oneOf(
+          new SimpleSchema({
+            thing: Object,
+            'thing.inner': String,
+          }),
+          new SimpleSchema({
+            thing2: Object,
+            'thing2.inner': String,
+          }),
+        ),
+      });
+
+      expect(Array.from(schema.oneOfKeys().keys())).toEqual(['obj.$.thing', 'obj.$.thing.inner', 'obj.$.thing2', 'obj.$.thing2.inner']);
+    });
+
+    it('allows either type including schemas (nested differing types - upsert', function() {
+      expect(true).toBe(false);
+    });
+
+    it('allows simple types (modifier)', function () {
+      const schema = new SimpleSchema({
+        field: SimpleSchema.oneOf(String, Number),
+      });
+
+      let isValid = schema.namedContext().validate({
+        $set: {
+          field: 'test',
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = schema.namedContext().validate({
+        $set: {
+          field: 3,
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = schema.namedContext().validate({
+        $set: {
+          field: false,
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(false);
+    });
+
+    it('allows either type including schemas (nested differing types - modifier)', function () {
+      // this test case is to ensure we correctly use a new "root" schema for nested objects
+      const schemaTwo = new SimpleSchema({
+        itemRef: String,
+        partNo: String,
+        obj: Object,
+        'obj.inner': String,
+      });
+
+      const schemaOne = new SimpleSchema({
+        anotherIdentifier: String,
+        partNo: String,
+        obj: Object,
+        'obj.inner': Number,
+      });
+
+      const combinedSchema = new SimpleSchema({
+        item: SimpleSchema.oneOf(schemaOne, schemaTwo),
+      });
+      let isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.obj.inner': 'test',
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.obj.inner': 3,
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.obj.inner': false,
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(false);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.obj': { inner: 'test' },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.obj': { inner: 3 },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          'item.obj': { inner: false },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(false);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          item: {
+            itemRef: 'test',
+            partNo: 'test',
+            obj: { inner: 'test' },
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          item: {
+            anotherIdentifier: 'test',
+            partNo: 'test',
+            obj: { inner: 3 },
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(true);
+
+      isValid = combinedSchema.namedContext().validate({
+        $set: {
+          item: {
+            anotherIdentifier: 'test',
+            partNo: 'test',
+            obj: { inner: 'test' },
+          },
+        },
+      }, { modifier: true });
+      expect(isValid).toBe(false);
+    });
+
     it('is valid as long as one min value is met', function () {
       const schema = new SimpleSchema({
         foo: SimpleSchema.oneOf({

@@ -47,6 +47,8 @@ function doValidation({
     };
   }
 
+  const oneOfKeys = schema.oneOfKeys();
+
   function recurse({
     val,
     affectedKey,
@@ -351,7 +353,11 @@ function doValidation({
       };
 
       // Perform validation for this key
-      def = (subSchema || schema).getDefinition(subSchema ? subSchemaAffectedKey : affectedKey, null, functionsContext);
+      if (subSchema) {
+        def = subSchemaAffectedKey ? subSchema.getDefinition(subSchemaAffectedKey, null, functionsContext) : subSchema;
+      } else {
+        def = schema.getDefinition(affectedKey, null, functionsContext);
+      }
       if (shouldValidateKey) {
         return validate(val, affectedKey, affectedKeyGeneric, def, operator, isInArrayItemObject, isInSubObject, subSchema, subSchemaAffectedKey, subSchemaAffectedKeyGeneric);
       }
@@ -418,14 +424,41 @@ function doValidation({
               k = `${k}.0`;
             }
           }
-          const ret = checkObj({
-            val: v,
-            affectedKey: k,
-            operator: op,
-          });
 
-          if (Array.isArray(ret)) {
-            allErrors.push(...ret);
+          // if this key is in a oneOf - we need to fork and recurse to find the relevant key
+          const isOneOf = oneOfKeys.has(k);
+          if (isOneOf) {
+            const subSchemaReferences = oneOfKeys.get(k);
+            const perSchemaErrors = [];
+            const isValid = subSchemaReferences.some(({ schema: subSchema, suffix }) => {
+              const ret = checkObj({
+                val: v,
+                affectedKey: k,
+                operator: op,
+                subSchema,
+                subSchemaAffectedKey: suffix,
+              });
+              if (Array.isArray(ret)) {
+                perSchemaErrors.push(ret);
+                return ret.length === 0;
+              }
+              return true;
+            });
+            if (!isValid) {
+              perSchemaErrors.forEach((errors) => {
+                allErrors.push(...errors);
+              });
+            }
+          } else {
+            const ret = checkObj({
+              val: v,
+              affectedKey: k,
+              operator: op,
+            });
+
+            if (Array.isArray(ret)) {
+              allErrors.push(...ret);
+            }
           }
         });
       }
