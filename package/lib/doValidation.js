@@ -54,7 +54,7 @@ function doValidation({
     // Get the schema for this key, marking invalid if there isn't one.
     if (!def) {
       // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
-      if (op === '$unset') return;
+      if (op === '$unset' || (op === '$currentDate' && affectedKey.endsWith('.$type'))) return;
 
       validationErrors.push({
         name: affectedKey,

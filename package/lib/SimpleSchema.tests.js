@@ -1159,6 +1159,36 @@ describe('SimpleSchema', function () {
     expect(foo.rawDefinition).toEqual({ foo: String });
   });
 
+  it('$currentDate Date validation', function () {
+    const schema = new SimpleSchema({
+      date: Date,
+    });
+    const context = schema.namedContext();
+
+    let testModifer = {
+      $currentDate: {
+        date: true,
+      },
+    };
+    expect(context.validate(testModifer, { modifier: true })).toBe(true);
+
+    testModifer = {
+      $currentDate: {
+        date: { $type: 'date' },
+      },
+    };
+    context.validate(testModifer, { modifier: true });
+    expect(context.validate(testModifer, { modifier: true })).toBe(true);
+
+    // timestamp fails because it would save a MongoDB.Timestamp value into a Date field
+    testModifer = {
+      $currentDate: {
+        date: { $type: 'timestamp' },
+      },
+    };
+    expect(context.validate(testModifer, { modifier: true })).toBe(false);
+  });
+
   describe('SimpleSchema.Any', function () {
     const schema = new SimpleSchema({
       testAny: SimpleSchema.Any,
