@@ -378,7 +378,6 @@ describe('SimpleSchema', function () {
     // only Number.MAX_SAFE_INTEGER
     expectThrows(10, 9007199254740992);
 
-
     const isTrue = (expr, s) => expect(expr.test(s)).toBe(true);
     const isFalse = (expr, s) => expect(expr.test(s)).toBe(false);
 

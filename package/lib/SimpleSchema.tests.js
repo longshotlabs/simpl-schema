@@ -498,7 +498,6 @@ describe('SimpleSchema', function () {
     });
   });
 
-
   describe('extend', function () {
     it('works for plain object', function () {
       const schema = new SimpleSchema({

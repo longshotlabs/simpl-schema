@@ -1,6 +1,5 @@
 import MongoObject from 'mongo-object';
 
-
 /**
  * Clones a schema object, expanding shorthand as it does it.
  */
