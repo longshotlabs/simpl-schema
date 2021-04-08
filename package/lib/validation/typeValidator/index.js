@@ -24,7 +24,11 @@ export default function typeValidator() {
 
   if (expectedType === Object || SimpleSchema.isSimpleSchema(expectedType)) {
     // Is it an object?
-    if (keyValue === Object(keyValue) && typeof keyValue[Symbol.iterator] !== 'function' && !(keyValue instanceof Date)) return;
+    if (
+      keyValue === Object(keyValue)
+      && typeof keyValue[Symbol.iterator] !== 'function'
+      && !(keyValue instanceof Date)
+    ) return;
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Object' };
   }
 
@@ -32,9 +36,27 @@ export default function typeValidator() {
 
   if (expectedType instanceof Function) {
     // Generic constructor checks
-    if (!(keyValue instanceof expectedType)) return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: expectedType.name };
+    if (!(keyValue instanceof expectedType)) {
+      // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
+      const dateTypeIsOkay = expectedType === Date
+        && op === '$currentDate'
+        && (keyValue === true || JSON.stringify(keyValue) === '{"$type":"date"}');
+
+      if (expectedType !== Date || !dateTypeIsOkay) {
+        return {
+          type: SimpleSchema.ErrorTypes.EXPECTED_TYPE,
+          dataType: expectedType.name,
+        };
+      }
+    }
 
     // Date checks
-    if (expectedType === Date) return doDateChecks(def, keyValue);
+    if (expectedType === Date) {
+      // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
+      if (op === '$currentDate') {
+        return doDateChecks(def, new Date());
+      }
+      return doDateChecks(def, keyValue);
+    }
   }
 }
