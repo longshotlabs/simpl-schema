@@ -44,6 +44,7 @@ There are also reasons not to choose this package. Because of all it does, this 
     - [Overriding When Extending](#overriding-when-extending)
   - [Subschemas](#subschemas)
   - [Extracting Schemas](#extracting-schemas)
+  - [Raw Definition](#raw-definition)
 - [Schema Keys](#schema-keys)
 - [Schema Rules](#schema-rules)
   - [type](#type)
@@ -608,6 +609,23 @@ const addressSchema = schema.getObjectSchema('address');
 //   postalCode: String,
 // });
 ```
+
+### Raw Definition
+
+Sometimes if you want to get the `rawDefinition` of some schema just pass in the options `{ keepRawDefinition: true}`(if not arg is passed the value will be null). Example:
+```javascript
+ const userSchema = new SimpleSchema({
+   name: String,
+   number: 'SimpleSchema.Integer',
+   email: String
+}, { keepRawDefintion: true });
+userSchema.rawDefinition;
+//{
+//   name: String,
+//   number: 'SimpleSchema.Integer',
+//   email: String
+//}
+``` 
 
 ## Schema Keys
 

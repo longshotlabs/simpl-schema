@@ -76,10 +76,20 @@ class SimpleSchema {
     this._depsLabels = {};
     this.extend(schema);
 
+    // Clone raw definition and save if keepRawDefinition is active
+    this._rawDefinition = this._constructorOptions.keepRawDefinition ? schema : null;
+
     // Define default validation error messages
     this.messageBox = new MessageBox(clone(defaultMessages));
 
     this.version = SimpleSchema.version;
+  }
+
+  /**
+  /* @returns {Object} The entire raw schema definition passed in the constructor
+  */
+  get rawDefinition() {
+    return this._rawDefinition;
   }
 
   forEachAncestorSimpleSchema(key, func) {
