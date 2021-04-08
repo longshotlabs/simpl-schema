@@ -1,6 +1,6 @@
 # SimpleSchema (simpl-schema NPM package)
 
-[![Lint, Test, and (Maybe) Publish](https://github.com/aldeed/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push)](https://github.com/aldeed/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
+[![Lint, Test, and (Maybe) Publish](<https://github.com/aldeed/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push>)](https://github.com/aldeed/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
 
 SimpleSchema validates JavaScript objects to ensure they match a schema. It can also clean the objects to automatically convert types, remove unsupported properties, and add automatic values such that the object is then more likely to pass validation.
 
@@ -18,7 +18,8 @@ There are also reasons not to choose this package. Because of all it does, this 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
 
 - [The History of SimpleSchema](#the-history-of-simpleschema)
 - [Installation](#installation)
@@ -127,7 +128,7 @@ In this documentation:
 ### Validate an Object and Throw an Error
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 new SimpleSchema({
   name: String,
@@ -141,14 +142,11 @@ new SimpleSchema({
 An error is thrown for the first invalid object found.
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 new SimpleSchema({
   name: String,
-}).validate([
-  { name: 'Bill' },
-  { name: 2 },
-]);
+}).validate([{ name: "Bill" }, { name: 2 }]);
 ```
 
 ### Validate a Meteor Method Argument and Satisfy `audit-argument-checks`
@@ -156,13 +154,13 @@ new SimpleSchema({
 To avoid errors about not checking all arguments when you are using SimpleSchema to validate Meteor method arguments, you must pass `check` as an option when creating your SimpleSchema instance.
 
 ```js
-import SimpleSchema from 'simpl-schema';
-import { check } from 'meteor/check';
-import { Meteor } from 'meteor/meteor';
+import SimpleSchema from "simpl-schema";
+import { check } from "meteor/check";
+import { Meteor } from "meteor/meteor";
 
-SimpleSchema.defineValidationErrorTransform(error => {
+SimpleSchema.defineValidationErrorTransform((error) => {
   const ddpError = new Meteor.Error(error.message);
-  ddpError.error = 'validation-error';
+  ddpError.error = "validation-error";
   ddpError.details = error.details;
   return ddpError;
 });
@@ -181,7 +179,7 @@ Meteor.methods({
 ### Validate an Object and Get the Errors
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const validationContext = new SimpleSchema({
   name: String,
@@ -198,17 +196,20 @@ console.log(validationContext.validationErrors());
 ### Validate a MongoDB Modifier
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const validationContext = new SimpleSchema({
   name: String,
 }).newContext();
 
-validationContext.validate({
-  $set: {
-    name: 2,
+validationContext.validate(
+  {
+    $set: {
+      name: 2,
+    },
   },
-}, { modifier: true });
+  { modifier: true }
+);
 
 console.log(validationContext.isValid());
 console.log(validationContext.validationErrors());
@@ -217,12 +218,15 @@ console.log(validationContext.validationErrors());
 ### Enable Meteor Tracker Reactivity
 
 ```js
-import SimpleSchema from 'simpl-schema';
-import { Tracker } from 'meteor/tracker';
+import SimpleSchema from "simpl-schema";
+import { Tracker } from "meteor/tracker";
 
-const validationContext = new SimpleSchema({
-  name: String,
-}, { tracker: Tracker }).newContext();
+const validationContext = new SimpleSchema(
+  {
+    name: String,
+  },
+  { tracker: Tracker }
+).newContext();
 
 Tracker.autorun(function () {
   console.log(validationContext.isValid());
@@ -234,7 +238,7 @@ validationContext.validate({
 });
 
 validationContext.validate({
-  name: 'Joe',
+  name: "Joe",
 });
 ```
 
@@ -253,23 +257,26 @@ TO DO
 ### Set Default Options for One Schema
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
-const mySchema = new SimpleSchema({
-  name: String,
-}, {
-  clean: {
-    autoConvert: true,
-    extendAutoValueContext: {},
-    filter: false,
-    getAutoValues: true,
-    removeEmptyStrings: true,
-    removeNullsFromArrays: false,
-    trimStrings: true,
+const mySchema = new SimpleSchema(
+  {
+    name: String,
   },
-  humanizeAutoLabels: false,
-  requiredByDefault: true,
-});
+  {
+    clean: {
+      autoConvert: true,
+      extendAutoValueContext: {},
+      filter: false,
+      getAutoValues: true,
+      removeEmptyStrings: true,
+      removeNullsFromArrays: false,
+      trimStrings: true,
+    },
+    humanizeAutoLabels: false,
+    requiredByDefault: true,
+  }
+);
 ```
 
 These options will be used every time you clean or validate with this particular SimpleSchema instance.
@@ -277,7 +284,7 @@ These options will be used every time you clean or validate with this particular
 ### Set Default Options for All Schemas
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 SimpleSchema.constructorOptionDefaults({
   clean: {
@@ -300,7 +307,7 @@ Important notes:
 ### Explicitly Clean an Object
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const mySchema = new SimpleSchema({ name: String });
 const doc = { name: 123 };
@@ -312,7 +319,7 @@ console.log(typeof cleanDoc.name); // string
 Works for a MongoDB modifier, too:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const mySchema = new SimpleSchema({ name: String });
 const modifier = { $set: { name: 123 } };
@@ -328,7 +335,7 @@ Let's get into some more details about the different syntaxes that are supported
 ### Shorthand Definitions
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   name: String,
@@ -344,7 +351,7 @@ This is referred to as "shorthand" syntax. You simply map a property name to a t
 In many cases, you will need to use longhand in order to define additional rules beyond what the data type should be.
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   name: {
@@ -367,7 +374,7 @@ const schema = new SimpleSchema({
 You can use any combination of shorthand and longhand:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   name: String,
@@ -387,7 +394,7 @@ For example, this:
 
 ```js
 {
-  exp: /foo/
+  exp: /foo/;
 }
 ```
 
@@ -423,7 +430,7 @@ is equivalent to:
 You can define two or more different ways in which a key will be considered valid:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   id: SimpleSchema.oneOf(String, SimpleSchema.Integer),
@@ -434,17 +441,20 @@ const schema = new SimpleSchema({
 And this can be done in any mixture of shorthand and longhand:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
-  id: SimpleSchema.oneOf({
-    type: String,
-    min: 16,
-    max: 16,
-  }, {
-    type: SimpleSchema.Integer,
-    min: 0,
-  }),
+  id: SimpleSchema.oneOf(
+    {
+      type: String,
+      min: 16,
+      max: 16,
+    },
+    {
+      type: SimpleSchema.Integer,
+      min: 0,
+    }
+  ),
   name: String,
 });
 ```
@@ -454,28 +464,28 @@ When one of the allowed types is an object, use a subschema. Don't mix the objec
 Correct:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const objSchema = new SimpleSchema({
-  _id: String
+  _id: String,
 });
 
 const schema = new SimpleSchema({
-  foo: SimpleSchema.oneOf(String, objSchema)
+  foo: SimpleSchema.oneOf(String, objSchema),
 });
 ```
 
 Incorrect:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   foo: SimpleSchema.oneOf(String, Object),
-  'foo._id': {
+  "foo._id": {
     type: String,
-    optional: true
-  }
+    optional: true,
+  },
 });
 ```
 
@@ -486,8 +496,8 @@ NOTE: Multiple definitions is still an experimental feature and may not work as 
 If there are certain fields that are repeated in many of your schemas, it can be useful to define a SimpleSchema instance just for those fields and then merge them into other schemas:
 
 ```js
-import SimpleSchema from 'simpl-schema';
-import { idSchema, addressSchema } from './sharedSchemas';
+import SimpleSchema from "simpl-schema";
+import { idSchema, addressSchema } from "./sharedSchemas";
 
 const schema = new SimpleSchema({
   name: String,
@@ -501,8 +511,8 @@ schema.extend(addressSchema);
 If the key appears in both schemas, the definition will be extended such that the result is the combination of both definitions.
 
 ```js
-import SimpleSchema from 'simpl-schema';
-import { idSchema, addressSchema } from './sharedSchemas';
+import SimpleSchema from "simpl-schema";
+import { idSchema, addressSchema } from "./sharedSchemas";
 
 const schema = new SimpleSchema({
   name: {
@@ -537,8 +547,8 @@ Note also that a plain object was passed to `extend`. If you pass a plain object
 Similar to extending, you can also reference other schemas as a way to define objects that occur within the main object:
 
 ```js
-import SimpleSchema from 'simpl-schema';
-import { addressSchema } from './sharedSchemas';
+import SimpleSchema from "simpl-schema";
+import { addressSchema } from "./sharedSchemas";
 
 const schema = new SimpleSchema({
   name: String,
@@ -557,7 +567,7 @@ Sometimes you have one large SimpleSchema object, and you need just a subset of 
 To pull out certain schema keys into a new schema, you can use the `pick` method:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   firstName: String,
@@ -565,13 +575,13 @@ const schema = new SimpleSchema({
   username: String,
 });
 
-const nameSchema = schema.pick('firstName', 'lastName');
+const nameSchema = schema.pick("firstName", "lastName");
 ```
 
 To keep all but certain keys in a new schema, you can use the `omit` method:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   firstName: String,
@@ -579,26 +589,26 @@ const schema = new SimpleSchema({
   username: String,
 });
 
-const nameSchema = schema.omit('username');
+const nameSchema = schema.omit("username");
 ```
 
 To pull a subschema out of an `Object` key in a larger schema, you can use `getObjectSchema`:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   firstName: String,
   lastName: String,
   address: Object,
-  'address.street1': String,
-  'address.street2': { type: String, optional: true },
-  'address.city': String,
-  'address.state': String,
-  'address.postalCode': String,
+  "address.street1": String,
+  "address.street2": { type: String, optional: true },
+  "address.city": String,
+  "address.state": String,
+  "address.postalCode": String,
 });
 
-const addressSchema = schema.getObjectSchema('address');
+const addressSchema = schema.getObjectSchema("address");
 
 // addressSchema is now the same as this:
 // new SimpleSchema({
@@ -613,19 +623,23 @@ const addressSchema = schema.getObjectSchema('address');
 ### Raw Definition
 
 Sometimes if you want to get the `rawDefinition` of some schema just pass in the options `{ keepRawDefinition: true}`(if not arg is passed the value will be null). Example:
+
 ```javascript
- const userSchema = new SimpleSchema({
-   name: String,
-   number: 'SimpleSchema.Integer',
-   email: String
-}, { keepRawDefintion: true });
+const userSchema = new SimpleSchema(
+  {
+    name: String,
+    number: "SimpleSchema.Integer",
+    email: String,
+  },
+  { keepRawDefintion: true }
+);
 userSchema.rawDefinition;
 //{
 //   name: String,
 //   number: 'SimpleSchema.Integer',
 //   email: String
 //}
-``` 
+```
 
 ## Schema Keys
 
@@ -634,29 +648,29 @@ A basic schema key is just the name of the key (property) to expect in the objec
 Use string keys with MongoDB-style dot notation to validate nested arrays and objects. For example:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   mailingAddress: Object,
-  'mailingAddress.street': String,
-  'mailingAddress.city': String,
+  "mailingAddress.street": String,
+  "mailingAddress.city": String,
 });
 ```
 
 To indicate array items, use a `$`:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   addresses: {
     type: Array,
     minCount: 1,
-    maxCount: 4
+    maxCount: 4,
   },
-  'addresses.$': Object,
-  'addresses.$.street': String,
-  'addresses.$.city': String,
+  "addresses.$": Object,
+  "addresses.$.street": String,
+  "addresses.$.city": String,
 });
 ```
 
@@ -680,7 +694,7 @@ One of the following:
 
 ### label
 
-*Can also be a function that returns the label*
+_Can also be a function that returns the label_
 
 A string that will be used to refer to this field in validation error messages. The default is an inflected (humanized) derivation of the key name itself. For example, the key "firstName" will have a default label of "First name" if you do not include the `label` property in your definition.
 
@@ -688,7 +702,7 @@ You can use the `labels` function to alter one or more labels on the fly:
 
 ```js
 schema.labels({
-  password: "Enter your password"
+  password: "Enter your password",
 });
 ```
 
@@ -698,38 +712,41 @@ To get the label for a field, use `schema.label(fieldName)`, which returns a usa
 
 ### optional
 
-*Can also be a function that returns true or false*
+_Can also be a function that returns true or false_
 
 By default, all keys are required. Set `optional: true` to change that.
 
 With complex keys, it might be difficult to understand what "required" means. Here's a brief explanation of how requiredness is interpreted:
 
-- If `type` is `Array`, then "required" means that key must have a value, but an empty array is fine. (If an empty array is *not* fine, add the `minCount: 1` option.)
+- If `type` is `Array`, then "required" means that key must have a value, but an empty array is fine. (If an empty array is _not_ fine, add the `minCount: 1` option.)
 - For array items (when the key name ends with ".$"), if `optional` is true, then `null` values are valid. If array items are required, then any `null` items will fail the type check.
-- If a key is required at a deeper level, the key must have a value *only if* the object it belongs to is present.
+- If a key is required at a deeper level, the key must have a value _only if_ the object it belongs to is present.
 - When the object being validated is a Mongo modifier object, changes that would unset or `null` a required key result in validation errors.
 
 That last point can be confusing, so let's look at a couple examples:
 
-- Say you have a required key "friends.address.city" but "friends.address" is optional. If "friends.address" is set in the object you're validating, but "friends.address.city" is not, there is a validation error. However, if "friends.address" is *not* set, then there is no validation error for "friends.address.city" because the object it belongs to is not present.
-- If you have a required key "friends.$.name", but the `friends` array has no objects in the object you are validating, there is no validation error for "friends.$.name". When the `friends` array *does* have objects, every present object is validated, and each object could potentially have a validation error if it is missing the `name` property. For example, when there are two objects in the friends array and both are missing the `name` property, there will be a validation error for both "friends.0.name" and "friends.1.name".
+- Say you have a required key "friends.address.city" but "friends.address" is optional. If "friends.address" is set in the object you're validating, but "friends.address.city" is not, there is a validation error. However, if "friends.address" is _not_ set, then there is no validation error for "friends.address.city" because the object it belongs to is not present.
+- If you have a required key "friends.$.name", but the `friends` array has no objects in the object you are validating, there is no validation error for "friends.$.name". When the `friends` array _does_ have objects, every present object is validated, and each object could potentially have a validation error if it is missing the `name` property. For example, when there are two objects in the friends array and both are missing the `name` property, there will be a validation error for both "friends.0.name" and "friends.1.name".
 
 ### required
 
-*Can also be a function that returns true or false*
+_Can also be a function that returns true or false_
 
 If you would rather have all your schema keys be optional by default, pass the `requiredByDefault: false` option and then use `required: true` to make individual keys required.
 
 ```js
-const schema = new SimpleSchema({
-  optionalProp: String,
-  requiredProp: { type: String, required: true },
-}, { requiredByDefault: false });
+const schema = new SimpleSchema(
+  {
+    optionalProp: String,
+    requiredProp: { type: String, required: true },
+  },
+  { requiredByDefault: false }
+);
 ```
 
 ### min/max
 
-*Can also be a function that returns the min/max value*
+_Can also be a function that returns the min/max value_
 
 - If `type` is `Number` or `SimpleSchema.Integer`, these rules define the minimum or maximum numeric value.
 - If `type` is `String`, these rules define the minimum or maximum string length.
@@ -739,40 +756,41 @@ You can alternatively provide a function that takes no arguments and returns the
 
 ### exclusiveMin/exclusiveMax
 
-*Can also be a function that returns true or false*
+_Can also be a function that returns true or false_
 
 Set to `true` to indicate that the range of numeric values, as set by min/max, are to be treated as an exclusive range. Set to `false` (default) to treat ranges as inclusive.
 
 ### minCount/maxCount
 
-*Can also be a function that returns the minCount/maxCount value*
+_Can also be a function that returns the minCount/maxCount value_
 
 Define the minimum or maximum array length. Used only when type is `Array`.
 
 ### allowedValues
 
-*Can also be a function that returns the array or the `Set` of allowed values*
+_Can also be a function that returns the array or the `Set` of allowed values_
 
 An array or a `Set` of values that are allowed. A key will be invalid if its value is not one of these.
 
 You can use `schema.getAllowedValuesForKey(key)` to get the allowed values array for a key.
 
 **Note**: If you wish to restrict the items allowed in an `Array`, the `allowedValues` property must be on the array item definition.
+
 ```javascript
 const schema = new SimpleSchema({
   myArray: {
-    type: Array
+    type: Array,
   },
-  'myArray.$': {
+  "myArray.$": {
     type: String,
-    allowedValues: ['foo', 'bar']
-  }
+    allowedValues: ["foo", "bar"],
+  },
 });
 ```
 
 ### regEx
 
-*Can also be a function that returns a regular expression or an array of them*
+_Can also be a function that returns a regular expression or an array of them_
 
 Any regular expression that must be matched for the key to be valid, or an array of regular expressions that will be tested in order.
 
@@ -788,10 +806,16 @@ The `SimpleSchema.RegEx` object defines standard regular expressions you can use
 - `SimpleSchema.RegEx.Url` for http, https and ftp urls
 - `SimpleSchema.RegEx.Id` for IDs generated by `Random.id()` of the random package, also usable to validate a relation id.
 - `SimpleSchema.RegEx.idOfLength(min, max)` for IDs generated by `Random.id(length)` where min/max define lower and upper bounds.
-   Call without params for allowing an arbitrary length. Call with `min` only for fixed length.
-   Call with `max = null` for fixed lower and arbitrary upper bounds.
+  Call without params for allowing an arbitrary length. Call with `min` only for fixed length.
+  Call with `max = null` for fixed lower and arbitrary upper bounds.
 - `SimpleSchema.RegEx.ZipCode` for 5- and 9-digit ZIP codes
 - `SimpleSchema.RegEx.Phone` for phone numbers (taken from Google's libphonenumber library)
+
+### skipRegExCheckForEmptyStrings
+
+_Can also be a function that returns true or false_
+
+Set to `true` when `regEx` is set if you want an empty string to always pass validation, even though the regular expression may disallow it.
 
 ### blackbox
 
@@ -801,7 +825,7 @@ Prior to SimpleSchema 2.0, objects that are instances of a custom class were con
 
 ### trim
 
-*Used by the cleaning process but not by validation*
+_Used by the cleaning process but not by validation_
 
 When you call `simpleSchemaInstance.clean()` with `trimStrings` set to `true`, all string values are trimmed of leading and trailing whitespace. If you set `trim` to `false` for certain keys in their schema definition, those keys will be skipped.
 
@@ -811,7 +835,7 @@ Refer to the [Custom Validation](#custom-field-validation) section.
 
 ### defaultValue
 
-*Used by the cleaning process but not by validation*
+_Used by the cleaning process but not by validation_
 
 Set this to any value that you want to be used as the default when an object does not include this field or has this field set to `undefined`. This value will be injected into the object by a call to `mySimpleSchema.clean()` with `getAutovalues: true`.
 
@@ -826,7 +850,7 @@ To get the defaultValue for a field, use `schema.defaultValue(fieldName)`. It is
 
 ### autoValue
 
-*Used by the cleaning process but not by validation*
+_Used by the cleaning process but not by validation_
 
 The `autoValue` option allows you to specify a function that is called by `simpleSchemaInstance.clean()` to potentially change the value of a property in the object being cleaned. This is a powerful feature that allows you to set up either forced values or default values, potentially based on the values of other fields in the object.
 
@@ -884,10 +908,10 @@ const schema = new SimpleSchema({
     type: Array,
     minCount: 0,
     maxCount: 3,
-  }
+  },
 });
 
-schema.get('friends', 'maxCount'); // 3
+schema.get("friends", "maxCount"); // 3
 ```
 
 ## Validating Data
@@ -917,13 +941,13 @@ It's usually best to use a named validation context. That way, the context is au
 Here is an example of obtaining a named validation context:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   name: String,
 });
 
-const userFormValidationContext = schema.namedContext('userForm');
+const userFormValidationContext = schema.namedContext("userForm");
 ```
 
 The first time you request a context with a certain name, it is created. Calling `namedContext()` passing no arguments is equivalent to calling `namedContext('default')`.
@@ -933,7 +957,7 @@ The first time you request a context with a certain name, it is created. Calling
 To obtain an unnamed validation context, call `newContext()`:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   name: String,
@@ -980,9 +1004,9 @@ This method returns `true` only if all the specified schema keys and their desce
 You can `defineValidationErrorTransform` one time somewhere in your code to customize the error or change it to a more specific type.
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
-SimpleSchema.defineValidationErrorTransform(error => {
+SimpleSchema.defineValidationErrorTransform((error) => {
   const customError = new MyCustomErrorType(error.message);
   customError.errorList = error.details;
   return customError;
@@ -992,11 +1016,11 @@ SimpleSchema.defineValidationErrorTransform(error => {
 For example, in a Meteor app, in order to ensure that the error details are sent back to the client when throwing an error in a server method, you can convert it to a `Meteor.Error`:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
-SimpleSchema.defineValidationErrorTransform(error => {
+SimpleSchema.defineValidationErrorTransform((error) => {
   const ddpError = new Meteor.Error(error.message);
-  ddpError.error = 'validation-error';
+  ddpError.error = "validation-error";
   ddpError.details = error.details;
   return ddpError;
 });
@@ -1024,13 +1048,13 @@ schema.addValidator(myFunction);
 To add a custom validation function that is called for ONE key in ONE schema:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 const schema = new SimpleSchema({
   someKey: {
     type: String,
     custom: myFunction,
-  }
+  },
 });
 ```
 
@@ -1060,13 +1084,11 @@ on the client, refer to the [Asynchronous Custom Validation on the Client](#asyn
 Add a validator for all schemas:
 
 ```js
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
-SimpleSchema.addDocValidator(obj => {
+SimpleSchema.addDocValidator((obj) => {
   // Must return an array, potentially empty, of objects with `name` and `type` string properties and optional `value` property.
-  return [
-    { name: 'firstName', type: 'TOO_SILLY', value: 'Reepicheep' }
-  ];
+  return [{ name: "firstName", type: "TOO_SILLY", value: "Reepicheep" }];
 });
 ```
 
@@ -1115,12 +1137,14 @@ Example:
 SimpleSchema.setDefaultMessages({
   messages: {
     en: {
-      wrongPassword: 'Wrong password',
+      wrongPassword: "Wrong password",
     },
   },
 });
 
-myValidationContext.addValidationErrors([{ name: 'password', type: 'wrongPassword' }]);
+myValidationContext.addValidationErrors([
+  { name: "password", type: "wrongPassword" },
+]);
 ```
 
 ### Asynchronous Custom Validation on the Client
@@ -1178,7 +1202,7 @@ In most cases you probably want to set default messages to be used by all `Simpl
 SimpleSchema.setDefaultMessages({
   messages: {
     en: {
-      "too_long": "Too long!",
+      too_long: "Too long!",
     },
   },
 });
@@ -1191,7 +1215,7 @@ The `MessageBox` instance for a specific schema instance is `simpleSchemaInstanc
 ```js
 simpleSchemaInstance.messageBox.messages({
   en: {
-    "too_long": "Too long!",
+    too_long: "Too long!",
   },
 });
 ```
@@ -1238,20 +1262,23 @@ The `clean` function takes the object to be cleaned as its first argument and th
 You can also set defaults for any of these options in your SimpleSchema constructor options:
 
 ```js
-const schema = new SimpleSchema({
-  name: String
-}, {
-  clean: {
-    trimStrings: false,
+const schema = new SimpleSchema(
+  {
+    name: String,
   },
-});
+  {
+    clean: {
+      trimStrings: false,
+    },
+  }
+);
 ```
 
 NOTE: The Collection2 package always calls `clean` before every insert, update, or upsert.
 
 ## Dates
 
-For consistency, if you care only about the date (year, month, date) portion and not the time, then use a `Date` object set to the desired date at midnight UTC *(note, the clean function won't strip out time)*. This goes for `min` and `max` dates, too. If you care only about the date
+For consistency, if you care only about the date (year, month, date) portion and not the time, then use a `Date` object set to the desired date at midnight UTC _(note, the clean function won't strip out time)_. This goes for `min` and `max` dates, too. If you care only about the date
 portion and you want to specify a minimum date, `min` should be set to midnight UTC on the minimum date (inclusive).
 
 Following these rules ensures maximum interoperability with HTML5 date inputs and usually just makes sense.
@@ -1299,7 +1326,7 @@ value using a custom validation function.
 ```js
 SimpleSchema.messageBox.messages({
   en: {
-    passwordMismatch: 'Passwords do not match',
+    passwordMismatch: "Passwords do not match",
   },
 });
 
@@ -1314,7 +1341,7 @@ MySchema = new SimpleSchema({
     label: "Enter the password again",
     min: 8,
     custom() {
-      if (this.value !== this.field('password').value) {
+      if (this.value !== this.field("password").value) {
         return "passwordMismatch";
       }
     },
@@ -1372,7 +1399,7 @@ developing an app to figure out why certain actions are failing validation.
 You may find at some point that there is something extra you would really like to define within a schema for your package or app. However, if you add unrecognized options to your schema definition, you will get an error. To inform SimpleSchema about your custom option and avoid the error, you need to call `SimpleSchema.extendOptions`. By way of example, here is how the Collection2 package adds the additional schema options it provides:
 
 ```js
-SimpleSchema.extendOptions(['index', 'unique', 'denyInsert', 'denyUpdate']);
+SimpleSchema.extendOptions(["index", "unique", "denyInsert", "denyUpdate"]);
 ```
 
 Obviously you need to ensure that `extendOptions` is called before any SimpleSchema instances are created with those options.

@@ -19,6 +19,22 @@ describe('SimpleSchema', function () {
     expect(schema.newContext().validate({ foo: '' })).toEqual(false);
   });
 
+  it('no regEx errors for empty strings when `skipRegExCheckForEmptyStrings` field option is true', function () {
+    const schema = new SimpleSchema({
+      foo: {
+        type: String,
+        optional: true,
+        regEx: /bar/,
+        skipRegExCheckForEmptyStrings: true,
+      },
+    });
+
+    expect(schema.newContext().validate({ foo: '' })).toBe(true);
+
+    // still fails when not empty string, though
+    expect(schema.newContext().validate({ foo: 'bad' })).toBe(false);
+  });
+
   it('Built-In RegEx and Messages', function () {
     const schema = new SimpleSchema({
       email: {

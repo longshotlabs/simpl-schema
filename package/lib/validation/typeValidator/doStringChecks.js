@@ -17,7 +17,10 @@ export default function doStringChecks(def, keyValue) {
   }
 
   // Does the string match the regular expression?
-  if (def.regEx instanceof RegExp && !def.regEx.test(keyValue)) {
+  if (
+    (def.skipRegExCheckForEmptyStrings !== true || keyValue !== '')
+    && def.regEx instanceof RegExp && !def.regEx.test(keyValue)
+  ) {
     return { type: SimpleSchema.ErrorTypes.FAILED_REGULAR_EXPRESSION, regExp: def.regEx.toString() };
   }
 

@@ -13,40 +13,42 @@ import defaultMessages from './defaultMessages';
 
 // Exported for tests
 export const schemaDefinitionOptions = [
-  'type',
+  'autoValue',
+  'defaultValue',
   'label',
   'optional',
   'required',
-  'autoValue',
-  'defaultValue',
+  'type',
 ];
 
 const oneOfProps = [
-  'type',
-  'min',
-  'max',
-  'minCount',
-  'maxCount',
   'allowedValues',
-  'exclusiveMin',
-  'exclusiveMax',
-  'regEx',
-  'custom',
   'blackbox',
+  'custom',
+  'exclusiveMax',
+  'exclusiveMin',
+  'max',
+  'maxCount',
+  'min',
+  'minCount',
+  'regEx',
+  'skipRegExCheckForEmptyStrings',
   'trim',
+  'type',
 ];
 
 const propsThatCanBeFunction = [
-  'label',
-  'optional',
-  'min',
-  'max',
-  'minCount',
-  'maxCount',
   'allowedValues',
-  'exclusiveMin',
   'exclusiveMax',
+  'exclusiveMin',
+  'label',
+  'max',
+  'maxCount',
+  'min',
+  'minCount',
+  'optional',
   'regEx',
+  'skipRegExCheckForEmptyStrings',
 ];
 
 class SimpleSchema {
