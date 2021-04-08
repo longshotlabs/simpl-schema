@@ -49,6 +49,14 @@ describe('SimpleSchema', function () {
     }).toThrow('"someArray" is Array type but the schema does not include a "someArray.$" definition for the array items');
   });
 
+  it('does not allow prototype pollution', function () {
+    const obj = {};
+    expect(obj.polluted).toBe(undefined);
+    const badObj = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+    SimpleSchema.setDefaultMessages(badObj);
+    expect(obj.polluted).toBe(undefined);
+  });
+
   describe('nesting', function () {
     it('throws an error if a nested schema defines a field that its parent also defines', function () {
       expect(function () {
@@ -626,6 +634,28 @@ describe('SimpleSchema', function () {
 
       expect(mainSchema._schema['items.$'].type.definitions[0].type._schemaKeys).toEqual(['_id']);
     });
+
+    it('can extend array definition only, without array item definition', function () {
+      const schema = new SimpleSchema({
+        myArray: {
+          type: Array,
+        },
+        'myArray.$': {
+          type: String,
+          allowedValues: ['foo', 'bar'],
+        },
+      });
+
+      expect(schema._schema.myArray.type.definitions[0].minCount).toBe(undefined);
+
+      schema.extend({
+        myArray: {
+          minCount: 1,
+        },
+      });
+
+      expect(schema._schema.myArray.type.definitions[0].minCount).toBe(1);
+    });
   });
 
   it('empty required array is valid', function () {
@@ -916,6 +946,62 @@ describe('SimpleSchema', function () {
 
     // Don't mess up other tests
     SimpleSchema._docValidators = [];
+  });
+
+  it('SimpleSchema.constructorOptionDefaults', function () {
+    const initialDefaults = SimpleSchema.constructorOptionDefaults();
+
+    // Default defaults
+    expect(initialDefaults).toEqual({
+      clean: {
+        autoConvert: true,
+        extendAutoValueContext: {},
+        filter: true,
+        getAutoValues: true,
+        removeEmptyStrings: true,
+        removeNullsFromArrays: false,
+        trimStrings: true,
+      },
+      humanizeAutoLabels: true,
+      requiredByDefault: true,
+    });
+
+    // Verify they are actually used
+    const schema = new SimpleSchema();
+    expect(schema._constructorOptions.humanizeAutoLabels).toBe(true);
+    expect(schema._cleanOptions.filter).toBe(true);
+
+    // Change some
+    SimpleSchema.constructorOptionDefaults({
+      humanizeAutoLabels: false,
+      clean: {
+        filter: false,
+      },
+    });
+
+    // Verify they are changed
+    const newDefaults = SimpleSchema.constructorOptionDefaults();
+    expect(newDefaults).toEqual({
+      clean: {
+        autoConvert: true,
+        extendAutoValueContext: {},
+        filter: false,
+        getAutoValues: true,
+        removeEmptyStrings: true,
+        removeNullsFromArrays: false,
+        trimStrings: true,
+      },
+      humanizeAutoLabels: false,
+      requiredByDefault: true,
+    });
+
+    // Verify they are actually used
+    const otherSchema = new SimpleSchema();
+    expect(otherSchema._constructorOptions.humanizeAutoLabels).toBe(false);
+    expect(otherSchema._cleanOptions.filter).toBe(false);
+
+    // Don't mess up other tests
+    SimpleSchema.constructorOptionDefaults(initialDefaults);
   });
 
   it('addDocValidator', function () {

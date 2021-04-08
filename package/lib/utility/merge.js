@@ -11,6 +11,7 @@
 export default function merge(destination, ...sources) {
   sources.forEach((source) => {
     Object.keys(source).forEach((prop) => {
+      if (prop === '__proto__') return; // protect against prototype pollution
       if (
         source[prop]
         && source[prop].constructor

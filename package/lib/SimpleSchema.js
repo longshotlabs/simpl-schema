@@ -50,22 +50,18 @@ const propsThatCanBeFunction = [
 ];
 
 class SimpleSchema {
-  constructor(schema = {}, {
-    check,
-    clean: cleanOptions,
-    defaultLabel,
-    humanizeAutoLabels = true,
-    requiredByDefault = true,
-    tracker,
-    keepRawDefinition = false,
-  } = {}) {
+  constructor(schema = {}, options = {}) {
     // Stash the options object
     this._constructorOptions = {
-      check,
-      defaultLabel,
-      humanizeAutoLabels,
-      requiredByDefault,
-      tracker,
+      ...SimpleSchema._constructorOptionDefaults,
+      ...options,
+    };
+    delete this._constructorOptions.clean; // stored separately below
+
+    // Schema-level defaults for cleaning
+    this._cleanOptions = {
+      ...SimpleSchema._constructorOptionDefaults.clean,
+      ...(options.clean || {}),
     };
 
     // Custom validators for this instance
@@ -75,25 +71,13 @@ class SimpleSchema {
     // Named validation contexts
     this._validationContexts = {};
 
-    // Schema-level defaults for cleaning
-    this._cleanOptions = {
-      filter: true,
-      autoConvert: true,
-      removeEmptyStrings: true,
-      trimStrings: true,
-      getAutoValues: true,
-      removeNullsFromArrays: false,
-      extendAutoValueContext: {},
-      ...cleanOptions,
-    };
-
     // Clone, expanding shorthand, and store the schema object in this._schema
     this._schema = {};
     this._depsLabels = {};
     this.extend(schema);
 
     // Clone raw definition and save if keepRawDefinition is active
-    this._rawDefinition = keepRawDefinition ? schema : null;
+    this._rawDefinition = this._constructorOptions.keepRawDefinition ? schema : null;
 
     // Define default validation error messages
     this.messageBox = new MessageBox(clone(defaultMessages));
@@ -155,6 +139,42 @@ class SimpleSchema {
       // didn't have tracker option set
       simpleSchema.reactiveLabelDependency(subSchemaKey, tracker);
     });
+  }
+
+  /**
+   * @param {String} key One specific or generic key for which to get the schema.
+   * @returns {[SimpleSchema, String]} Returns a 2-tuple.
+   *
+   *   First item: The SimpleSchema instance that actually defines the given key.
+   *
+   *   For example, if you have several nested objects, each their own SimpleSchema
+   *   instance, and you pass in 'outerObj.innerObj.innerestObj.name' as the key, you'll
+   *   get back the SimpleSchema instance for `outerObj.innerObj.innerestObj` key.
+   *
+   *   But if you pass in 'outerObj.innerObj.innerestObj.name' as the key and that key is
+   *   defined in the main schema without use of subschemas, then you'll get back the main schema.
+   *
+   *   Second item: The part of the key that is in the found schema.
+   *
+   *   Always returns a tuple (array) but the values may be `null`.
+   */
+  nearestSimpleSchemaInstance(key) {
+    if (!key) return [null, null];
+
+    const genericKey = MongoObject.makeKeyGeneric(key);
+    if (this._schema[genericKey]) return [this, genericKey];
+
+    // If not defined in this schema, see if it's defined in a subschema
+    let innerKey;
+    let nearestSimpleSchemaInstance;
+    this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+      if (!nearestSimpleSchemaInstance && simpleSchema._schema[subSchemaKey]) {
+        nearestSimpleSchemaInstance = simpleSchema;
+        innerKey = subSchemaKey;
+      }
+    });
+
+    return innerKey ? [nearestSimpleSchemaInstance, innerKey] : [null, null];
   }
 
   /**
@@ -478,8 +498,11 @@ class SimpleSchema {
       schemaObj = expandShorthand(schema);
     }
 
+    const schemaKeys = Object.keys(schemaObj);
+    const combinedKeys = new Set([...Object.keys(this._schema), ...schemaKeys]);
+
     // Update all of the information cached on the instance
-    Object.keys(schemaObj).forEach((fieldName) => {
+    schemaKeys.forEach((fieldName) => {
       const definition = standardizeDefinition(schemaObj[fieldName]);
 
       // Merge/extend with any existing definition
@@ -501,7 +524,7 @@ class SimpleSchema {
         this._schema[fieldName] = definition;
       }
 
-      checkAndScrubDefinition(fieldName, this._schema[fieldName], this._constructorOptions, schemaObj);
+      checkAndScrubDefinition(fieldName, this._schema[fieldName], this._constructorOptions, combinedKeys);
     });
 
     checkSchemaOverlap(this._schema);
@@ -597,7 +620,7 @@ class SimpleSchema {
   namedContext(name) {
     if (typeof name !== 'string') name = 'default';
     if (!this._validationContexts[name]) {
-      this._validationContexts[name] = new ValidationContext(this);
+      this._validationContexts[name] = new ValidationContext(this, name);
     }
     return this._validationContexts[name];
   }
@@ -713,10 +736,12 @@ class SimpleSchema {
     Object.keys(labels).forEach((key) => {
       const label = labels[key];
       if (typeof label !== 'string' && typeof label !== 'function') return;
-      if (!Object.prototype.hasOwnProperty.call(this._schema, key)) return;
 
-      this._schema[key].label = label;
-      this._depsLabels[key] && this._depsLabels[key].changed();
+      const [schemaInstance, innerKey] = this.nearestSimpleSchemaInstance(key);
+      if (!schemaInstance) return;
+
+      schemaInstance._schema[innerKey].label = label;
+      schemaInstance._depsLabels[innerKey] && schemaInstance._depsLabels[innerKey].changed();
     });
   }
 
@@ -845,6 +870,37 @@ class SimpleSchema {
     SimpleSchema._docValidators.push(func);
   }
 
+  // Global constructor options
+  static _constructorOptionDefaults = {
+    clean: {
+      autoConvert: true,
+      extendAutoValueContext: {},
+      filter: true,
+      getAutoValues: true,
+      removeEmptyStrings: true,
+      removeNullsFromArrays: false,
+      trimStrings: true,
+    },
+    humanizeAutoLabels: true,
+    requiredByDefault: true,
+  };
+
+  /**
+   * @summary Get/set default values for SimpleSchema constructor options
+   */
+  static constructorOptionDefaults(options) {
+    if (!options) return SimpleSchema._constructorOptionDefaults;
+
+    SimpleSchema._constructorOptionDefaults = {
+      ...SimpleSchema._constructorOptionDefaults,
+      ...options,
+      clean: {
+        ...SimpleSchema._constructorOptionDefaults.clean,
+        ...(options.clean || {}),
+      },
+    };
+  }
+
   static ErrorTypes = {
     REQUIRED: 'required',
     MIN_STRING: 'minString',
@@ -962,8 +1018,16 @@ function standardizeDefinition(def) {
   return standardizedDef;
 }
 
-// Checks and mutates definition. Clone it first.
-function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) {
+/**
+ * @summary Checks and mutates definition. Clone it first.
+ *   Throws errors if any problems are found.
+ * @param {String} fieldName Name of field / key
+ * @param {Object} definition Field definition
+ * @param {Object} options Options
+ * @param {Set} allKeys Set of all field names / keys in entire schema
+ * @return {undefined} Void
+ */
+function checkAndScrubDefinition(fieldName, definition, options, allKeys) {
   if (!definition.type) throw new Error(`${fieldName} key is missing "type"`);
 
   // Validate the field definition
@@ -991,7 +1055,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
     if (SimpleSchema.isSimpleSchema(type)) {
       Object.keys(type._schema).forEach((subKey) => {
         const newKey = `${fieldName}.${subKey}`;
-        if (Object.prototype.hasOwnProperty.call(fullSchemaObj, newKey)) {
+        if (allKeys.has(newKey)) {
           throw new Error(`The type for "${fieldName}" is set to a SimpleSchema instance that defines "${newKey}", but the parent SimpleSchema instance also tries to define "${newKey}"`);
         }
       });
@@ -1000,7 +1064,7 @@ function checkAndScrubDefinition(fieldName, definition, options, fullSchemaObj) 
 
   // If at least one of the possible types is Array, then make sure we have a
   // definition for the array items, too.
-  if (couldBeArray && !Object.prototype.hasOwnProperty.call(fullSchemaObj, `${fieldName}.$`)) {
+  if (couldBeArray && !allKeys.has(`${fieldName}.$`)) {
     throw new Error(`"${fieldName}" is Array type but the schema does not include a "${fieldName}.$" definition for the array items"`);
   }
 

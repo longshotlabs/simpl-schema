@@ -1,6 +1,6 @@
 # SimpleSchema (simpl-schema NPM package)
 
-[![Backers on Open Collective](https://opencollective.com/simple-schema-js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/simple-schema-js/sponsors/badge.svg)](#sponsors) [![Lint, Test, and (Maybe) Publish](https://github.com/aldeed/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push)](https://github.com/aldeed/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
+[![Lint, Test, and (Maybe) Publish](https://github.com/aldeed/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push)](https://github.com/aldeed/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
 
 SimpleSchema validates JavaScript objects to ensure they match a schema. It can also clean the objects to automatically convert types, remove unsupported properties, and add automatic values such that the object is then more likely to pass validation.
 
@@ -31,7 +31,8 @@ There are also reasons not to choose this package. Because of all it does, this 
   - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
   - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
   - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
-  - [Set Default Cleaning Options](#set-default-cleaning-options)
+  - [Set Default Options for One Schema](#set-default-options-for-one-schema)
+  - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
   - [Explicitly Clean an Object](#explicitly-clean-an-object)
 - [Defining a Schema](#defining-a-schema)
   - [Shorthand Definitions](#shorthand-definitions)
@@ -91,7 +92,6 @@ There are also reasons not to choose this package. Because of all it does, this 
 - [Extending the Schema Options](#extending-the-schema-options)
 - [Add On Packages](#add-on-packages)
 - [Contributors](#contributors)
-- [Backers](#backers)
 - [Sponsors](#sponsors)
 - [License](#license)
 - [Contributing](#contributing)
@@ -250,7 +250,7 @@ Passing in `Tracker` causes the following functions to become reactive:
 
 TO DO
 
-### Set Default Cleaning Options
+### Set Default Options for One Schema
 
 ```js
 import SimpleSchema from 'simpl-schema';
@@ -259,15 +259,43 @@ const mySchema = new SimpleSchema({
   name: String,
 }, {
   clean: {
-    filter: true,
     autoConvert: true,
-    removeEmptyStrings: true,
-    trimStrings: true,
+    extendAutoValueContext: {},
+    filter: false,
     getAutoValues: true,
-    removeNullsFromArrays: true,
+    removeEmptyStrings: true,
+    removeNullsFromArrays: false,
+    trimStrings: true,
   },
+  humanizeAutoLabels: false,
+  requiredByDefault: true,
 });
 ```
+
+These options will be used every time you clean or validate with this particular SimpleSchema instance.
+
+### Set Default Options for All Schemas
+
+```js
+import SimpleSchema from 'simpl-schema';
+
+SimpleSchema.constructorOptionDefaults({
+  clean: {
+    filter: false,
+  },
+  humanizeAutoLabels: false,
+});
+
+// If you don't pass in any options, it will return the current defaults.
+console.log(SimpleSchema.constructorOptionDefaults());
+```
+
+These options will be used every time you clean or validate with any SimpleSchema instance, but can be overridden by options passed in to the constructor for a single instance.
+
+Important notes:
+
+- You must call `SimpleSchema.constructorOptionDefaults` before any of your schemas are created, so put it in an entry-point file and/or at the top of your code file.
+- In a large, complex project where SimpleSchema instances might be created by various JavaScript packages, there may be multiple `SimpleSchema` objects. In other words, the `import SimpleSchema` line in one package might be pulling in the `SimpleSchema` object from one package while that line in another package pulls in a completely different `SimpleSchema` object. It will be difficult to know that this is happening unless you notice that your defaults are not being used by some of your schemas. To solve this, you can call `SimpleSchema.constructorOptionDefaults` multiple times or adjust your package dependencies to ensure that only one version of `simpl-schema` is pulled into your project.
 
 ### Explicitly Clean an Object
 
@@ -825,7 +853,7 @@ Any other return value will be used as the field's value. You may also return sp
 
 #### autoValue gotchas
 
-- If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to [issue #204](https://github.com/aldeed/simple-schema-js/issues/204).
+- If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to [issue #204](https://github.com/aldeed/simpl-schema/issues/204).
 - An `autoValue` function will always run during cleaning even if that field is not in the object being cleaned. This allows you to provide complex default values. If your function applies only when there is a value, you should add `if (!this.isSet) return;` at the top.
 
 ### Function Properties
@@ -1156,7 +1184,7 @@ SimpleSchema.setDefaultMessages({
 });
 ```
 
-The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/simple-schema-js/blob/master/package/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
+The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/simpl-schema/blob/main/package/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
 
 The `MessageBox` instance for a specific schema instance is `simpleSchemaInstance.messageBox`. You can call `messages` function on this to update the messages for that schema only. Example:
 
@@ -1178,6 +1206,8 @@ key if it is invalid. If it is valid, this method returns an empty string. This
 is a reactive method.
 
 Call `myContext.reset()` if you need to reset the validation context, clearing out any invalid field messages and making it valid.
+
+`myContext.name` is set to the context name, if it is a named context. Create named contexts by calling `schema.namedContext(name)` or `new ValidationContext(schema, name)`.
 
 ## Other SimpleSchema Methods
 
@@ -1358,26 +1388,9 @@ Obviously you need to ensure that `extendOptions` is called before any SimpleSch
 This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
 <a href="graphs/contributors"><img src="https://opencollective.com/simple-schema-js/contributors.svg?width=890" /></a>
 
-## Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/simple-schema-js#backer)]
-
-<a href="https://opencollective.com/simple-schema-js#backers" target="_blank"><img src="https://opencollective.com/simple-schema-js/backers.svg?width=890"></a>
-
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/simple-schema-js#sponsor)]
-
-<a href="https://opencollective.com/simple-schema-js/sponsor/0/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/1/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/2/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/3/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/4/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/5/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/6/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/7/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/8/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/simple-schema-js/sponsor/9/website" target="_blank"><img src="https://opencollective.com/simple-schema-js/sponsor/9/avatar.svg"></a>
+You can support this project by [becoming a sponsor](https://github.com/sponsors/aldeed).
 
 ## License
 
