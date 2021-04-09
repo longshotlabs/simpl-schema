@@ -503,7 +503,6 @@ describe('SimpleSchema', function () {
         'obj.inner': Number,
       });
 
-
       const combinedSchema = new SimpleSchema({
         item: Array,
         'item.$': SimpleSchema.oneOf(schemaOne, schemaTwo),
