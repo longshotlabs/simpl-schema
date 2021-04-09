@@ -487,7 +487,7 @@ describe('SimpleSchema', function () {
       expect(isValid).toBe(false);
     });
 
-    it.only('allows either type including schemas (array nested differing types - modifier)', function () {
+    it('allows either type including schemas (array nested differing types - modifier)', function () {
       // this test case is to ensure we correctly use a new "root" schema for nested objects
       const schemaTwo = new SimpleSchema({
         itemRef: String,
