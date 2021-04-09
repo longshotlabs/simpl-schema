@@ -498,7 +498,6 @@ describe('SimpleSchema', function () {
     });
   });
 
-
   describe('extend', function () {
     it('works for plain object', function () {
       const schema = new SimpleSchema({
@@ -1142,6 +1141,52 @@ describe('SimpleSchema', function () {
     }).toNotThrow();
 
     expect(foo instanceof SimpleSchema).toBe(true);
+  });
+
+  it('issue #390 - Should get null rawDefinition if keepRawDefiniton is false', function () {
+    const foo = new SimpleSchema({
+      foo: String,
+    });
+    expect(foo instanceof SimpleSchema).toBe(true);
+    expect(foo.rawDefinition).toEqual(null);
+  });
+
+  it('issue #390 - Should get rawDefinition if keepRawDefiniton is true', function () {
+    const foo = new SimpleSchema({
+      foo: String,
+    }, { keepRawDefinition: true });
+    expect(foo instanceof SimpleSchema).toBe(true);
+    expect(foo.rawDefinition).toEqual({ foo: String });
+  });
+
+  it('$currentDate Date validation', function () {
+    const schema = new SimpleSchema({
+      date: Date,
+    });
+    const context = schema.namedContext();
+
+    let testModifer = {
+      $currentDate: {
+        date: true,
+      },
+    };
+    expect(context.validate(testModifer, { modifier: true })).toBe(true);
+
+    testModifer = {
+      $currentDate: {
+        date: { $type: 'date' },
+      },
+    };
+    context.validate(testModifer, { modifier: true });
+    expect(context.validate(testModifer, { modifier: true })).toBe(true);
+
+    // timestamp fails because it would save a MongoDB.Timestamp value into a Date field
+    testModifer = {
+      $currentDate: {
+        date: { $type: 'timestamp' },
+      },
+    };
+    expect(context.validate(testModifer, { modifier: true })).toBe(false);
   });
 
   describe('SimpleSchema.Any', function () {

@@ -1,7 +1,6 @@
 import { SimpleSchema } from '../SimpleSchema';
 import { getKeysWithValueInObj } from '../utility';
 
-
 // Check for missing required values. The general logic is this:
 // * If the operator is $unset or $rename, it's invalid.
 // * If the value is null, it's invalid.

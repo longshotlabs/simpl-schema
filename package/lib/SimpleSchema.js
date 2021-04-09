@@ -13,40 +13,42 @@ import defaultMessages from './defaultMessages';
 
 // Exported for tests
 export const schemaDefinitionOptions = [
-  'type',
+  'autoValue',
+  'defaultValue',
   'label',
   'optional',
   'required',
-  'autoValue',
-  'defaultValue',
+  'type',
 ];
 
 const oneOfProps = [
-  'type',
-  'min',
-  'max',
-  'minCount',
-  'maxCount',
   'allowedValues',
-  'exclusiveMin',
-  'exclusiveMax',
-  'regEx',
-  'custom',
   'blackbox',
+  'custom',
+  'exclusiveMax',
+  'exclusiveMin',
+  'max',
+  'maxCount',
+  'min',
+  'minCount',
+  'regEx',
+  'skipRegExCheckForEmptyStrings',
   'trim',
+  'type',
 ];
 
 const propsThatCanBeFunction = [
-  'label',
-  'optional',
-  'min',
-  'max',
-  'minCount',
-  'maxCount',
   'allowedValues',
-  'exclusiveMin',
   'exclusiveMax',
+  'exclusiveMin',
+  'label',
+  'max',
+  'maxCount',
+  'min',
+  'minCount',
+  'optional',
   'regEx',
+  'skipRegExCheckForEmptyStrings',
 ];
 
 class SimpleSchema {
@@ -76,10 +78,20 @@ class SimpleSchema {
     this._depsLabels = {};
     this.extend(schema);
 
+    // Clone raw definition and save if keepRawDefinition is active
+    this._rawDefinition = this._constructorOptions.keepRawDefinition ? schema : null;
+
     // Define default validation error messages
     this.messageBox = new MessageBox(clone(defaultMessages));
 
     this.version = SimpleSchema.version;
+  }
+
+  /**
+  /* @returns {Object} The entire raw schema definition passed in the constructor
+  */
+  get rawDefinition() {
+    return this._rawDefinition;
   }
 
   forEachAncestorSimpleSchema(key, func) {

@@ -45,7 +45,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.repository_owner == 'aldeed' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' && github.repository_owner == 'longshotlabs' && github.ref == 'refs/heads/main' }}
     needs: [lint, test]
     defaults:
       run:
