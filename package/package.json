@@ -33,7 +33,7 @@
   "dependencies": {
     "clone": "^2.1.2",
     "message-box": "^0.2.7",
-    "mongo-object": "^0.1.4"
+    "mongo-object": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",

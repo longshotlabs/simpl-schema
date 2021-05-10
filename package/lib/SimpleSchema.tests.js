@@ -1330,4 +1330,34 @@ describe('SimpleSchema', function () {
       });
     });
   });
+  describe('support mongodb array update operator $[]', function () {
+    it('simple positional modify all operator $[]', function() {
+      const schema = new SimpleSchema({ someArray: Array, "someArray.$": String });
+      expectValid(
+        schema,
+        { $set: { 'someArray.$[]': "a" } },
+        { modifier: true },
+      );
+    });
+    it('simple positional modifier with arrayFilter identifier', function() {
+      const schema = new SimpleSchema({ someArray: Array, "someArray.$": String });
+      expectValid(
+        schema,
+        { $set: { 'someArray.$[identifier]': "a" } },
+        { modifier: true },
+      );
+    });
+    it('nested update with positional modifier with arrayFilter identifier', function() {
+      const schema = new SimpleSchema({ 
+        someArray: Array,
+        "someArray.$": Object,
+        "someArray.$.someValue": Number
+      });
+      expectValid(
+        schema,
+        { $inc: { 'someArray.$[identifier].someValue': 1 } },
+        { modifier: true },
+      );
+    });
+  })
 });
