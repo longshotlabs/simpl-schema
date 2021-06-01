@@ -7,13 +7,13 @@
     "test:watch:browser": "TEST_SERVER=0 TEST_WATCH=1 meteor test --driver-package meteortesting:mocha"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.2.5",
-    "@babel/runtime": "^7.3.1",
-    "meteor-node-stubs": "^0.4.1",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/runtime": "^7.14.0",
+    "meteor-node-stubs": "^1.0.3",
     "simpl-schema": "../../package"
   },
   "devDependencies": {
-    "expect": "24.0.0",
-    "nightmare": "3.0.1"
+    "expect": "27.0.2",
+    "nightmare": "3.0.2"
   }
 }
