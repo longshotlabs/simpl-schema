@@ -17,10 +17,20 @@ export default class ValidationContext {
     this._deps = {};
     const { tracker } = ss._constructorOptions;
     if (tracker) {
-      this._depsAny = new tracker.Dependency();
-      this._schemaKeys.forEach((key) => {
-        this._deps[key] = new tracker.Dependency();
-      });
+      const addDeps = (schema, keys = []) => {
+        Object.keys(schema).forEach(key => {
+          const schemaElement = schema[key];
+          schemaElement.type.definitions && schemaElement.type.definitions.forEach(def => {
+            if (typeof def.type === 'object') {
+              addDeps(def.type._schema, keys.concat(key));
+            } else {
+              const fullKey = keys.concat(key).join('.');
+              this._deps[fullKey] = new tracker.Dependency();
+            }
+          });
+        });
+      };
+      addDeps(this._schema);
     }
   }
 
