@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: "16"
           cache: "npm"
+          cache-dependency-path: package/package-lock.json
       - name: Update to latest NPM version
         run: npm i -g npm
       - name: Install package dependencies
@@ -40,6 +41,7 @@ jobs:
         with:
           node-version: "16"
           cache: "npm"
+          cache-dependency-path: package/package-lock.json
       - name: Update to latest NPM version
         run: npm i -g npm
       - name: Install package dependencies
@@ -62,6 +64,7 @@ jobs:
         with:
           node-version: "16"
           cache: "npm"
+          cache-dependency-path: package/package-lock.json
       - name: Update to latest NPM version
         run: npm i -g npm
       - name: Install package dependencies
