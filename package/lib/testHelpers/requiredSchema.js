@@ -19,7 +19,14 @@ const requiredSchema = new SimpleSchema({
   },
   requiredUrl: {
     type: String,
-    regEx: SimpleSchema.RegEx.Url,
+    custom() {
+      if (!this.isSet) return;
+      try {
+        new URL(this.value); // eslint-disable-line
+      } catch (err) {
+        return 'badUrl';
+      }
+    },
   },
   requiredObject: {
     type: Object,

@@ -146,7 +146,7 @@ function clean(ss, doc, options = {}) {
           // But only if we're not already within an entire object that is being set.
           if (
             this.operator === '$set'
-            && this.position.match(/\[.+?\]/g).length < 2
+            && this.position.match(/\[/g).length < 2
           ) {
             p = this.position.replace('$set', '$unset');
             mongoObject.setValueForPosition(p, '');

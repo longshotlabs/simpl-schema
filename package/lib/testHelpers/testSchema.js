@@ -181,8 +181,15 @@ const testSchema = new SimpleSchema({
   },
   url: {
     type: String,
-    regEx: SimpleSchema.RegEx.Url,
     optional: true,
+    custom() {
+      if (!this.isSet) return;
+      try {
+        new URL(this.value); // eslint-disable-line
+      } catch (err) {
+        return 'badUrl';
+      }
+    },
   },
   customObject: {
     type: Address,
@@ -219,7 +226,7 @@ const testSchema = new SimpleSchema({
 testSchema.messageBox.messages({
   minCount: 'blah',
   'regEx email': '[label] is not a valid email address',
-  'regEx url': '[label] is not a valid URL',
+  'badUrl url': '[label] is not a valid URL',
 });
 
 export default testSchema;
