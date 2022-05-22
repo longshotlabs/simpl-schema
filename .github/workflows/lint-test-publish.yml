@@ -14,16 +14,18 @@ jobs:
         shell: bash
         working-directory: package
     steps:
-    - name: Check out files
-      uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - name: Install package dependencies
-      run: npm ci
-    - name: Lint code
-      run: npm run lint --if-present
+      - name: Check out files
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "npm"
+      - name: Update to latest NPM version
+        run: npm i -g npm
+      - name: Install package dependencies
+        run: npm ci
+      - name: Lint code
+        run: npm run lint --if-present
 
   test:
     runs-on: ubuntu-latest
@@ -32,16 +34,18 @@ jobs:
         shell: bash
         working-directory: package
     steps:
-    - name: Check out files
-      uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - name: Install package dependencies
-      run: npm ci
-    - name: Test code
-      run: npm run test --if-present
+      - name: Check out files
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "npm"
+      - name: Update to latest NPM version
+        run: npm i -g npm
+      - name: Install package dependencies
+        run: npm ci
+      - name: Test code
+        run: npm run test --if-present
 
   publish:
     runs-on: ubuntu-latest
@@ -53,11 +57,13 @@ jobs:
         working-directory: package
     steps:
       - name: Check out files
-        uses: actions/checkout@v2
-      - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 12.x
+          node-version: "16"
+          cache: "npm"
+      - name: Update to latest NPM version
+        run: npm i -g npm
       - name: Install package dependencies
         run: npm ci
       - name: Semantic Release
