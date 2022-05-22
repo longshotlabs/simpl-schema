@@ -38,17 +38,18 @@
   "devDependencies": {
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.0",
+    "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-proposal-class-properties": "^7.17.12",
     "@babel/plugin-proposal-object-rest-spread": "^7.18.0",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.18.0",
     "@babel/register": "^7.17.7",
     "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
     "babel-plugin-add-module-exports": "^1.0.4",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint": "^8.16.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-redos": "^4.4.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0",
     "expect": "^1.20.1",
     "mocha": "^7.1.1",
@@ -78,7 +79,10 @@
       "airbnb-base",
       "plugin:you-dont-need-lodash-underscore/compatible"
     ],
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
+    "plugins": [
+      "redos"
+    ],
     "env": {
       "es6": true,
       "mocha": true,
@@ -102,6 +106,7 @@
       ],
       "no-unused-expressions": 0,
       "no-console": 0,
+      "redos/no-vulnerable": "error",
       "space-before-function-paren": 0
     }
   },
