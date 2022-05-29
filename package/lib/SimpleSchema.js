@@ -1092,8 +1092,11 @@ function checkAndScrubDefinition(fieldName, definition, options, allKeys) {
   } else if (!Object.prototype.hasOwnProperty.call(definition, 'optional')) {
     if (Object.prototype.hasOwnProperty.call(definition, 'required')) {
       if (typeof definition.required === 'function') {
+        // Save a reference to the `required` fn because
+        // we are going to delete it from `definition` below
+        const requiredFn = definition.required;
         definition.optional = function optional(...args) {
-          return !definition.required.apply(this, args);
+          return !requiredFn.apply(this, args);
         };
       } else {
         definition.optional = !definition.required;

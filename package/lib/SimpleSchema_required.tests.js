@@ -138,16 +138,25 @@ describe('SimpleSchema - required', function () {
     });
   });
 
-  it('requiredByDefault false', function () {
-    const schema = new SimpleSchema({ foo: String }, { requiredByDefault: false });
-    expectRequiredErrorLength(schema, {}).toBe(0);
-  });
+  describe('requiredByDefault', function () {
+    it('requiredByDefault=false', function () {
+      const schema = new SimpleSchema({ foo: String }, { requiredByDefault: false });
+      expectRequiredErrorLength(schema, {}).toBe(0);
+    });
 
-  it('required option', function () {
-    const schema = new SimpleSchema({
-      foo: { type: String, required: true },
-    }, { requiredByDefault: false });
-    expectRequiredErrorLength(schema, {}).toBe(1);
+    it('requiredByDefault=false + required=true', function () {
+      const schema = new SimpleSchema({
+        foo: { type: String, required: true },
+      }, { requiredByDefault: false });
+      expectRequiredErrorLength(schema, {}).toBe(1);
+    });
+
+    it('requiredByDefault=false + required()=true', function () {
+      const schema = new SimpleSchema({
+        foo: { type: String, required: () => true },
+      }, { requiredByDefault: false });
+      expectRequiredErrorLength(schema, {}).toBe(1);
+    });
   });
 
   describe('modifier with $set', function () {
