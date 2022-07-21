@@ -655,6 +655,48 @@ describe('SimpleSchema', function () {
 
       expect(schema._schema.myArray.type.definitions[0].minCount).toBe(1);
     });
+
+    it('tests requiredness on fields added through extension', function () {
+      const subitemSchema = new SimpleSchema({
+        name: String,
+      });
+
+      const itemSchema = new SimpleSchema({
+        name: String,
+        subitems: {
+          type: Array,
+          optional: true,
+        },
+        'subitems.$': {
+          type: subitemSchema,
+        },
+      });
+
+      const schema = new SimpleSchema({
+        name: String,
+        items: {
+          type: Array,
+          optional: true,
+        },
+        'items.$': {
+          type: itemSchema,
+        },
+      });
+
+      subitemSchema.extend({
+        other: String,
+      });
+
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.REQUIRED, schema, {
+        name: 'foo',
+        items: [{
+          name: 'foo',
+          subitems: [{
+            name: 'foo',
+          }],
+        }],
+      }).toBe(1);
+    });
   });
 
   it('empty required array is valid', function () {
@@ -1026,41 +1068,61 @@ describe('SimpleSchema', function () {
     expect(context.validationErrors()).toEqual(errorArray);
   });
 
-  it('sets _objectKeys', function () {
-    const schema = new SimpleSchema({
-      a: Object,
-      'a.b': Object,
-      'a.b.c': Array,
-      'a.b.c.$': Object,
-      'a.b.c.$.d': Object,
-      'a.b.c.$.d.e': String,
+  describe('objectKeys', function () {
+    it('gets objectKeys', function () {
+      const schema = new SimpleSchema({
+        a: Object,
+        'a.b': Object,
+        'a.b.c': Array,
+        'a.b.c.$': Object,
+        'a.b.c.$.d': Object,
+        'a.b.c.$.d.e': String,
+      });
+
+      expect(schema.objectKeys()).toEqual(['a']);
+      expect(schema.objectKeys('a')).toEqual(['b']);
+      expect(schema.objectKeys('a.b')).toEqual(['c']);
+      expect(schema.objectKeys('a.b.c')).toEqual([]);
+      expect(schema.objectKeys('a.b.c.$')).toEqual(['d']);
+      expect(schema.objectKeys('a.b.c.$.d')).toEqual(['e']);
     });
 
-    expect(schema._objectKeys).toEqual({
-      'a.': ['b'],
-      'a.b.': ['c'],
-      'a.b.c.$.': ['d'],
-      'a.b.c.$.d.': ['e'],
-    });
-  });
+    it('gets subschema objectKeys', function () {
+      const schema = new SimpleSchema({
+        a: {
+          type: new SimpleSchema({
+            b: {
+              type: new SimpleSchema({
+                c: {
+                  type: String,
+                },
+              }),
+            },
+          }),
+        },
+      });
 
-  it('gets subschema objectKeys', function () {
-    const schema = new SimpleSchema({
-      a: {
-        type: new SimpleSchema({
-          b: {
-            type: new SimpleSchema({
-              c: {
-                type: String,
-              },
-            }),
-          },
-        }),
-      },
+      expect(schema.objectKeys('a')).toEqual(['b']);
+      expect(schema.objectKeys('a.b')).toEqual(['c']);
     });
 
-    expect(schema.objectKeys('a')).toEqual(['b']);
-    expect(schema.objectKeys('a.b')).toEqual(['c']);
+    it('gets correct objectKeys from extended subschemas', function () {
+      const itemSchema = new SimpleSchema({
+        name: String,
+      });
+
+      const schema = new SimpleSchema({
+        name: String,
+        item: itemSchema,
+      });
+
+      itemSchema.extend({
+        other: String,
+      });
+
+      expect(schema.objectKeys()).toEqual(['name', 'item']);
+      expect(schema.objectKeys('item')).toEqual(['name', 'other']);
+    });
   });
 
   it('gets schema property by key', function () {

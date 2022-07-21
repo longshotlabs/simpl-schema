@@ -453,7 +453,32 @@ class SimpleSchema {
    */
   objectKeys(keyPrefix) {
     if (!keyPrefix) return this._firstLevelSchemaKeys;
-    return this._objectKeys[`${keyPrefix}.`] || [];
+
+    const objectKeys = [];
+    const setObjectKeys = (curSchema, schemaParentKey) => {
+      Object.keys(curSchema).forEach((fieldName) => {
+        const definition = curSchema[fieldName];
+        fieldName = schemaParentKey ? `${schemaParentKey}.${fieldName}` : fieldName;
+        if (fieldName.indexOf('.') > -1 && fieldName.slice(-2) !== '.$') {
+          const parentKey = fieldName.slice(0, fieldName.lastIndexOf('.'));
+          const parentKeyWithDot = `${parentKey}.`;
+          objectKeys[parentKeyWithDot] = objectKeys[parentKeyWithDot] || [];
+          objectKeys[parentKeyWithDot].push(fieldName.slice(fieldName.lastIndexOf('.') + 1));
+        }
+
+        // If the current field is a nested SimpleSchema,
+        // iterate over the child fields and cache their properties as well
+        definition.type.definitions.forEach(({ type }) => {
+          if (SimpleSchema.isSimpleSchema(type)) {
+            setObjectKeys(type._schema, fieldName);
+          }
+        });
+      });
+    };
+
+    setObjectKeys(this._schema);
+
+    return objectKeys[`${keyPrefix}.`] || [];
   }
 
   /**
@@ -536,7 +561,6 @@ class SimpleSchema {
     this._autoValues = [];
     this._blackboxKeys = new Set();
     this._firstLevelSchemaKeys = [];
-    this._objectKeys = {};
 
     // Update all of the information cached on the instance
     this._schemaKeys.forEach((fieldName) => {
@@ -572,31 +596,6 @@ class SimpleSchema {
         });
       }
     });
-
-    // Store child keys keyed by parent. This needs to be done recursively to handle
-    // subschemas.
-    const setObjectKeys = (curSchema, schemaParentKey) => {
-      Object.keys(curSchema).forEach((fieldName) => {
-        const definition = curSchema[fieldName];
-        fieldName = schemaParentKey ? `${schemaParentKey}.${fieldName}` : fieldName;
-        if (fieldName.indexOf('.') > -1 && fieldName.slice(-2) !== '.$') {
-          const parentKey = fieldName.slice(0, fieldName.lastIndexOf('.'));
-          const parentKeyWithDot = `${parentKey}.`;
-          this._objectKeys[parentKeyWithDot] = this._objectKeys[parentKeyWithDot] || [];
-          this._objectKeys[parentKeyWithDot].push(fieldName.slice(fieldName.lastIndexOf('.') + 1));
-        }
-
-        // If the current field is a nested SimpleSchema,
-        // iterate over the child fields and cache their properties as well
-        definition.type.definitions.forEach(({ type }) => {
-          if (SimpleSchema.isSimpleSchema(type)) {
-            setObjectKeys(type._schema, fieldName);
-          }
-        });
-      });
-    };
-
-    setObjectKeys(this._schema);
 
     return this;
   }
