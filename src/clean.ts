@@ -1,23 +1,24 @@
-import clone from "clone";
-import MongoObject from "mongo-object";
-import { isEmptyObject, looksLikeModifier } from "./utility/index.js";
-import { SimpleSchema } from "./SimpleSchema.js";
-import convertToProperType from "./clean/convertToProperType.js";
-import setAutoValues from "./clean/setAutoValues.js";
-import typeValidator from "./validation/typeValidator/index.js";
-import { CleanOptions, StandardSchemaKeyDefinition } from "./types.js";
+import clone from 'clone'
+import MongoObject from 'mongo-object'
+
+import convertToProperType from './clean/convertToProperType.js'
+import setAutoValues from './clean/setAutoValues.js'
+import { SimpleSchema } from './SimpleSchema.js'
+import { CleanOptions, StandardSchemaKeyDefinition } from './types.js'
+import { isEmptyObject, looksLikeModifier } from './utility/index.js'
+import typeValidator from './validation/typeValidator/index.js'
 
 interface ForEachNodeContext {
-  genericKey: string;
-  isArrayItem: boolean;
-  operator: string;
-  position: string;
-  remove: () => void;
-  updateValue: (newValue: any) => void;
-  value: any;
+  genericKey: string
+  isArrayItem: boolean
+  operator: string
+  position: string
+  remove: () => void
+  updateValue: (newValue: any) => void
+  value: any
 }
 
-const operatorsToIgnoreValue = ["$unset", "$currentDate"];
+const operatorsToIgnoreValue = ['$unset', '$currentDate']
 
 /**
  * @param {SimpleSchema} ss - A SimpleSchema instance
@@ -41,95 +42,96 @@ const operatorsToIgnoreValue = ["$unset", "$currentDate"];
  * type convert where possible, and inject automatic/default values. Use the options
  * to skip one or more of these.
  */
-function clean(
+function clean (
   ss: SimpleSchema,
   doc: Record<string | number | symbol, unknown>,
   options: CleanOptions = {}
 ): Record<string | number | symbol, unknown> {
-  // By default, doc will be filtered and autoconverted
+  // By default, doc will be filtered and auto-converted
   const cleanOptions = {
     isModifier: looksLikeModifier(doc),
     isUpsert: false,
-    ...ss['_cleanOptions'],
-    ...options,
-  };
+    // @ts-expect-error okay to use internal within the pkg
+    ...ss._cleanOptions,
+    ...options
+  }
 
   // Clone so we do not mutate
-  const cleanDoc = options.mutate ? doc : clone(doc);
+  const cleanDoc = cleanOptions.mutate === true ? doc : clone(doc)
 
   const mongoObject =
-    options.mongoObject || new MongoObject(cleanDoc, ss.blackboxKeys());
+    cleanOptions.mongoObject ?? new MongoObject(cleanDoc, ss.blackboxKeys())
 
   // Clean loop
   if (
-    options.filter ||
-    options.autoConvert ||
-    options.removeEmptyStrings ||
-    options.trimStrings
+    cleanOptions.filter === true ||
+    cleanOptions.autoConvert === true ||
+    cleanOptions.removeEmptyStrings === true ||
+    cleanOptions.trimStrings === true
   ) {
-    const removedPositions: string[] = []; // For removing now-empty objects after
+    const removedPositions: string[] = [] // For removing now-empty objects after
 
     mongoObject.forEachNode(
-      function eachNode(this: ForEachNodeContext) {
+      function eachNode (this: ForEachNodeContext) {
         // The value of a $unset is irrelevant, so no point in cleaning it.
         // Also we do not care if fields not in the schema are unset.
         // Other operators also have values that we wouldn't want to clean.
-        if (operatorsToIgnoreValue.includes(this.operator)) return;
+        if (operatorsToIgnoreValue.includes(this.operator)) return
 
-        const gKey = this.genericKey;
-        if (!gKey) return;
+        const gKey = this.genericKey
+        if (gKey == null) return
 
-        let val = this.value;
-        if (val === undefined) return;
+        let val = this.value
+        if (val === undefined) return
 
-        let p;
+        let p
 
         // Filter out props if necessary
         if (
-          (options.filter && !ss.allowsKey(gKey)) ||
-          (options.removeNullsFromArrays && this.isArrayItem && val === null)
+          (cleanOptions.filter === true && !ss.allowsKey(gKey)) ||
+          (cleanOptions.removeNullsFromArrays === true && this.isArrayItem && val === null)
         ) {
           // XXX Special handling for $each; maybe this could be made nicer
-          if (this.position.slice(-7) === "[$each]") {
-            mongoObject.removeValueForPosition(this.position.slice(0, -7));
-            removedPositions.push(this.position.slice(0, -7));
+          if (this.position.slice(-7) === '[$each]') {
+            mongoObject.removeValueForPosition(this.position.slice(0, -7))
+            removedPositions.push(this.position.slice(0, -7))
           } else {
-            this.remove();
-            removedPositions.push(this.position);
+            this.remove()
+            removedPositions.push(this.position)
           }
           if (SimpleSchema.debug) {
             console.info(
               `SimpleSchema.clean: filtered out value that would have affected key "${gKey}", which is not allowed by the schema`
-            );
+            )
           }
-          return; // no reason to do more
+          return // no reason to do more
         }
 
-        const outerDef = ss.schema(gKey) as StandardSchemaKeyDefinition;
-        const defs = outerDef && outerDef.type.definitions;
-        const def = defs && defs[0];
+        const outerDef = ss.schema(gKey) as StandardSchemaKeyDefinition
+        const defs = outerDef?.type.definitions
+        const def = defs?.[0]
 
-        // Autoconvert values if requested and if possible
-        if (options.autoConvert && def) {
+        // Auto-convert values if requested and if possible
+        if (cleanOptions.autoConvert === true && def != null) {
           const isValidType = defs.some((definition) => {
             const errors = typeValidator.call({
               valueShouldBeChecked: true,
               definition,
               value: val,
-              operator: this.operator,
-            });
-            return errors === undefined;
-          });
+              operator: this.operator
+            })
+            return errors === undefined
+          })
 
           if (!isValidType) {
-            const newVal = convertToProperType(val, def.type);
+            const newVal = convertToProperType(val, def.type)
             if (newVal !== undefined && newVal !== val) {
               SimpleSchema.debug &&
                 console.info(
-                  `SimpleSchema.clean: autoconverted value ${val} from ${typeof val} to ${typeof newVal} for ${gKey}`
-                );
-              val = newVal;
-              this.updateValue(newVal);
+                  `SimpleSchema.clean: auto-converted value ${String(val)} from ${typeof val} to ${typeof newVal} for ${gKey}`
+                )
+              val = newVal
+              this.updateValue(newVal)
             }
           }
         }
@@ -139,12 +141,12 @@ function clean(
         // 2. The field is not in the schema OR is in the schema with `trim` !== `false` AND
         // 3. The value is a string.
         if (
-          options.trimStrings &&
+          cleanOptions.trimStrings === true &&
           def?.trim !== false &&
-          typeof val === "string"
+          typeof val === 'string'
         ) {
-          val = val.trim();
-          this.updateValue(val);
+          val = val.trim()
+          this.updateValue(val)
         }
 
         // Remove empty strings if
@@ -152,67 +154,67 @@ function clean(
         // 2. The value is in a normal object or in the $set part of a modifier
         // 3. The value is an empty string.
         if (
-          options.removeEmptyStrings &&
-          (!this.operator || this.operator === "$set") &&
-          typeof val === "string" &&
-          !val.length
+          cleanOptions.removeEmptyStrings === true &&
+          (this.operator == null || this.operator === '$set') &&
+          typeof val === 'string' &&
+          val.length > 0
         ) {
           // For a document, we remove any fields that are being set to an empty string
-          this.remove();
+          this.remove()
           // For a modifier, we $unset any fields that are being set to an empty string.
           // But only if we're not already within an entire object that is being set.
-          if (this.operator === "$set") {
-            const matches = this.position.match(/\[/g);
+          if (this.operator === '$set') {
+            const matches = this.position.match(/\[/g)
             if (matches !== null && matches.length < 2) {
-              p = this.position.replace("$set", "$unset");
-              mongoObject.setValueForPosition(p, "");
+              p = this.position.replace('$set', '$unset')
+              mongoObject.setValueForPosition(p, '')
             }
           }
         }
       },
       { endPointsOnly: false }
-    );
+    )
 
     // Remove any objects that are now empty after filtering
     removedPositions.forEach((removedPosition) => {
-      const lastBrace = removedPosition.lastIndexOf("[");
+      const lastBrace = removedPosition.lastIndexOf('[')
       if (lastBrace !== -1) {
-        const removedPositionParent = removedPosition.slice(0, lastBrace);
-        const value = mongoObject.getValueForPosition(removedPositionParent);
-        if (isEmptyObject(value))
-          mongoObject.removeValueForPosition(removedPositionParent);
+        const removedPositionParent = removedPosition.slice(0, lastBrace)
+        const value = mongoObject.getValueForPosition(removedPositionParent)
+        if (isEmptyObject(value)) { mongoObject.removeValueForPosition(removedPositionParent) }
       }
-    });
+    })
 
-    mongoObject.removeArrayItems();
+    mongoObject.removeArrayItems()
   }
 
   // Set automatic values
-  options.getAutoValues &&
+  cleanOptions.getAutoValues === true &&
     setAutoValues(
       ss.autoValueFunctions(),
       mongoObject,
-      options.isModifier || false,
-      options.isUpsert || false,
-      options.extendAutoValueContext
-    );
+      cleanOptions.isModifier || false,
+      cleanOptions.isUpsert || false,
+      cleanOptions.extendAutoValueContext
+    )
 
   // Ensure we don't have any operators set to an empty object
   // since MongoDB 2.6+ will throw errors.
-  if (options.isModifier) {
-    Object.keys(cleanDoc || {}).forEach((op) => {
-      const operatorValue = cleanDoc[op];
+  if (cleanOptions.isModifier) {
+    Object.keys(cleanDoc ?? {}).forEach((op) => {
+      const operatorValue = cleanDoc[op]
       if (
-        typeof operatorValue === "object" &&
+        typeof operatorValue === 'object' &&
         operatorValue !== null &&
         isEmptyObject(operatorValue as Record<string, unknown>)
       ) {
-        delete cleanDoc[op];
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete cleanDoc[op]
       }
-    });
+    })
   }
 
-  return cleanDoc;
+  return cleanDoc
 }
 
-export default clean;
+export default clean

@@ -1,48 +1,49 @@
-import clone from "clone";
-import MongoObject from "mongo-object";
-import { AutoValueContext, AutoValueFunction } from "../types.js";
-import { getParentOfKey } from "../utility/index.js";
+import clone from 'clone'
+import MongoObject from 'mongo-object'
+
+import { AutoValueContext, AutoValueFunction } from '../types.js'
+import { getParentOfKey } from '../utility/index.js'
 
 interface AutoValueRunnerOptions {
-  closestSubschemaFieldName: string;
-  extendedAutoValueContext?: Record<string | number | symbol, unknown>;
-  func: AutoValueFunction;
-  isModifier: boolean;
-  isUpsert: boolean;
-  mongoObject: MongoObject;
+  closestSubschemaFieldName: string
+  extendedAutoValueContext?: Record<string | number | symbol, unknown>
+  func: AutoValueFunction
+  isModifier: boolean
+  isUpsert: boolean
+  mongoObject: MongoObject
 }
 
 interface RunForPositionProps {
-  key: string;
-  operator: string;
-  position: string;
-  value: any;
+  key: string
+  operator: string
+  position: string
+  value: any
 }
 
-function getFieldInfo(mongoObject: MongoObject, key: string) {
-  const keyInfo = mongoObject.getInfoForKey(key) || {
+function getFieldInfo (mongoObject: MongoObject, key: string) {
+  const keyInfo = (mongoObject.getInfoForKey(key) != null) || {
     operator: null,
     value: undefined
-  };
+  }
   return {
     ...keyInfo,
-    isSet: keyInfo.value !== undefined,
-  };
+    isSet: keyInfo.value !== undefined
+  }
 }
 
 export default class AutoValueRunner {
-  doneKeys: string[] = [];
-  options: AutoValueRunnerOptions;
+  doneKeys: string[] = []
+  options: AutoValueRunnerOptions
 
-  constructor(options: AutoValueRunnerOptions) {
-    this.options = options;
+  constructor (options: AutoValueRunnerOptions) {
+    this.options = options
   }
 
-  runForPosition({
+  runForPosition ({
     key: affectedKey,
     operator,
     position,
-    value,
+    value
   }: RunForPositionProps) {
     const {
       closestSubschemaFieldName,
@@ -50,25 +51,25 @@ export default class AutoValueRunner {
       func,
       isModifier,
       isUpsert,
-      mongoObject,
-    } = this.options;
+      mongoObject
+    } = this.options
 
     // If already called for this key, skip it
-    if (this.doneKeys.includes(affectedKey)) return;
+    if (this.doneKeys.includes(affectedKey)) return
 
-    const fieldParentName = getParentOfKey(affectedKey, true);
+    const fieldParentName = getParentOfKey(affectedKey, true)
     const parentFieldInfo = getFieldInfo(
       mongoObject,
       fieldParentName.slice(0, -1)
-    );
+    )
 
-    let doUnset = false;
+    let doUnset = false
 
     if (Array.isArray(parentFieldInfo.value)) {
-      const innerKey = affectedKey.split(".").slice(-1).pop();
+      const innerKey = affectedKey.split('.').slice(-1).pop()
       if (!innerKey || isNaN(Number(innerKey))) {
         // parent is an array, but the key to be set is not an integer (see issue #80)
-        return;
+        return
       }
     }
 
@@ -76,72 +77,72 @@ export default class AutoValueRunner {
       closestSubschemaFieldName: closestSubschemaFieldName.length
         ? closestSubschemaFieldName
         : null,
-      field(fName: string) {
-        return getFieldInfo(mongoObject, closestSubschemaFieldName + fName);
+      field (fName: string) {
+        return getFieldInfo(mongoObject, closestSubschemaFieldName + fName)
       },
       isModifier,
       isUpsert,
       isSet: value !== undefined,
       key: affectedKey,
       operator,
-      parentField() {
-        return parentFieldInfo;
+      parentField () {
+        return parentFieldInfo
       },
-      siblingField(fName: string) {
-        return getFieldInfo(mongoObject, fieldParentName + fName);
+      siblingField (fName: string) {
+        return getFieldInfo(mongoObject, fieldParentName + fName)
       },
-      unset() {
-        doUnset = true;
+      unset () {
+        doUnset = true
       },
       value,
-      ...(extendedAutoValueContext || {}),
-    };
+      ...((extendedAutoValueContext != null) || {})
+    }
 
-    const autoValue = func.call(autoValueContext, mongoObject.getObject());
+    const autoValue = func.call(autoValueContext, mongoObject.getObject())
 
     // Update tracking of which keys we've run autovalue for
-    this.doneKeys.push(affectedKey);
+    this.doneKeys.push(affectedKey)
 
-    if (doUnset && position) mongoObject.removeValueForPosition(position);
+    if (doUnset && position) mongoObject.removeValueForPosition(position)
 
-    if (autoValue === undefined) return;
+    if (autoValue === undefined) return
 
     // If the user's auto value is of the pseudo-modifier format, parse it
     // into operator and value.
     if (isModifier) {
-      let op;
-      let newValue;
-      if (autoValue && typeof autoValue === "object") {
+      let op
+      let newValue
+      if (autoValue && typeof autoValue === 'object') {
         const avOperator = Object.keys(autoValue).find(
-          (avProp) => avProp.substring(0, 1) === "$"
-        );
+          (avProp) => avProp.substring(0, 1) === '$'
+        )
         if (avOperator) {
-          op = avOperator;
-          newValue = autoValue[avOperator];
+          op = avOperator
+          newValue = autoValue[avOperator]
         }
       }
 
       // Add $set for updates and upserts if necessary. Keep this
       // above the "if (op)" block below since we might change op
       // in this line.
-      if (!op && position.slice(0, 1) !== "$") {
-        op = "$set";
-        newValue = autoValue;
+      if (!op && position.slice(0, 1) !== '$') {
+        op = '$set'
+        newValue = autoValue
       }
 
       if (op) {
         // Update/change value
-        mongoObject.removeValueForPosition(position);
+        mongoObject.removeValueForPosition(position)
         mongoObject.setValueForPosition(
           `${op}[${affectedKey}]`,
           clone(newValue)
-        );
-        return;
+        )
+        return
       }
     }
 
     // Update/change value. Cloning is necessary in case it's an object, because
     // if we later set some keys within it, they'd be set on the original object, too.
-    mongoObject.setValueForPosition(position, clone(autoValue));
+    mongoObject.setValueForPosition(position, clone(autoValue))
   }
 }

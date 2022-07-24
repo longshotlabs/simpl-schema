@@ -1,41 +1,39 @@
-import { SimpleSchema } from "../../SimpleSchema.js";
-import doDateChecks from "./doDateChecks.js";
-import doNumberChecks from "./doNumberChecks.js";
-import doStringChecks from "./doStringChecks.js";
-import doArrayChecks from "./doArrayChecks.js";
-import { TypeValidatorContext } from "../../types.js";
+import { SimpleSchema } from '../../SimpleSchema.js'
+import { TypeValidatorContext } from '../../types.js'
+import doArrayChecks from './doArrayChecks.js'
+import doDateChecks from './doDateChecks.js'
+import doNumberChecks from './doNumberChecks.js'
+import doStringChecks from './doStringChecks.js'
 
-export default function typeValidator(this: TypeValidatorContext) {
-  if (!this.valueShouldBeChecked) return;
+export default function typeValidator (this: TypeValidatorContext) {
+  if (!this.valueShouldBeChecked) return
 
-  const def = this.definition;
-  const expectedType = def.type;
-  const keyValue = this.value;
-  const op = this.operator;
+  const def = this.definition
+  const expectedType = def.type
+  const keyValue = this.value
+  const op = this.operator
 
-  if (expectedType === String) return doStringChecks(def, keyValue);
-  if (expectedType === Number) return doNumberChecks(def, keyValue, op, false);
-  if (expectedType === SimpleSchema.Integer)
-    return doNumberChecks(def, keyValue, op, true);
+  if (expectedType === String) return doStringChecks(def, keyValue)
+  if (expectedType === Number) return doNumberChecks(def, keyValue, op, false)
+  if (expectedType === SimpleSchema.Integer) { return doNumberChecks(def, keyValue, op, true) }
 
   if (expectedType === Boolean) {
     // Is it a boolean?
-    if (typeof keyValue === "boolean") return;
-    return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: "Boolean" };
+    if (typeof keyValue === 'boolean') return
+    return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Boolean' }
   }
 
   if (expectedType === Object || SimpleSchema.isSimpleSchema(expectedType)) {
     // Is it an object?
     if (
       keyValue === Object(keyValue) &&
-      typeof keyValue[Symbol.iterator] !== "function" &&
+      typeof keyValue[Symbol.iterator] !== 'function' &&
       !(keyValue instanceof Date)
-    )
-      return;
-    return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: "Object" };
+    ) { return }
+    return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Object' }
   }
 
-  if (expectedType === Array) return doArrayChecks(def, keyValue);
+  if (expectedType === Array) return doArrayChecks(def, keyValue)
 
   if (expectedType instanceof Function) {
     // Generic constructor checks
@@ -43,24 +41,24 @@ export default function typeValidator(this: TypeValidatorContext) {
       // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
       const dateTypeIsOkay =
         expectedType === Date &&
-        op === "$currentDate" &&
-        (keyValue === true || JSON.stringify(keyValue) === '{"$type":"date"}');
+        op === '$currentDate' &&
+        (keyValue === true || JSON.stringify(keyValue) === '{"$type":"date"}')
 
       if (expectedType !== Date || !dateTypeIsOkay) {
         return {
           type: SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-          dataType: expectedType.name,
-        };
+          dataType: expectedType.name
+        }
       }
     }
 
     // Date checks
     if (expectedType === Date) {
       // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
-      if (op === "$currentDate") {
-        return doDateChecks(def, new Date());
+      if (op === '$currentDate') {
+        return doDateChecks(def, new Date())
       }
-      return doDateChecks(def, keyValue);
+      return doDateChecks(def, keyValue)
     }
   }
 }

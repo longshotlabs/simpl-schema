@@ -8,13 +8,13 @@
  * pulling in a large dependency.
  */
 
-export default function merge(
+export default function merge (
   destination: Record<string | number | symbol, any>,
-  ...sources: Record<string | number | symbol, any>[]
+  ...sources: Array<Record<string | number | symbol, any>>
 ) {
   sources.forEach((source) => {
     Object.keys(source).forEach((prop) => {
-      if (prop === "__proto__") return; // protect against prototype pollution
+      if (prop === '__proto__') return // protect against prototype pollution
       if (
         source[prop] &&
         source[prop].constructor &&
@@ -25,14 +25,14 @@ export default function merge(
           !destination[prop].constructor ||
           destination[prop].constructor !== Object
         ) {
-          destination[prop] = {};
+          destination[prop] = {}
         }
-        merge(destination[prop], source[prop]);
+        merge(destination[prop], source[prop])
       } else {
-        destination[prop] = source[prop];
+        destination[prop] = source[prop]
       }
-    });
-  });
+    })
+  })
 
-  return destination;
+  return destination
 }

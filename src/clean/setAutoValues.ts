@@ -1,8 +1,8 @@
-import MongoObject from "mongo-object";
+import MongoObject from 'mongo-object'
 
-import getPositionsForAutoValue from "./getPositionsForAutoValue.js";
-import AutoValueRunner from "./AutoValueRunner.js";
-import { AutoValueFunctionDetails, CustomAutoValueContext } from "../types.js";
+import { AutoValueFunctionDetails, CustomAutoValueContext } from '../types.js'
+import AutoValueRunner from './AutoValueRunner.js'
+import getPositionsForAutoValue from './getPositionsForAutoValue.js'
 
 /**
  * @method sortAutoValueFunctions
@@ -12,27 +12,27 @@ import { AutoValueFunctionDetails, CustomAutoValueContext } from "../types.js";
  *
  * Stable sort of the autoValueFunctions (preserves order at the same field depth).
  */
-export function sortAutoValueFunctions(
+export function sortAutoValueFunctions (
   autoValueFunctions: AutoValueFunctionDetails[]
 ) {
   const defaultFieldOrder = autoValueFunctions.reduce<Record<string, number>>(
     (acc, { fieldName }, index) => {
-      acc[fieldName] = index;
-      return acc;
+      acc[fieldName] = index
+      return acc
     },
     {}
-  );
+  )
 
   // Sort by how many dots each field name has, asc, such that we can auto-create
   // objects and arrays before we run the autoValues for properties within them.
   // Fields of the same level (same number of dots) preserve should order from the original array.
   return autoValueFunctions.sort((a, b) => {
     const depthDiff =
-      a.fieldName.split(".").length - b.fieldName.split(".").length;
+      a.fieldName.split('.').length - b.fieldName.split('.').length
     return depthDiff === 0
       ? defaultFieldOrder[a.fieldName] - defaultFieldOrder[b.fieldName]
-      : depthDiff;
-  });
+      : depthDiff
+  })
 }
 
 /**
@@ -46,14 +46,14 @@ export function sortAutoValueFunctions(
  * Updates doc with automatic values from autoValue functions or default
  * values from defaultValue. Modifies the referenced object in place.
  */
-function setAutoValues(
+function setAutoValues (
   autoValueFunctions: AutoValueFunctionDetails[],
   mongoObject: MongoObject,
   isModifier: boolean,
   isUpsert: boolean,
   extendedAutoValueContext?: CustomAutoValueContext
 ): void {
-  const sortedAutoValueFunctions = sortAutoValueFunctions(autoValueFunctions);
+  const sortedAutoValueFunctions = sortAutoValueFunctions(autoValueFunctions)
 
   sortedAutoValueFunctions.forEach(
     ({ func, fieldName, closestSubschemaFieldName }) => {
@@ -63,20 +63,20 @@ function setAutoValues(
         func,
         isModifier,
         isUpsert,
-        mongoObject,
-      });
+        mongoObject
+      })
 
       const positions = getPositionsForAutoValue({
         fieldName,
         isModifier,
-        mongoObject,
-      });
+        mongoObject
+      })
 
       // Run the autoValue function once for each place in the object that
       // has a value or that potentially should.
-      positions.forEach(avRunner.runForPosition.bind(avRunner));
+      positions.forEach(avRunner.runForPosition.bind(avRunner))
     }
-  );
+  )
 }
 
-export default setAutoValues;
+export default setAutoValues

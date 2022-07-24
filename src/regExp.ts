@@ -2,18 +2,18 @@
 // sadly IPv4 Adresses will be caught too but technically those are valid domains
 // this expression is extracted from the original RFC 5322 mail expression
 // a modification enforces that the tld consists only of characters
-const rxDomain = '(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z](?:[a-z-]*[a-z])?';
+const rxDomain = '(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z](?:[a-z-]*[a-z])?'
 // this domain regex matches everythign that could be a domain in intranet
 // that means "localhost" is a valid domain
-const rxNameDomain = '(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.|$))+';
+const rxNameDomain = '(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.|$))+'
 // strict IPv4 expression which allows 0-255 per oktett
-const rxIPv4 = '(?:(?:[0-1]?\\d{1,2}|2[0-4]\\d|25[0-5])(?:\\.|$)){4}';
+const rxIPv4 = '(?:(?:[0-1]?\\d{1,2}|2[0-4]\\d|25[0-5])(?:\\.|$)){4}'
 // strict IPv6 expression which allows (and validates) all shortcuts
-const rxIPv6 = '(?:(?:[\\dA-Fa-f]{1,4}(?::|$)){8}' // full adress
-  + '|(?=(?:[^:\\s]|:[^:\\s])*::(?:[^:\\s]|:[^:\\s])*$)' // or min/max one '::'
-  + '[\\dA-Fa-f]{0,4}(?:::?(?:[\\dA-Fa-f]{1,4}|$)){1,6})'; // and short adress
+const rxIPv6 = '(?:(?:[\\dA-Fa-f]{1,4}(?::|$)){8}' + // full adress
+  '|(?=(?:[^:\\s]|:[^:\\s])*::(?:[^:\\s]|:[^:\\s])*$)' + // or min/max one '::'
+  '[\\dA-Fa-f]{0,4}(?:::?(?:[\\dA-Fa-f]{1,4}|$)){1,6})' // and short adress
 // this allows domains (also localhost etc) and ip adresses
-const rxWeakDomain = `(?:${[rxNameDomain, rxIPv4, rxIPv6].join('|')})`;
+const rxWeakDomain = `(?:${[rxNameDomain, rxIPv4, rxIPv6].join('|')})`
 // unique id from the random package also used by minimongo
 // min and max are used to set length boundaries
 // set both for explicit lower and upper bounds
@@ -22,18 +22,18 @@ const rxWeakDomain = `(?:${[rxNameDomain, rxIPv4, rxIPv6].join('|')})`;
 // set only min for fixed length
 // character list: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L88
 // string length: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L143
-const isValidBound = (value: number | null | undefined, lower: number) => !value || (Number.isSafeInteger(value) && value > lower);
+const isValidBound = (value: number | null | undefined, lower: number) => !value || (Number.isSafeInteger(value) && value > lower)
 const idOfLength = (min?: number | null, max?: number | null) => {
-  if (!isValidBound(min, 0)) throw new Error(`Expected a non-negative safe integer, got ${min}`);
-  if (!isValidBound(max, min as number)) throw new Error(`Expected a non-negative safe integer greater than 1 and greater than min, got ${max}`);
-  let bounds;
-  if (min && max) bounds = `${min},${max}`;
-  else if (min && max === null) bounds = `${min},`;
-  else if (min && !max) bounds = `${min}`;
-  else if (!min && !max) bounds = '0,';
-  else throw new Error(`Unexpected state for min (${min}) and max (${max})`);
-  return new RegExp(`^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{${bounds}}$`);
-};
+  if (!isValidBound(min, 0)) throw new Error(`Expected a non-negative safe integer, got ${min}`)
+  if (!isValidBound(max, min as number)) throw new Error(`Expected a non-negative safe integer greater than 1 and greater than min, got ${max}`)
+  let bounds
+  if (min && max) bounds = `${min},${max}`
+  else if (min && max === null) bounds = `${min},`
+  else if (min && !max) bounds = `${min}`
+  else if (!min && !max) bounds = '0,'
+  else throw new Error(`Unexpected state for min (${min}) and max (${max})`)
+  return new RegExp(`^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{${bounds}}$`)
+}
 
 const regEx = {
   // We use the RegExp suggested by W3C in http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
@@ -77,7 +77,7 @@ const regEx = {
   // Instead, use a custom validation function, with a high quality
   // phone number validation package that meets your needs.
   // eslint-disable-next-line redos/no-vulnerable
-  Phone: /^[0-9０-９٠-٩۰-۹]{2}$|^[+＋]*(?:[-x‐-―−ー－-／  ­​⁠　()（）［］.\[\]/~⁓∼～*]*[0-9０-９٠-٩۰-۹]){3,}[-x‐-―−ー－-／  ­​⁠　()（）［］.\[\]/~⁓∼～*A-Za-z0-9０-９٠-٩۰-۹]*(?:;ext=([0-9０-９٠-٩۰-۹]{1,20})|[  \t,]*(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,20})#?|[  \t,]*(?:[xｘ#＃~～]|int|ｉｎｔ)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?|[- ]+([0-9０-９٠-٩۰-۹]{1,6})#|[  \t]*(?:,{2}|;)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,15})#?|[  \t]*(?:,)+[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?)?$/i, // eslint-disable-line no-irregular-whitespace
-};
+  Phone: /^[0-9０-９٠-٩۰-۹]{2}$|^[+＋]*(?:[-x‐-―−ー－-／  ­​⁠　()（）［］.\[\]/~⁓∼～*]*[0-9０-９٠-٩۰-۹]){3,}[-x‐-―−ー－-／  ­​⁠　()（）［］.\[\]/~⁓∼～*A-Za-z0-9０-９٠-٩۰-۹]*(?:;ext=([0-9０-９٠-٩۰-۹]{1,20})|[  \t,]*(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,20})#?|[  \t,]*(?:[xｘ#＃~～]|int|ｉｎｔ)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?|[- ]+([0-9０-９٠-٩۰-۹]{1,6})#|[  \t]*(?:,{2}|;)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,15})#?|[  \t]*(?:,)+[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?)?$/i // eslint-disable-line no-irregular-whitespace
+}
 
-export default regEx;
+export default regEx

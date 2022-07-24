@@ -1,6 +1,7 @@
-import { SimpleSchema, ValidationContext } from "./SimpleSchema.js";
-import "./clean.js";
+import './clean.js'
 
-SimpleSchema.ValidationContext = ValidationContext;
+import { SimpleSchema, ValidationContext } from './SimpleSchema.js'
 
-export default SimpleSchema;
+SimpleSchema.ValidationContext = ValidationContext
+
+export default SimpleSchema
