@@ -8,9 +8,7 @@ There are a lot of similar packages for validating objects. These are some of th
 
 - Isomorphic. Works in NodeJS and modern browsers.
 - The object you validate can be a MongoDB modifier. SimpleSchema understands how to properly validate it such that the object in the database, after undergoing modification, will be valid.
-- Optional Tracker reactivity for Meteor apps
 - Powerful customizable error message system with decent English language defaults and support for localization, which makes it easy to drop this package in and display the validation error messages to end users.
-- Recommended by MDG, the group that makes Meteor
 - Has hundreds of tests and is used in production apps of various sizes
 - Used by the [Collection2](https://github.com/aldeed/meteor-collection2) and [AutoForm](https://github.com/aldeed/meteor-autoform) Meteor packages.
 
@@ -27,10 +25,8 @@ There are also reasons not to choose this package. Because of all it does, this 
 - [Quick Start](#quick-start)
   - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
   - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
-  - [Validate a Meteor Method Argument and Satisfy `audit-argument-checks`](#validate-a-meteor-method-argument-and-satisfy-audit-argument-checks)
   - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
   - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
-  - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
   - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
   - [Set Default Options for One Schema](#set-default-options-for-one-schema)
   - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
@@ -149,33 +145,6 @@ new SimpleSchema({
 }).validate([{ name: "Bill" }, { name: 2 }]);
 ```
 
-### Validate a Meteor Method Argument and Satisfy `audit-argument-checks`
-
-To avoid errors about not checking all arguments when you are using SimpleSchema to validate Meteor method arguments, you must pass `check` as an option when creating your SimpleSchema instance.
-
-```js
-import SimpleSchema from "simpl-schema";
-import { check } from "meteor/check";
-import { Meteor } from "meteor/meteor";
-
-SimpleSchema.defineValidationErrorTransform((error) => {
-  const ddpError = new Meteor.Error(error.message);
-  ddpError.error = "validation-error";
-  ddpError.details = error.details;
-  return ddpError;
-});
-
-const myMethodObjArgSchema = new SimpleSchema({ name: String }, { check });
-
-Meteor.methods({
-  myMethod(obj) {
-    myMethodObjArgSchema.validate(obj);
-
-    // Now do other method stuff knowing that obj satisfies the schema
-  },
-});
-```
-
 ### Validate an Object and Get the Errors
 
 ```js
@@ -214,41 +183,6 @@ validationContext.validate(
 console.log(validationContext.isValid());
 console.log(validationContext.validationErrors());
 ```
-
-### Enable Meteor Tracker Reactivity
-
-```js
-import SimpleSchema from "simpl-schema";
-import { Tracker } from "meteor/tracker";
-
-const validationContext = new SimpleSchema(
-  {
-    name: String,
-  },
-  { tracker: Tracker }
-).newContext();
-
-Tracker.autorun(function () {
-  console.log(validationContext.isValid());
-  console.log(validationContext.validationErrors());
-});
-
-validationContext.validate({
-  name: 2,
-});
-
-validationContext.validate({
-  name: "Joe",
-});
-```
-
-Passing in `Tracker` causes the following functions to become reactive:
-
-- ValidationContext#keyIsInvalid
-- ValidationContext#keyErrorMessage
-- ValidationContext#isValid
-- ValidationContext#validationErrors
-- SimpleSchema#label
 
 ### Automatically Clean the Object Before Validating It
 
