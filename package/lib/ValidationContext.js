@@ -74,14 +74,29 @@ export default class ValidationContext {
     return !!this.getErrorForKey(key, genericKey);
   }
 
+  _ensureKeyDep(key, genericKey = MongoObject.makeKeyGeneric(key)) {
+    const { tracker } = this._simpleSchema._constructorOptions;
+    if (!tracker) {
+      return;
+    }
+    if (!Object.prototype.hasOwnProperty.call(this._deps, key)) {
+      this._deps[key] = new tracker.Dependency();
+    }
+    if (!Object.prototype.hasOwnProperty.call(this._deps, genericKey)) {
+      this._deps[genericKey] = new tracker.Dependency();
+    }
+  }
+
   // Like the internal one, but with deps
   keyIsInvalid(key, genericKey = MongoObject.makeKeyGeneric(key)) {
+    this._ensureKeyDep(key, genericKey);
     if (Object.prototype.hasOwnProperty.call(this._deps, genericKey)) this._deps[genericKey].depend();
 
     return this._keyIsInvalid(key, genericKey);
   }
 
   keyErrorMessage(key, genericKey = MongoObject.makeKeyGeneric(key)) {
+    this._ensureKeyDep(key, genericKey);
     if (Object.prototype.hasOwnProperty.call(this._deps, genericKey)) this._deps[genericKey].depend();
 
     const errorObj = this.getErrorForKey(key, genericKey);
