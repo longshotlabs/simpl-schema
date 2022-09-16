@@ -2,7 +2,7 @@ import MongoObject from 'mongo-object'
 
 import doValidation from './doValidation.js'
 import { SimpleSchema } from './SimpleSchema.js'
-import { CleanOptions, ValidationError, ValidationOptions } from './types.js'
+import { CleanOptions, ObjectToValidate, ValidationError, ValidationOptions } from './types.js'
 
 export default class ValidationContext {
   public name?: string
@@ -78,7 +78,7 @@ export default class ValidationContext {
    * @returns True if valid; otherwise false
    */
   validate (
-    obj: Record<string | number | symbol, unknown>,
+    obj: ObjectToValidate,
     {
       extendedCustomContext = {},
       ignore: ignoreTypes = [],

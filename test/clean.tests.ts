@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from '../src/SimpleSchema.ts'
+import { SimpleSchema } from '../src/SimpleSchema.js'
 import Address from './helpers/Address.js'
 
 const ss = new SimpleSchema({
@@ -188,7 +188,7 @@ const ss = new SimpleSchema({
   }
 })
 
-function getTest (given, expected, isModifier) {
+function getTest (given: Record<string | number | symbol, unknown>, expected: unknown, isModifier?: boolean): () => void {
   return function () {
     ss.clean(given, { isModifier, mutate: true })
     expect(given).toEqual(expected)
@@ -694,7 +694,7 @@ describe('clean', function () {
   })
 
   it('trim strings', function () {
-    function doTest (isModifier, given, expected) {
+    function doTest (isModifier: boolean, given: Record<string | number | symbol, unknown>, expected: unknown): void {
       const cleanObj = ss.clean(given, {
         mutate: true,
         filter: false,
@@ -979,7 +979,7 @@ describe('clean', function () {
       'nested.field': SimpleSchema.oneOf(String, Number, Date)
     })
 
-    function doTest (given, expected) {
+    function doTest (given: Record<string | number | symbol, unknown>, expected: unknown): void {
       const cleanObj = oneOfSchema.clean(given, { mutate: true })
       expect(cleanObj).toEqual(expected)
     }

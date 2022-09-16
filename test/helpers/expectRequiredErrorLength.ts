@@ -1,10 +1,11 @@
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../../src/SimpleSchema.js'
+import { ValidationOptions } from '../../src/types.js'
 import { ExpectReturnTypes } from './expectTypes.js'
 import validate from './validate.js'
 
-export default function expectRequiredErrorLength (ss: any, doc: any, options: any): ExpectReturnTypes {
+export default function expectRequiredErrorLength (ss: any, doc: any, options?: ValidationOptions): ExpectReturnTypes {
   const errors = validate(ss, doc, options).validationErrors()
 
   let requiredErrorCount = 0

@@ -1,7 +1,7 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expectErrorLength from './testHelpers/expectErrorLength'
-import testSchema from './testHelpers/testSchema'
+import expectErrorLength from './helpers/expectErrorLength.js'
+import testSchema from './helpers/testSchema.js'
 
 describe('SimpleSchema - min', function () {
   describe('normal', function () {

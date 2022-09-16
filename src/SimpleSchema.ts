@@ -14,8 +14,10 @@ import {
   AutoValueFunctionDetails,
   CleanOptions,
   DocValidatorFunction,
+  PartialSchemaDefinitionWithShorthand,
   ResolvedSchemaDefinition,
   SchemaDefinition,
+  SchemaDefinitionWithShorthand,
   SchemaKeyDefinition,
   SchemaKeyTypeDefinition,
   SchemaKeyTypeDefinitionWithShorthand,
@@ -71,9 +73,9 @@ const propsThatCanBeFunction = [
 ]
 
 class SimpleSchema {
-  public static debug: boolean
-  public static defaultLabel: string | undefined
-  public static validationErrorTransform: (error: ClientError) => Error
+  public static debug?: boolean
+  public static defaultLabel?: string
+  public static validationErrorTransform?: (error: ClientError<ValidationError[]>) => Error
   public static version = 2
   public messageBox: MessageBox
   public version: number
@@ -100,7 +102,7 @@ class SimpleSchema {
   private readonly _constructorOptions: SimpleSchemaOptions = {}
   private _docValidators: DocValidatorFunction[] = []
   private _firstLevelSchemaKeys: string[] = []
-  private readonly _rawDefinition: SchemaDefinition | null = {}
+  private readonly _rawDefinition: SchemaDefinitionWithShorthand = {}
   private _schema: ResolvedSchemaDefinition = {}
   private _schemaKeys: string[] = []
   // Named validation contexts
@@ -108,7 +110,7 @@ class SimpleSchema {
   private _validators: ValidatorFunction[] = []
 
   constructor (
-    schema: SchemaDefinition = {},
+    schema: SchemaDefinitionWithShorthand = {},
     options: SimpleSchemaOptions = {}
   ) {
     // Stash the options object
@@ -131,9 +133,9 @@ class SimpleSchema {
     this.extend(schema)
 
     // Clone raw definition and save if keepRawDefinition is active
-    this._rawDefinition = this._constructorOptions.keepRawDefinition === true
-      ? schema
-      : null
+    if (this._constructorOptions.keepRawDefinition === true) {
+      this._rawDefinition = schema
+    }
 
     // Define default validation error messages
     this.messageBox = new MessageBox(clone(defaultMessages))
@@ -144,7 +146,7 @@ class SimpleSchema {
   /**
   /* @returns The entire raw schema definition passed in the constructor
   */
-  get rawDefinition (): SchemaDefinition | null {
+  get rawDefinition (): SchemaDefinitionWithShorthand {
     return this._rawDefinition
   }
 
@@ -589,7 +591,7 @@ class SimpleSchema {
    * @param schema The schema or schema definition to extend onto this one
    * @returns The SimpleSchema instance (chainable)
    */
-  extend (schema: SimpleSchema | SchemaDefinition = {}): SimpleSchema {
+  extend (schema: SimpleSchema | PartialSchemaDefinitionWithShorthand = {}): SimpleSchema {
     if (Array.isArray(schema)) {
       throw new Error(
         'You may not pass an array of schemas to the SimpleSchema constructor or to extend()'
@@ -604,7 +606,7 @@ class SimpleSchema {
       Object.assign(this._cleanOptions, (schema as SimpleSchema)._cleanOptions)
       Object.assign(this._constructorOptions, (schema as SimpleSchema)._constructorOptions)
     } else {
-      schemaObj = expandShorthand(schema as SchemaDefinition)
+      schemaObj = expandShorthand(schema as SchemaDefinitionWithShorthand)
     }
 
     const schemaKeys = Object.keys(schemaObj)
@@ -751,7 +753,7 @@ class SimpleSchema {
       // we set it to the first validation error message.
       const message = this.messageForError(errors[0])
 
-      const error = new ClientError(message, 'validation-error')
+      const error = new ClientError<ValidationError[]>(message, 'validation-error')
 
       // Add meaningful error messages for each validation error.
       // Useful for display messages when using 'mdg:validated-method'.
@@ -878,7 +880,10 @@ class SimpleSchema {
       return def[prop as keyof StandardSchemaKeyDefinitionWithSimpleTypes]
     }
 
-    return def.type[0]?.[prop as keyof SchemaKeyTypeDefinition]
+    const oneType = def.type[0]
+    if (oneType === SimpleSchema.Any) return undefined
+
+    return (oneType as SchemaKeyTypeDefinition)?.[prop as keyof SchemaKeyTypeDefinition]
   }
 
   // shorthand for getting defaultValue
@@ -923,7 +928,7 @@ class SimpleSchema {
     schemaDefinitionOptions.push(...options)
   }
 
-  static defineValidationErrorTransform (transform: (error: ClientError) => Error): void {
+  static defineValidationErrorTransform (transform: (error: ClientError<ValidationError[]>) => Error): void {
     if (typeof transform !== 'function') {
       throw new Error(
         'SimpleSchema.defineValidationErrorTransform must be passed a function that accepts an Error and returns an Error'
@@ -932,10 +937,10 @@ class SimpleSchema {
     SimpleSchema.validationErrorTransform = transform
   }
 
-  static validate (obj: any, schema: SimpleSchema | SchemaDefinition, options?: ValidationOptions): void {
+  static validate (obj: any, schema: SimpleSchema | SchemaDefinitionWithShorthand, options?: ValidationOptions): void {
     // Allow passing just the schema object
     if (!SimpleSchema.isSimpleSchema(schema)) {
-      schema = new SimpleSchema(schema as SchemaDefinition)
+      schema = new SimpleSchema(schema as SchemaDefinitionWithShorthand)
     }
 
     return (schema as SimpleSchema).validate(obj, options)

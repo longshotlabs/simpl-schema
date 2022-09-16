@@ -1,7 +1,7 @@
 import clone from 'clone'
 import MongoObject from 'mongo-object'
 
-import { AutoValueContext, AutoValueFunction } from '../types.js'
+import { AutoValueContext, AutoValueFunction, FieldInfo } from '../types.js'
 import { getParentOfKey } from '../utility/index.js'
 
 interface AutoValueRunnerOptions {
@@ -20,8 +20,8 @@ interface RunForPositionProps {
   value: any
 }
 
-function getFieldInfo (mongoObject: MongoObject, key: string) {
-  const keyInfo = (mongoObject.getInfoForKey(key) != null) || {
+function getFieldInfo <ValueType> (mongoObject: MongoObject, key: string): FieldInfo<ValueType> {
+  const keyInfo = mongoObject.getInfoForKey(key) ?? {
     operator: null,
     value: undefined
   }
@@ -44,7 +44,7 @@ export default class AutoValueRunner {
     operator,
     position,
     value
-  }: RunForPositionProps) {
+  }: RunForPositionProps): void {
     const {
       closestSubschemaFieldName,
       extendedAutoValueContext,
@@ -58,7 +58,7 @@ export default class AutoValueRunner {
     if (this.doneKeys.includes(affectedKey)) return
 
     const fieldParentName = getParentOfKey(affectedKey, true)
-    const parentFieldInfo = getFieldInfo(
+    const parentFieldInfo = getFieldInfo<any>(
       mongoObject,
       fieldParentName.slice(0, -1)
     )
@@ -67,14 +67,14 @@ export default class AutoValueRunner {
 
     if (Array.isArray(parentFieldInfo.value)) {
       const innerKey = affectedKey.split('.').slice(-1).pop()
-      if (!innerKey || isNaN(Number(innerKey))) {
+      if (innerKey === undefined || isNaN(Number(innerKey))) {
         // parent is an array, but the key to be set is not an integer (see issue #80)
         return
       }
     }
 
     const autoValueContext: AutoValueContext = {
-      closestSubschemaFieldName: closestSubschemaFieldName.length
+      closestSubschemaFieldName: closestSubschemaFieldName.length > 0
         ? closestSubschemaFieldName
         : null,
       field (fName: string) {
@@ -95,7 +95,7 @@ export default class AutoValueRunner {
         doUnset = true
       },
       value,
-      ...((extendedAutoValueContext != null) || {})
+      ...(extendedAutoValueContext ?? {})
     }
 
     const autoValue = func.call(autoValueContext, mongoObject.getObject())
@@ -103,7 +103,7 @@ export default class AutoValueRunner {
     // Update tracking of which keys we've run autovalue for
     this.doneKeys.push(affectedKey)
 
-    if (doUnset && position) mongoObject.removeValueForPosition(position)
+    if (doUnset && position != null) mongoObject.removeValueForPosition(position)
 
     if (autoValue === undefined) return
 
@@ -112,11 +112,11 @@ export default class AutoValueRunner {
     if (isModifier) {
       let op
       let newValue
-      if (autoValue && typeof autoValue === 'object') {
+      if (autoValue != null && typeof autoValue === 'object') {
         const avOperator = Object.keys(autoValue).find(
           (avProp) => avProp.substring(0, 1) === '$'
         )
-        if (avOperator) {
+        if (avOperator !== undefined) {
           op = avOperator
           newValue = autoValue[avOperator]
         }
@@ -125,12 +125,12 @@ export default class AutoValueRunner {
       // Add $set for updates and upserts if necessary. Keep this
       // above the "if (op)" block below since we might change op
       // in this line.
-      if (!op && position.slice(0, 1) !== '$') {
+      if (op == null && position.slice(0, 1) !== '$') {
         op = '$set'
         newValue = autoValue
       }
 
-      if (op) {
+      if (op != null) {
         // Update/change value
         mongoObject.removeValueForPosition(position)
         mongoObject.setValueForPosition(

@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import expandShorthand from './expandShorthand'
+import expandShorthand from '../src/expandShorthand.js'
 
 describe('expandShorthand', function () {
   it('test 1', function () {

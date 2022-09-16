@@ -1,10 +1,10 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import { SimpleSchema } from './SimpleSchema'
-import expectErrorLength from './testHelpers/expectErrorLength'
-import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength'
-import friendsSchema from './testHelpers/friendsSchema'
-import testSchema from './testHelpers/testSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import expectErrorLength from './helpers/expectErrorLength.js'
+import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
+import friendsSchema from './helpers/friendsSchema.js'
+import testSchema from './helpers/testSchema.js'
 
 describe('SimpleSchema - max', function () {
   describe('normal', function () {

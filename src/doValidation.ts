@@ -5,7 +5,9 @@ import {
   DocValidatorContext,
   FieldInfo,
   FunctionPropContext,
+  SchemaKeyTypeDefinition,
   StandardSchemaKeyDefinitionWithSimpleTypes,
+  SupportedTypes,
   ValidationError,
   ValidatorContext,
   ValidatorFunction
@@ -68,7 +70,7 @@ function doValidation ({
     )
   }
 
-  function getFieldInfo (key: string): FieldInfo {
+  function getFieldInfo <ValueType> (key: string): FieldInfo<ValueType> {
     // Create mongoObject if necessary, cache for speed
     if (mongoObject == null) mongoObject = new MongoObject(obj, schema.blackboxKeys())
 
@@ -189,16 +191,15 @@ function doValidation ({
         // and add them to inner props like "type" and "min"
         definition: {
           ...definitionWithoutType,
-          ...typeDef
+          ...typeDef as SchemaKeyTypeDefinition & { type: SupportedTypes }
         }
       }
 
       // Add custom field validators to the list after the built-in
       // validators but before the schema and global validators.
       const fieldValidators = validators.slice(0)
-      if (typeof typeDef.custom === 'function') {
-        fieldValidators.splice(builtInValidators.length, 0, typeDef.custom)
-      }
+      const customFn = (typeDef as SchemaKeyTypeDefinition).custom
+      if (customFn != null) fieldValidators.splice(builtInValidators.length, 0, customFn)
 
       // We use _.every just so that we don't continue running more validator
       // functions after the first one returns false or an error string.

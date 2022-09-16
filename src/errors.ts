@@ -1,5 +1,5 @@
-export class ClientError extends Error {
-  public details?: unknown
+export class ClientError<DetailsType> extends Error {
+  public details?: DetailsType
   public error?: string
   public errorType = 'ClientError'
   public name = 'ClientError'

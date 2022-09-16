@@ -1,12 +1,12 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import { SimpleSchema } from './SimpleSchema'
-import expectErrorLength from './testHelpers/expectErrorLength'
-import expectRequiredErrorLength from './testHelpers/expectRequiredErrorLength'
-import expectValid from './testHelpers/expectValid'
-import friendsSchema from './testHelpers/friendsSchema'
-import requiredSchema from './testHelpers/requiredSchema'
-import testSchema from './testHelpers/testSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import expectErrorLength from './helpers/expectErrorLength.js'
+import expectRequiredErrorLength from './helpers/expectRequiredErrorLength.js'
+import expectValid from './helpers/expectValid.js'
+import friendsSchema from './helpers/friendsSchema.js'
+import requiredSchema from './helpers/requiredSchema.js'
+import testSchema from './helpers/testSchema.js'
 
 describe('SimpleSchema - required', function () {
   describe('normal', function () {

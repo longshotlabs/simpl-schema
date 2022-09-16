@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
 
 describe('SimpleSchema', function () {
   it('regEx - issue 409', function () {
@@ -201,11 +201,11 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.Email', function () {
     const expr = SimpleSchema.RegEx.Email
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
-    function isFalse (s) {
+    function isFalse (s: string): void {
       expect(expr.test(s)).toBe(false)
     }
 
@@ -223,11 +223,11 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.EmailWithTLD', function () {
     const expr = SimpleSchema.RegEx.EmailWithTLD
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
-    function isFalse (s) {
+    function isFalse (s: string): void {
       expect(expr.test(s)).toBe(false)
     }
 
@@ -245,11 +245,11 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.Domain', function () {
     const expr = SimpleSchema.RegEx.Domain
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
-    function isFalse (s) {
+    function isFalse (s: string): void {
       expect(expr.test(s)).toBe(false)
     }
 
@@ -262,7 +262,7 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.WeakDomain', function () {
     const expr = SimpleSchema.RegEx.WeakDomain
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
@@ -275,11 +275,11 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.IP', function () {
     const expr = SimpleSchema.RegEx.IP
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
-    function isFalse (s) {
+    function isFalse (s: string): void {
       expect(expr.test(s)).toBe(false)
     }
 
@@ -297,11 +297,11 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.IPv4', function () {
     const expr = SimpleSchema.RegEx.IPv4
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
-    function isFalse (s) {
+    function isFalse (s: string): void {
       expect(expr.test(s)).toBe(false)
     }
 
@@ -319,11 +319,11 @@ describe('SimpleSchema', function () {
   it('SimpleSchema.RegEx.IPv6', function () {
     const expr = SimpleSchema.RegEx.IPv6
 
-    function isTrue (s) {
+    function isTrue (s: string): void {
       expect(expr.test(s)).toBe(true)
     }
 
-    function isFalse (s) {
+    function isFalse (s: string): void {
       expect(expr.test(s)).toBe(false)
     }
 
@@ -354,9 +354,15 @@ describe('SimpleSchema', function () {
   }
 
   it('SimpleSchema.RegEx.Id', function () {
-    const idExpr = SimpleSchema.RegEx.Id
-    const isTrue = (s) => expect(idExpr.test(s)).toBe(true)
-    const isFalse = (s) => expect(idExpr.test(s)).toBe(false)
+    const expr = SimpleSchema.RegEx.Id
+
+    function isTrue (s: string): void {
+      expect(expr.test(s)).toBe(true)
+    }
+
+    function isFalse (s: string): void {
+      expect(expr.test(s)).toBe(false)
+    }
 
     isTrue(Random.id())
     isFalse(Random.id(16)) // less
@@ -366,12 +372,12 @@ describe('SimpleSchema', function () {
 
   it('SimpleSchema.RegEx.idOfLength', function () {
     const { idOfLength } = SimpleSchema.RegEx
-    const expectThrows = (min, max) => expect(() => idOfLength(min, max)).toThrow(/Expected a non-negative safe integer/)
+    const expectThrows = (min?: number, max?: number): void => expect(() => idOfLength(min, max)).toThrow(/Expected a non-negative safe integer/)
 
     // lets add some fuzzing to see if there are some unexpected edge cases
     // when generating the id RegExp pattern using SimpleSchema.RegEx.IdOf
-    const randomMinValues = (fn, times) => (new Array(times)).forEach(() => expectThrows(fn()))
-    const randomMaxValues = (min, fn, times) => (new Array(times)).forEach(() => expectThrows(min, fn()))
+    const randomMinValues = (fn: () => number, times: number): void => (new Array(times)).forEach(() => expectThrows(fn()))
+    const randomMaxValues = (min: number, fn: () => number, times: number): void => (new Array(times)).forEach(() => expectThrows(min, fn()))
 
     // unexpected min values
 
@@ -395,8 +401,8 @@ describe('SimpleSchema', function () {
     // only Number.MAX_SAFE_INTEGER
     expectThrows(10, 9007199254740992)
 
-    const isTrue = (expr, s) => expect(expr.test(s)).toBe(true)
-    const isFalse = (expr, s) => expect(expr.test(s)).toBe(false)
+    const isTrue = (expr: RegExp, s: string): void => expect(expr.test(s)).toBe(true)
+    const isFalse = (expr: RegExp, s: string): void => expect(expr.test(s)).toBe(false)
 
     // arbitrary length ids
     const anyLen = idOfLength(0, null)

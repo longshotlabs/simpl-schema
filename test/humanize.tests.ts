@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import humanize from '../utility/humanize'
+import { humanize } from '../src/utility/humanize.js'
 
 describe('humanize', function () {
   it('works', function () {

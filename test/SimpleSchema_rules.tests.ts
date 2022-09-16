@@ -1,8 +1,9 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import { FunctionPropContext } from '../src/types.js'
 
 describe('SimpleSchema - Rules', function () {
   it('Rules should be passed the object being validated', function () {
@@ -12,7 +13,7 @@ describe('SimpleSchema - Rules', function () {
       },
       bar: {
         type: Number,
-        max () {
+        max (this: FunctionPropContext & { obj: { foo: number } }) {
           return this.obj.foo
         }
       }

@@ -1,7 +1,7 @@
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { sortAutoValueFunctions } from '../../src/clean/setAutoValues.ts'
-import { SimpleSchema } from '../../src/SimpleSchema.ts'
+import { sortAutoValueFunctions } from '../../src/clean/setAutoValues.js'
+import { SimpleSchema } from '../../src/SimpleSchema.js'
 
 describe('setAutoValues', () => {
   it('sorts correctly', () => {

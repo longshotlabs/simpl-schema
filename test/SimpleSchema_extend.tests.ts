@@ -1,7 +1,7 @@
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
-import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
 
 describe('SimpleSchema - Extend Schema', function () {
   it('supports extending with no type', function () {
@@ -95,7 +95,7 @@ describe('SimpleSchema - Extend Schema', function () {
       }
     })
     schema2.addValidator(() => {})
-    schema2.addDocValidator(() => {})
+    schema2.addDocValidator(() => [])
 
     expect(schema1.schema()).toEqual({
       firstName: {
@@ -109,7 +109,9 @@ describe('SimpleSchema - Extend Schema', function () {
         optional: false
       }
     })
+    // @ts-expect-error
     expect(schema1._validators.length).toBe(0)
+    // @ts-expect-error
     expect(schema1._docValidators.length).toBe(0)
 
     schema1.extend(schema2)
@@ -131,7 +133,9 @@ describe('SimpleSchema - Extend Schema', function () {
         optional: false
       }
     })
+    // @ts-expect-error
     expect(schema1._validators.length).toBe(1)
+    // @ts-expect-error
     expect(schema1._docValidators.length).toBe(1)
   })
 
@@ -149,7 +153,9 @@ describe('SimpleSchema - Extend Schema', function () {
       }
     })
 
+    // @ts-expect-error
     expect(schema._schema.name.type.definitions[0].min).toBe(5)
+    // @ts-expect-error
     expect(schema._schema.name.type.definitions[0].max).toBe(15)
   })
 
@@ -172,6 +178,7 @@ describe('SimpleSchema - Extend Schema', function () {
 
     new SimpleSchema({}).extend(mainSchema).extend(main2Schema)
 
+    // @ts-expect-error
     expect(mainSchema._schema['items.$'].type.definitions[0].type._schemaKeys).toEqual(['_id'])
   })
 
@@ -186,6 +193,7 @@ describe('SimpleSchema - Extend Schema', function () {
       }
     })
 
+    // @ts-expect-error
     expect(schema._schema.myArray.type.definitions[0].minCount).toBe(undefined)
 
     schema.extend({
@@ -194,6 +202,7 @@ describe('SimpleSchema - Extend Schema', function () {
       }
     })
 
+    // @ts-expect-error
     expect(schema._schema.myArray.type.definitions[0].minCount).toBe(1)
   })
 
@@ -293,7 +302,7 @@ describe('SimpleSchema - Extend Schema', function () {
     // Top-level field extension
     schema.extend({
       method: {
-        allowedValues: [...schema.getAllowedValuesForKey('method'), 'all']
+        allowedValues: [...schema.getAllowedValuesForKey('method') ?? [], 'all']
       }
     })
 
@@ -302,7 +311,7 @@ describe('SimpleSchema - Extend Schema', function () {
     // Subschema field extension
     ObjSchema.extend({
       loveType: {
-        allowedValues: [...ObjSchema.getAllowedValuesForKey('loveType'), 'romantic']
+        allowedValues: [...ObjSchema.getAllowedValuesForKey('loveType') ?? [], 'romantic']
       }
     })
 
@@ -311,7 +320,7 @@ describe('SimpleSchema - Extend Schema', function () {
     // Subschema field in array field extension
     ListItemSchema.extend({
       name: {
-        allowedValues: [...ListItemSchema.getAllowedValuesForKey('name'), 'b', 'c']
+        allowedValues: [...ListItemSchema.getAllowedValuesForKey('name') ?? [], 'b', 'c']
       }
     })
 

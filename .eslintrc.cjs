@@ -7,7 +7,10 @@ module.exports = {
     sourceType: "module",
     warnOnUnsupportedTypeScriptVersion: false,
   },
-  plugins: ["simple-import-sort"],
+  plugins: [
+    "redos",
+    "simple-import-sort"
+  ],
   rules: {
     // note you must disable the base rule as it can report incorrect errors
     "no-use-before-define": "off",

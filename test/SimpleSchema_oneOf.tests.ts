@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
 
 describe('SimpleSchema', function () {
   describe('oneOf', function () {
@@ -14,26 +14,26 @@ describe('SimpleSchema', function () {
       const test1 = { foo: 1 }
       expect(function test1func () {
         schema.validate(test1)
-      }).toNotThrow()
-      expect(test1.foo).toBeA('number')
+      }).not.toThrow()
+      expect(typeof test1.foo).toBe('number')
 
       const test2 = { foo: 'bar' }
       expect(function test2func () {
         schema.validate(test2)
-      }).toNotThrow()
-      expect(test2.foo).toBeA('string')
+      }).not.toThrow()
+      expect(typeof test2.foo).toBe('string')
 
       const test3 = { foo: new Date() }
       expect(function test2func () {
         schema.validate(test3)
-      }).toNotThrow()
+      }).not.toThrow()
       expect(test3.foo instanceof Date).toBe(true)
 
       const test4 = { foo: false }
       expect(function test3func () {
         schema.validate(test4)
       }).toThrow()
-      expect(test4.foo).toBeA('boolean')
+      expect(typeof test4.foo).toBe('boolean')
     })
 
     it.skip('allows either type including schemas', function () {
@@ -86,7 +86,7 @@ describe('SimpleSchema', function () {
 
       expect(function () {
         schema.validate({ foo: 7 })
-      }).toNotThrow()
+      }).not.toThrow()
     })
 
     it('works when one is an array', function () {
@@ -99,7 +99,7 @@ describe('SimpleSchema', function () {
         schema.validate({
           foo: 'bar'
         })
-      }).toNotThrow()
+      }).not.toThrow()
 
       expect(function () {
         schema.validate({
@@ -111,13 +111,13 @@ describe('SimpleSchema', function () {
         schema.validate({
           foo: []
         })
-      }).toNotThrow()
+      }).not.toThrow()
 
       expect(function () {
         schema.validate({
           foo: ['bar', 'bin']
         })
-      }).toNotThrow()
+      }).not.toThrow()
 
       expect(function () {
         schema.validate({
@@ -139,7 +139,7 @@ describe('SimpleSchema', function () {
         schema.validate({
           foo: 'bar'
         })
-      }).toNotThrow()
+      }).not.toThrow()
 
       expect(function () {
         schema.validate({
@@ -165,7 +165,7 @@ describe('SimpleSchema', function () {
             _id: 'ID'
           }
         })
-      }).toNotThrow()
+      }).not.toThrow()
     })
 
     it('is invalid if neither min value is met', function () {

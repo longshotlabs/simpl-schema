@@ -8,6 +8,12 @@ interface GetPositionsForAutoValueProps {
   mongoObject: MongoObject
 }
 
+interface PositionInfo {
+  key: string
+  operator: string | null
+  position: string
+}
+
 /**
  * A position is a place in the object where this field exists.
  * If no arrays are involved, then every field/key has at most 1 position.
@@ -37,14 +43,14 @@ export default function getPositionsForAutoValue ({
   fieldName,
   isModifier,
   mongoObject
-}: GetPositionsForAutoValueProps) {
+}: GetPositionsForAutoValueProps): PositionInfo[] {
   // Positions for this field
   const positions = mongoObject.getPositionsInfoForGenericKey(fieldName)
 
   // If the field is an object and will be created by MongoDB,
   // we don't need (and can't have) a value for it
   if (
-    isModifier &&
+    isModifier === true &&
     mongoObject.getPositionsThatCreateGenericKey(fieldName).length > 0
   ) {
     return positions
@@ -56,8 +62,8 @@ export default function getPositionsForAutoValue ({
     positions.push({
       key: fieldName,
       value: undefined,
-      operator: isModifier ? '$set' : null,
-      position: isModifier ? `$set[${fieldName}]` : fieldName
+      operator: isModifier === true ? '$set' : null,
+      position: isModifier === true ? `$set[${fieldName}]` : fieldName
     })
     return positions
   }
@@ -84,7 +90,7 @@ export default function getPositionsForAutoValue ({
     mongoObject.getPositionsThatCreateGenericKey(parentPath).forEach((info) => {
       const { operator, position } = info
       let wouldBePosition: string
-      if (operator) {
+      if (operator != null) {
         const next = position.slice(
           position.indexOf('[') + 1,
           position.indexOf(']')
@@ -109,7 +115,7 @@ export default function getPositionsForAutoValue ({
       }
       if (positions.find((item) => item.position === wouldBePosition) == null) {
         const key = MongoObject._positionToKey(wouldBePosition)
-        if (key) {
+        if (key != null) {
           positions.push({
             key,
             value: undefined,

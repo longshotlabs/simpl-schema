@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import getLastPartOfKey from '../../src/utility/getLastPartOfKey.ts'
+import getLastPartOfKey from '../../src/utility/getLastPartOfKey.js'
 
 describe('getLastPartOfKey', function () {
   it('returns the correct string for a non-array key', function () {

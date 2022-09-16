@@ -22,16 +22,16 @@ const rxWeakDomain = `(?:${[rxNameDomain, rxIPv4, rxIPv6].join('|')})`
 // set only min for fixed length
 // character list: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L88
 // string length: https://github.com/meteor/meteor/blob/release/0.8.0/packages/random/random.js#L143
-const isValidBound = (value: number | null | undefined, lower: number) => !value || (Number.isSafeInteger(value) && value > lower)
-const idOfLength = (min?: number | null, max?: number | null) => {
-  if (!isValidBound(min, 0)) throw new Error(`Expected a non-negative safe integer, got ${min}`)
-  if (!isValidBound(max, min as number)) throw new Error(`Expected a non-negative safe integer greater than 1 and greater than min, got ${max}`)
-  let bounds
-  if (min && max) bounds = `${min},${max}`
-  else if (min && max === null) bounds = `${min},`
-  else if (min && !max) bounds = `${min}`
-  else if (!min && !max) bounds = '0,'
-  else throw new Error(`Unexpected state for min (${min}) and max (${max})`)
+const isValidBound = (value: number | null | undefined, lower: number): boolean => value == null || (Number.isSafeInteger(value) && value > lower)
+const idOfLength = (min?: number | null, max?: number | null): RegExp => {
+  if (!isValidBound(min, 0)) throw new Error(`Expected a non-negative safe integer, got ${String(min)}`)
+  if (!isValidBound(max, min as number)) throw new Error(`Expected a non-negative safe integer greater than 1 and greater than min, got ${String(max)}`)
+  let bounds: string
+  if (min != null && max != null) bounds = `${min},${max}`
+  else if (min != null && max === null) bounds = `${min},`
+  else if (min != null && max === undefined) bounds = `${min}`
+  else if (min === undefined && max === undefined) bounds = '0,'
+  else throw new Error(`Unexpected state for min (${String(min)}) and max (${String(max)})`)
   return new RegExp(`^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{${bounds}}$`)
 }
 
@@ -39,10 +39,10 @@ const regEx = {
   // We use the RegExp suggested by W3C in http://www.w3.org/TR/html5/forms.html#valid-e-mail-address
   // This is probably the same logic used by most browsers when type=email, which is our goal. It is
   // a very permissive expression. Some apps may wish to be more strict and can write their own RegExp.
-  Email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  Email: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 
   // Like Email but requires the TLD (.com, etc)
-  EmailWithTLD: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  EmailWithTLD: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 
   Domain: new RegExp(`^${rxDomain}$`),
   WeakDomain: new RegExp(`^${rxWeakDomain}$`),
@@ -77,7 +77,7 @@ const regEx = {
   // Instead, use a custom validation function, with a high quality
   // phone number validation package that meets your needs.
   // eslint-disable-next-line redos/no-vulnerable
-  Phone: /^[0-9０-９٠-٩۰-۹]{2}$|^[+＋]*(?:[-x‐-―−ー－-／  ­​⁠　()（）［］.\[\]/~⁓∼～*]*[0-9０-９٠-٩۰-۹]){3,}[-x‐-―−ー－-／  ­​⁠　()（）［］.\[\]/~⁓∼～*A-Za-z0-9０-９٠-٩۰-۹]*(?:;ext=([0-9０-９٠-٩۰-۹]{1,20})|[  \t,]*(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,20})#?|[  \t,]*(?:[xｘ#＃~～]|int|ｉｎｔ)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?|[- ]+([0-9０-９٠-٩۰-۹]{1,6})#|[  \t]*(?:,{2}|;)[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,15})#?|[  \t]*(?:,)+[:\.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?)?$/i // eslint-disable-line no-irregular-whitespace
+  Phone: /^[0-9０-９٠-٩۰-۹]{2}$|^[+＋]*(?:[-x‐-―−ー－-／  ­​⁠　()（）［］.[\]/~⁓∼～*]*[0-9０-９٠-٩۰-۹]){3,}[-x‐-―−ー－-／  ­​⁠　()（）［］.[\]/~⁓∼～*A-Za-z0-9０-９٠-٩۰-۹]*(?:;ext=([0-9０-９٠-٩۰-۹]{1,20})|[  \t,]*(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|доб|anexo)[:.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,20})#?|[  \t,]*(?:[xｘ#＃~～]|int|ｉｎｔ)[:.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?|[- ]+([0-9０-９٠-٩۰-۹]{1,6})#|[  \t]*(?:,{2}|;)[:.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,15})#?|[  \t]*(?:,)+[:.．]?[  \t,-]*([0-9０-９٠-٩۰-۹]{1,9})#?)?$/i // eslint-disable-line no-irregular-whitespace
 }
 
 export default regEx

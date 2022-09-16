@@ -14,7 +14,7 @@ import getPositionsForAutoValue from './getPositionsForAutoValue.js'
  */
 export function sortAutoValueFunctions (
   autoValueFunctions: AutoValueFunctionDetails[]
-) {
+): AutoValueFunctionDetails[] {
   const defaultFieldOrder = autoValueFunctions.reduce<Record<string, number>>(
     (acc, { fieldName }, index) => {
       acc[fieldName] = index

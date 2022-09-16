@@ -1,10 +1,10 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema, ValidationContext } from './SimpleSchema'
-import expectErrorLength from './testHelpers/expectErrorLength'
-import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength'
+import { SimpleSchema, ValidationContext } from '../src/SimpleSchema.js'
+import expectErrorLength from './helpers/expectErrorLength.js'
+import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
 
 const schema = new SimpleSchema({
   password: {

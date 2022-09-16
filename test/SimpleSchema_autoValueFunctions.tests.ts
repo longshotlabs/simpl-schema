@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
 
 describe('SimpleSchema - autoValueFunctions', function () {
   it('simple', function () {

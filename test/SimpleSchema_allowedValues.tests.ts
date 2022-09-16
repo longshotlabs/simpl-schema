@@ -2,12 +2,12 @@
 
 import '@babel/polyfill'
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
-import expectErrorLength from './testHelpers/expectErrorLength'
-import friendsSchema from './testHelpers/friendsSchema'
-import testSchema from './testHelpers/testSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import expectErrorLength from './helpers/expectErrorLength.js'
+import friendsSchema from './helpers/friendsSchema.js'
+import testSchema from './helpers/testSchema.js'
 
 describe('SimpleSchema - allowedValues', function () {
   describe('normal', function () {
@@ -389,9 +389,9 @@ describe('SimpleSchema - allowedValues', function () {
         }
       })
       const fetchedAllowedValues = schema.getAllowedValuesForKey('foo')
-      expect(fetchedAllowedValues).toInclude('a')
-      expect(fetchedAllowedValues).toInclude('b')
-      expect(fetchedAllowedValues.length).toEqual(2)
+      expect(fetchedAllowedValues?.includes('a')).toBe(true)
+      expect(fetchedAllowedValues?.includes('b')).toBe(true)
+      expect(fetchedAllowedValues?.length).toBe(2)
     })
 
     it('returns null when allowedValues key is empty', function () {

@@ -1,7 +1,7 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import { SimpleSchema } from './SimpleSchema'
-import expectErrorLength from './testHelpers/expectErrorLength'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import expectErrorLength from './helpers/expectErrorLength.js'
 
 const schema = new SimpleSchema({
   blackBoxObject: {

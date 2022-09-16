@@ -62,12 +62,17 @@ export interface SchemaKeyTypeDefinition extends TypeDefinitionProps {
   type: SupportedTypes
 }
 
-export type SchemaKeyTypeDefinitionWithShorthand = SchemaKeyTypeDefinition | SupportedTypes | RegExpConstructor
+export type SchemaKeyTypeDefinitionWithShorthand = SchemaKeyTypeDefinition | SupportedTypes | RegExpConstructor | SimpleSchemaGroup
+
+export interface FunctionOptionContext {
+  key?: string | null
+  [prop: string]: unknown
+}
 
 export interface SchemaKeyDefinitionBase extends TypeDefinitionProps {
   autoValue?: AutoValueFunction
   defaultValue?: any
-  label?: string | (() => string)
+  label?: string | ((this: FunctionOptionContext) => string)
   optional?: boolean | (() => boolean)
   required?: boolean | (() => boolean)
 }
@@ -81,17 +86,19 @@ export interface StandardSchemaKeyDefinition extends SchemaKeyDefinitionBase {
 }
 
 export interface StandardSchemaKeyDefinitionWithSimpleTypes extends SchemaKeyDefinitionBase {
-  type: Array<SchemaKeyTypeDefinition & { type: SupportedTypes }>
+  type: Array<(SchemaKeyTypeDefinition & { type: SupportedTypes }) | '___Any___'>
 }
 
 export type SchemaKeyDefinition = StandardSchemaKeyDefinition | SchemaKeyDefinitionWithOneType
-export type SchemaKeyDefinitionWithShorthand = StandardSchemaKeyDefinition | SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor
+export type SchemaKeyDefinitionWithShorthand = StandardSchemaKeyDefinition | SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor | SimpleSchemaGroup | SupportedTypes[]
+export type PartialSchemaKeyDefinitionWithShorthand = StandardSchemaKeyDefinition | Partial<SchemaKeyDefinitionWithOneType> | SupportedTypes | RegExpConstructor | SimpleSchemaGroup | SupportedTypes[]
 
 export type SchemaDefinition = Record<string, SchemaKeyDefinition>
 export type SchemaDefinitionWithShorthand = Record<string, SchemaKeyDefinitionWithShorthand>
+export type PartialSchemaDefinitionWithShorthand = Record<string, PartialSchemaKeyDefinitionWithShorthand>
 export type ResolvedSchemaDefinition = Record<string, StandardSchemaKeyDefinition>
 
-export type AnyClass = new(...args: any[]) => any
+export type AnyClass = new (...args: any[]) => any
 
 export type SupportedTypes =
   | ArrayConstructor
@@ -100,12 +107,14 @@ export type SupportedTypes =
   | NumberConstructor
   | StringConstructor
   | ObjectConstructor
-  | typeof SimpleSchema.Any
+  | '___Any___'
   | typeof SimpleSchema.Integer
   | SimpleSchema
   | AnyClass
+  | RegExp
 
 export interface ValidationError {
+  message?: string
   name: string
   type: string
   value: any
@@ -126,20 +135,20 @@ export interface ValidationOptions {
   upsert?: boolean
 }
 
-export interface FieldInfo {
+export interface FieldInfo<ValueType> {
   isSet: boolean
   operator: string | null
-  value: any
+  value: ValueType
 }
 
 export interface CommonContext {
-  field: (fieldName: string) => FieldInfo
+  field: <ValueType>(fieldName: string) => FieldInfo<ValueType>
   isModifier: boolean
   isSet: boolean
   key: string
   operator: string | null
-  parentField: () => FieldInfo
-  siblingField: (fieldName: string) => FieldInfo
+  parentField: <ValueType>() => FieldInfo<ValueType>
+  siblingField: <ValueType>(fieldName: string) => FieldInfo<ValueType>
   value: any
 }
 
@@ -159,7 +168,7 @@ export interface TypeValidatorContext {
 export interface ValidatorContext extends CommonContext, CustomValidatorContext {
   addValidationErrors: (errors: ValidationError[]) => void
   definition: SchemaKeyDefinition
-  field: (fieldName: string) => FieldInfo
+  field: <ValueType>(fieldName: string) => FieldInfo<ValueType>
   genericKey: string
   isInArrayItemObject: boolean
   isInSubObject: boolean
@@ -181,6 +190,8 @@ export interface DocValidatorContext extends CustomValidatorContext {
 
 export type FunctionPropContext = Omit<ValidatorContext, 'addValidationErrors' | 'valueShouldBeChecked'>
 
-export type DocValidatorFunction = (this: DocValidatorContext, obj: Record<string, any>) => undefined | boolean | string | ValidationErrorResult
+export type DocValidatorFunction = (this: DocValidatorContext, obj: Record<string, any>) => ValidationError[]
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export type ValidatorFunction = (this: ValidatorContext) => void | undefined | boolean | string | ValidationErrorResult
+
+export type ObjectToValidate = Record<string | number | symbol, unknown> | AnyClass

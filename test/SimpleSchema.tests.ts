@@ -2,14 +2,18 @@
 
 import { expect } from 'expect'
 
+import { ClientError } from '../src/errors.js'
 import { SimpleSchema } from '../src/SimpleSchema.js'
+import { AnyClass, FunctionOptionContext, ValidationError } from '../src/types.js'
 import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
 import expectValid from './helpers/expectValid.js'
 import testSchema from './helpers/testSchema.js'
 
 class CustomObject {
-  constructor (obj: Record<string, unknown>) {
-    Object.assign(this, obj)
+  public foo = 0
+
+  constructor (obj: Record<'foo', number>) {
+    this.foo = obj.foo
   }
 
   bar (): number {
@@ -20,6 +24,7 @@ class CustomObject {
 describe('SimpleSchema', function () {
   it('throws error if first argument is an array', function () {
     expect(function () {
+      // @ts-expect-error
       return new SimpleSchema([])
     }).toThrow(
       'You may not pass an array of schemas to the SimpleSchema constructor or to extend()'
@@ -29,6 +34,7 @@ describe('SimpleSchema', function () {
   it('throws error if a key is missing type', function () {
     expect(function () {
       return new SimpleSchema({
+        // @ts-expect-error
         foo: {}
       })
     }).toThrow('Invalid definition for foo field: "type" option is required')
@@ -56,9 +62,11 @@ describe('SimpleSchema', function () {
 
   it('does not allow prototype pollution', function () {
     const obj = {}
+    // @ts-expect-error
     expect(obj.polluted).toBe(undefined)
     const badObj = JSON.parse('{"__proto__":{"polluted":"yes"}}')
     SimpleSchema.setDefaultMessages(badObj)
+    // @ts-expect-error
     expect(obj.polluted).toBe(undefined)
   })
 
@@ -228,6 +236,7 @@ describe('SimpleSchema', function () {
             label: 'Places',
             optional: true
           },
+          // @ts-expect-error
           'places.$': { type: Place }
         })
       }).toThrow(
@@ -263,7 +272,7 @@ describe('SimpleSchema', function () {
           nested: [{ somethingOptional: 'q' }, { somethingOptional: 'z' }]
         }
       },
-      { modifier: true }
+      { isModifier: true }
     )
 
     expect(cleaned).toEqual({
@@ -335,11 +344,12 @@ describe('SimpleSchema', function () {
     const testObj = new CustomObject({ foo: 1 })
 
     const context = schema.namedContext()
-    expect(context.validate(testObj)).toBe(true)
+    expect(context.validate(testObj as unknown as AnyClass)).toBe(true)
     expect(testObj instanceof CustomObject).toBe(true)
 
+    // @ts-expect-error
     testObj.foo = 'not a number'
-    expect(context.validate(testObj)).toBe(false)
+    expect(context.validate(testObj as unknown as AnyClass)).toBe(false)
   })
 
   it('validate object with prototype within normal object', function () {
@@ -357,12 +367,13 @@ describe('SimpleSchema', function () {
     expect(context.validate(testObj)).toBe(true)
     expect(testObj.customObject instanceof CustomObject).toBe(true)
 
+    // @ts-expect-error
     testObj.customObject.foo = 'not a number'
     expect(context.validate(testObj)).toBe(false)
   })
 
   it('allowsKey', function () {
-    function run (key, allowed) {
+    function run (key: string, allowed: boolean): void {
       expect(testSchema.allowsKey(key)).toBe(allowed)
     }
 
@@ -431,7 +442,7 @@ describe('SimpleSchema', function () {
         },
         { modifier: true }
       )
-    }).toNotThrow()
+    }).not.toThrow()
   })
 
   it('this.key in label function context', function () {
@@ -439,9 +450,9 @@ describe('SimpleSchema', function () {
       items: Array,
       'items.$': {
         type: String,
-        label () {
+        label (this: FunctionOptionContext) {
           const { key } = this
-          if (!key) return 'Item'
+          if (key == null) return 'Item'
           return `Item ${key.slice(key.lastIndexOf('.') + 1)}`
         }
       }
@@ -625,34 +636,33 @@ describe('SimpleSchema', function () {
       string: String
     })
 
-    function verify (error) {
+    function verify (error: ClientError<ValidationError[]>): void {
       expect(error.name).toBe('ClientError')
       expect(error.errorType).toBe('ClientError')
       expect(error.error).toBe('validation-error')
-      expect(error.details.length).toBe(2)
-      expect(error.details[0].name).toBe('int')
-      expect(error.details[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
-      expect(error.details[0].message).toBe('Int must be of type Integer')
-      expect(error.details[1].name).toBe('string')
-      expect(error.details[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
-      expect(error.details[1].message).toBe('String is required')
+      expect(error.details?.length).toBe(2)
+      expect(error.details?.[0].name).toBe('int')
+      expect(error.details?.[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
+      expect(error.details?.[0].message).toBe('Int must be of type Integer')
+      expect(error.details?.[1].name).toBe('string')
+      expect(error.details?.[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
+      expect(error.details?.[1].message).toBe('String is required')
 
       // In order for the message at the top of the stack trace to be useful,
       // we set it to the first validation error message.
-      expect(error.reason, 'Int must be of type Integer')
-      expect(error.message, 'Int must be of type Integer [validation-error]')
+      expect(error.message).toBe('Int must be of type Integer [validation-error]')
     }
 
     try {
       schema.validate({ int: '5' })
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     try {
       SimpleSchema.validate({ int: '5' }, schema)
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     try {
@@ -664,18 +674,18 @@ describe('SimpleSchema', function () {
         }
       )
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     try {
-      schema.validator()({ int: '5' })
+      schema.validator()({ int: '5' }) as undefined
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     expect(function () {
-      schema.validator({ clean: true })({ int: '5', string: 'test' })
-    }).toNotThrow()
+      schema.validator({ clean: true })({ int: '5', string: 'test' }) as undefined
+    }).not.toThrow()
   })
 
   it('getFormValidator', async function () {
@@ -685,8 +695,8 @@ describe('SimpleSchema', function () {
     })
 
     return await Promise.all([
-      schema
-        .getFormValidator()({ int: '5' })
+      (schema
+        .getFormValidator()({ int: '5' }) as Promise<ValidationError[]>)
         .then((errors) => {
           expect(errors).toEqual([
             {
@@ -704,8 +714,8 @@ describe('SimpleSchema', function () {
             }
           ])
         }),
-      schema
-        .getFormValidator({ clean: true })({ int: '5', string: 'test' })
+      (schema
+        .getFormValidator({ clean: true })({ int: '5', string: 'test' }) as Promise<ValidationError[]>)
         .then((errors) => {
           expect(errors).toEqual([])
         })
@@ -718,32 +728,31 @@ describe('SimpleSchema', function () {
       string: String
     })
 
-    function verify (error) {
+    function verify (error: ClientError<ValidationError[]>): void {
       expect(error.name).toBe('ClientError')
       expect(error.errorType).toBe('ClientError')
       expect(error.error).toBe('validation-error')
-      expect(error.details.length).toBe(2)
-      expect(error.details[0].name).toBe('int')
-      expect(error.details[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
-      expect(error.details[1].name).toBe('string')
-      expect(error.details[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
+      expect(error.details?.length).toBe(2)
+      expect(error.details?.[0].name).toBe('int')
+      expect(error.details?.[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
+      expect(error.details?.[1].name).toBe('string')
+      expect(error.details?.[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
 
       // In order for the message at the top of the stack trace to be useful,
       // we set it to the first validation error message.
-      expect(error.reason, 'Int must be of type Integer')
-      expect(error.message, 'Int must be of type Integer [validation-error]')
+      expect(error.message).toBe('Int must be of type Integer [validation-error]')
     }
 
     try {
       schema.validate([{ int: 5, string: 'test' }, { int: '5' }])
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     try {
       SimpleSchema.validate([{ int: 5, string: 'test' }, { int: '5' }], schema)
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     try {
@@ -752,13 +761,13 @@ describe('SimpleSchema', function () {
         string: String
       })
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
 
     try {
-      schema.validator()([{ int: 5, string: 'test' }, { int: '5' }])
+      schema.validator()([{ int: 5, string: 'test' }, { int: '5' }]) as undefined
     } catch (error) {
-      verify(error)
+      verify(error as ClientError<ValidationError[]>)
     }
   })
 
@@ -774,12 +783,12 @@ describe('SimpleSchema', function () {
 
     try {
       schema.validate({})
-    } catch (e) {
-      expect(e.message).toBe('validationErrorTransform')
+    } catch (error) {
+      expect((error as ClientError<ValidationError[]>).message).toBe('validationErrorTransform')
     }
 
     // Don't mess up other tests
-    SimpleSchema.validationErrorTransform = null
+    SimpleSchema.validationErrorTransform = undefined
   })
 
   it('SimpleSchema.addDocValidator', function () {
@@ -787,7 +796,7 @@ describe('SimpleSchema', function () {
       string: String
     })
 
-    const errorArray = [
+    const errorArray: ValidationError[] = [
       { name: 'firstName', type: 'TOO_SILLY', value: 'Reepicheep' }
     ]
     const validatedObject = {
@@ -805,6 +814,7 @@ describe('SimpleSchema', function () {
     expect(context.validationErrors()).toEqual(errorArray)
 
     // Don't mess up other tests
+    // @ts-expect-error
     SimpleSchema._docValidators = []
   })
 
@@ -828,7 +838,9 @@ describe('SimpleSchema', function () {
 
     // Verify they are actually used
     const schema = new SimpleSchema()
+    // @ts-expect-error
     expect(schema._constructorOptions.humanizeAutoLabels).toBe(true)
+    // @ts-expect-error
     expect(schema._cleanOptions.filter).toBe(true)
 
     // Change some
@@ -857,7 +869,9 @@ describe('SimpleSchema', function () {
 
     // Verify they are actually used
     const otherSchema = new SimpleSchema()
+    // @ts-expect-error
     expect(otherSchema._constructorOptions.humanizeAutoLabels).toBe(false)
+    // @ts-expect-error
     expect(otherSchema._cleanOptions.filter).toBe(false)
 
     // Don't mess up other tests
@@ -869,7 +883,7 @@ describe('SimpleSchema', function () {
       string: String
     })
 
-    const errorArray = [
+    const errorArray: ValidationError[] = [
       { name: 'firstName', type: 'TOO_SILLY', value: 'Reepicheep' }
     ]
     const validatedObject = {
@@ -983,7 +997,7 @@ describe('SimpleSchema', function () {
   })
 
   it('issue #232', function () {
-    let foo
+    let foo: any
 
     expect(function () {
       const schema3 = new SimpleSchema({
@@ -1004,7 +1018,7 @@ describe('SimpleSchema', function () {
           defaultValue: {}
         }
       })
-    }).toNotThrow()
+    }).not.toThrow()
 
     expect(foo instanceof SimpleSchema).toBe(true)
   })
@@ -1034,7 +1048,7 @@ describe('SimpleSchema', function () {
     })
     const context = schema.namedContext()
 
-    let testModifer = {
+    let testModifer: Record<string, unknown> = {
       $currentDate: {
         date: true
       }
@@ -1063,7 +1077,7 @@ describe('SimpleSchema', function () {
       testAny: SimpleSchema.Any
     })
     describe('can be used to allow a key with type', function () {
-      const dataTypes = [
+      const dataTypes: Array<[string, unknown]> = [
         ["String 'string'", 'string'],
         ['Number 42', 42],
         ['Number 3.1415', 3.1415],

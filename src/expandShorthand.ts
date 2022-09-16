@@ -5,7 +5,7 @@ import { SchemaDefinition, SchemaDefinitionWithShorthand, SupportedTypes } from 
 /**
  * Clones a schema object, expanding shorthand as it does it.
  */
-export default function expandShorthand (schema: SchemaDefinitionWithShorthand) {
+export default function expandShorthand (schema: SchemaDefinitionWithShorthand): SchemaDefinition {
   const schemaClone: SchemaDefinition = {}
 
   Object.keys(schema).forEach((key) => {
@@ -29,7 +29,7 @@ export default function expandShorthand (schema: SchemaDefinitionWithShorthand) 
 
       // Also add the item key definition
       const itemKey = `${key}.$`
-      if (schema[itemKey]) {
+      if (schema[itemKey] !== undefined) {
         throw new Error(
           `Array shorthand used for ${key} field but ${key}.$ key is already in the schema`
         )

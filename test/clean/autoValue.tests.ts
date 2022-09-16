@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from '../../src/SimpleSchema.ts'
+import { SimpleSchema } from '../../src/SimpleSchema.js'
 
 describe('autoValue', function () {
   describe('has correct information in function context', function () {
@@ -390,7 +390,7 @@ describe('autoValue', function () {
         autoValue () {
           const content = this.field('content')
           if (content.isSet) {
-            if (!this.operator) {
+            if (this.operator == null) {
               return [
                 {
                   date: new Date('2017-01-01T00:00:00.000Z'),
@@ -546,6 +546,10 @@ describe('autoValue', function () {
 
   it('simple autoValues', function () {
     const schema = new SimpleSchema({
+      content: {
+        type: String,
+        optional: true
+      },
       name: {
         type: String
       },
@@ -558,7 +562,7 @@ describe('autoValue', function () {
       updateCount: {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.operator) return 0
+          if (this.operator == null) return 0
           return { $inc: 1 }
         }
       },
@@ -566,7 +570,7 @@ describe('autoValue', function () {
         type: String,
         optional: true,
         autoValue () {
-          const content = this.field('content')
+          const content = this.field<string>('content')
           if (content.isSet) return content.value.split(' ')[0]
           this.unset()
         }
@@ -618,8 +622,8 @@ describe('autoValue', function () {
         autoValue () {
           expect(this.isSet).toBe(true)
           expect(this.operator).toEqual('$set')
-          expect(this.value).toEqual('should be overridden by autovalue')
-          return 'autovalue'
+          expect(this.value).toEqual('should be overridden by autoValue')
+          return 'autoValue'
         }
       }
     })
@@ -636,13 +640,13 @@ describe('autoValue', function () {
     const result = schema.clean(
       {
         $set: {
-          'children.$.value': 'should be overridden by autovalue'
+          'children.$.value': 'should be overridden by autoValue'
         }
       },
       { isModifier: true }
     )
 
-    expect(result.$set['children.$.value']).toBe('autovalue')
+    expect((result as Record<'$set', Record<string, string>>).$set['children.$.value']).toBe('autoValue')
   })
 
   it('operator correct for $pull', function () {
@@ -715,8 +719,8 @@ describe('autoValue', function () {
           type: Number,
           optional: true,
           autoValue () {
-            const amount = this.field('amount').value || 0
-            const tax = this.field('tax').value || 0
+            const amount = this.field<number>('amount').value ?? 0
+            const tax = this.field<number>('tax').value ?? 0
             return amount * (1 + tax)
           }
         }
@@ -792,7 +796,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return 5
           }
         }
@@ -836,7 +840,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return 5
           }
         }
@@ -869,7 +873,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested': {
         type: Object,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return {}
           }
         }
@@ -877,7 +881,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return 5
           }
         }
@@ -911,7 +915,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return 5
           }
         }
@@ -938,7 +942,7 @@ describe('autoValue', function () {
       integer: {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return 5
           }
         }
@@ -988,7 +992,7 @@ describe('autoValue', function () {
       integer: {
         type: SimpleSchema.Integer,
         autoValue () {
-          if (!this.value) {
+          if (this.value == null) {
             return 5
           }
         }

@@ -1,8 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import convertToProperType from '../../src/clean/convertToProperType.ts'
+import convertToProperType from '../../src/clean/convertToProperType.js'
 
 describe('convertToProperType', function () {
   it('convert string `false` to boolean value false', function () {

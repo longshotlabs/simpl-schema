@@ -36,7 +36,7 @@ export function extname (text: string): string {
   return (index === -1) ? '' : ext
 }
 
-export function humanize (text?: string): string {
+export function humanize (text?: string | number | null): string {
   text = text ?? ''
   text = text.toString() // might be a number
   text = text.trim()

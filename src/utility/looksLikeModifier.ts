@@ -1,8 +1,10 @@
+import { ObjectToValidate } from '../types.js'
+
 /**
  * Returns true if any of the keys of obj start with a $
  */
 export default function looksLikeModifier (
-  obj: Record<string | number | symbol, unknown>
-) {
-  return !!Object.keys(obj || {}).find((key) => key.substring(0, 1) === '$')
+  obj: ObjectToValidate | null | undefined
+): boolean {
+  return Object.keys(obj ?? {}).some((key) => key.substring(0, 1) === '$')
 }

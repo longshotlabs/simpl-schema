@@ -1,13 +1,13 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
-import Address from './testHelpers/Address'
-import expectErrorLength from './testHelpers/expectErrorLength'
-import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength'
-import friendsSchema from './testHelpers/friendsSchema'
-import testSchema from './testHelpers/testSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import Address from './helpers/Address.js'
+import expectErrorLength from './helpers/expectErrorLength.js'
+import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
+import friendsSchema from './helpers/friendsSchema.js'
+import testSchema from './helpers/testSchema.js'
 
 describe('SimpleSchema - type', function () {
   it('typed array', function () {
@@ -100,6 +100,7 @@ describe('SimpleSchema - type', function () {
     expect(function () {
       // eslint-disable-next-line no-new
       new SimpleSchema({
+        // @ts-expect-error
         name: { type: Array[Object] }
       })
     }).toThrow()
