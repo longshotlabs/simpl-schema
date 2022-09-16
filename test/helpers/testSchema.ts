@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 
-import { SimpleSchema } from '../SimpleSchema'
-import Address from './Address'
+import { SimpleSchema } from '../../src/SimpleSchema.js'
+import Address from './Address.js'
 
 const refSchema = new SimpleSchema({
   string: {

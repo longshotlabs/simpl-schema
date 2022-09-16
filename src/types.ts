@@ -50,9 +50,9 @@ export interface TypeDefinitionProps {
   exclusiveMax?: boolean
   exclusiveMin?: boolean
   maxCount?: number
-  max?: number | Date
+  max?: number | Date | (() => number | Date)
   minCount?: number
-  min?: number | Date
+  min?: number | Date | (() => number | Date)
   regEx?: RegExp
   skipRegExCheckForEmptyStrings?: boolean
   trim?: boolean
@@ -91,6 +91,8 @@ export type SchemaDefinition = Record<string, SchemaKeyDefinition>
 export type SchemaDefinitionWithShorthand = Record<string, SchemaKeyDefinitionWithShorthand>
 export type ResolvedSchemaDefinition = Record<string, StandardSchemaKeyDefinition>
 
+export type AnyClass = new(...args: any[]) => any
+
 export type SupportedTypes =
   | ArrayConstructor
   | BooleanConstructor
@@ -101,6 +103,7 @@ export type SupportedTypes =
   | typeof SimpleSchema.Any
   | typeof SimpleSchema.Integer
   | SimpleSchema
+  | AnyClass
 
 export interface ValidationError {
   name: string
@@ -179,4 +182,5 @@ export interface DocValidatorContext extends CustomValidatorContext {
 export type FunctionPropContext = Omit<ValidatorContext, 'addValidationErrors' | 'valueShouldBeChecked'>
 
 export type DocValidatorFunction = (this: DocValidatorContext, obj: Record<string, any>) => undefined | boolean | string | ValidationErrorResult
-export type ValidatorFunction = (this: ValidatorContext) => undefined | boolean | string | ValidationErrorResult
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+export type ValidatorFunction = (this: ValidatorContext) => void | undefined | boolean | string | ValidationErrorResult

@@ -22,18 +22,18 @@ export default class ValidationContext {
     this._schemaKeys = Object.keys(this._schema)
   }
 
-  setValidationErrors (errors: ValidationError[]) {
+  setValidationErrors (errors: ValidationError[]): void {
     this._validationErrors = errors
   }
 
-  addValidationErrors (errors: ValidationError[]) {
+  addValidationErrors (errors: ValidationError[]): void {
     errors.forEach((error) => this._validationErrors.push(error))
   }
 
   /**
    * Reset the validationErrors array
    */
-  reset () {
+  reset (): void {
     this.setValidationErrors([])
   }
 
@@ -42,7 +42,7 @@ export default class ValidationContext {
    * @param genericKey The generic version of this key, if already known
    * @returns The first validation error for this key, if any
    */
-  getErrorForKey (key: string, genericKey = MongoObject.makeKeyGeneric(key)) {
+  getErrorForKey (key: string, genericKey = MongoObject.makeKeyGeneric(key)): ValidationError | undefined {
     const errors = this._validationErrors
     const errorForKey = errors.find((error) => error.name === key)
     if (errorForKey != null) return errorForKey
@@ -55,8 +55,8 @@ export default class ValidationContext {
    * @param genericKey The generic version of this key, if already known
    * @returns True if this key is currently invalid; otherwise false.
    */
-  keyIsInvalid (key: string, genericKey = MongoObject.makeKeyGeneric(key)) {
-    return !(this.getErrorForKey(key, genericKey) == null)
+  keyIsInvalid (key: string, genericKey = MongoObject.makeKeyGeneric(key)): boolean {
+    return this.getErrorForKey(key, genericKey) != null
   }
 
   /**
@@ -64,7 +64,7 @@ export default class ValidationContext {
    * @param genericKey The generic version of this key, if already known
    * @returns The message for the first error for this key, or an empty string
    */
-  keyErrorMessage (key: string, genericKey = MongoObject.makeKeyGeneric(key)) {
+  keyErrorMessage (key: string, genericKey = MongoObject.makeKeyGeneric(key)): string {
     const errorObj = this.getErrorForKey(key, genericKey)
     if (errorObj == null) return ''
 
@@ -87,7 +87,7 @@ export default class ValidationContext {
       mongoObject,
       upsert: isUpsert = false
     }: ValidationOptions = {}
-  ) {
+  ): boolean {
     const validationErrors = doValidation({
       extendedCustomContext,
       ignoreTypes,
@@ -118,15 +118,15 @@ export default class ValidationContext {
     return validationErrors.length === 0
   }
 
-  isValid () {
+  isValid (): boolean {
     return this._validationErrors.length === 0
   }
 
-  validationErrors () {
+  validationErrors (): ValidationError[] {
     return this._validationErrors
   }
 
-  clean (doc: Record<string | number | symbol, unknown>, options: CleanOptions = {}) {
+  clean (doc: Record<string | number | symbol, unknown>, options: CleanOptions = {}): Record<string | number | symbol, unknown> {
     return this._simpleSchema.clean(doc, options)
   }
 }

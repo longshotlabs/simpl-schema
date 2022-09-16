@@ -1,29 +1,37 @@
+interface AddressInfo {
+  city: string
+  state: string
+}
+
 class Address {
-  constructor (city, state) {
+  public city: string
+  public state: string
+
+  constructor (city: string, state: string) {
     this.city = city
     this.state = state
   }
 
-  toString () {
+  toString (): string {
     return `${this.city}, ${this.state}`
   }
 
-  clone () {
+  clone (): Address {
     return new Address(this.city, this.state)
   }
 
-  equals (other) {
+  equals (other: unknown): boolean {
     if (!(other instanceof Address)) {
       return false
     }
     return JSON.stringify(this) === JSON.stringify(other)
   }
 
-  typeName () { // eslint-disable-line class-methods-use-this
+  typeName (): string { // eslint-disable-line class-methods-use-this
     return 'Address'
   }
 
-  toJSONValue () {
+  toJSONValue (): AddressInfo {
     return {
       city: this.city,
       state: this.state

@@ -1,18 +1,18 @@
 /* eslint-disable func-names, prefer-arrow-callback, class-methods-use-this */
 
-import expect from 'expect'
+import { expect } from 'expect'
 
-import { SimpleSchema } from './SimpleSchema'
-import expectErrorOfTypeLength from './testHelpers/expectErrorOfTypeLength'
-import expectValid from './testHelpers/expectValid'
-import testSchema from './testHelpers/testSchema'
+import { SimpleSchema } from '../src/SimpleSchema.js'
+import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
+import expectValid from './helpers/expectValid.js'
+import testSchema from './helpers/testSchema.js'
 
 class CustomObject {
-  constructor (obj) {
+  constructor (obj: Record<string, unknown>) {
     Object.assign(this, obj)
   }
 
-  bar () {
+  bar (): number {
     return 20
   }
 }
@@ -678,13 +678,13 @@ describe('SimpleSchema', function () {
     }).toNotThrow()
   })
 
-  it('getFormValidator', function () {
+  it('getFormValidator', async function () {
     const schema = new SimpleSchema({
       int: SimpleSchema.Integer,
       string: String
     })
 
-    return Promise.all([
+    return await Promise.all([
       schema
         .getFormValidator()({ int: '5' })
         .then((errors) => {

@@ -20,5 +20,6 @@ declare module 'message-box' {
     constructor (messages: MessageBoxOptions)
     clone (): MessageBox
     message (error: ErrorDetails, options: MessageOptions): string
+    messages (messages: Record<string, string>): void
   }
 }

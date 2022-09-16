@@ -1,4 +1,4 @@
-import { SimpleSchema } from '../SimpleSchema'
+import { SimpleSchema } from '../../src/SimpleSchema.js'
 
 const friendsSchema = new SimpleSchema({
   name: {
