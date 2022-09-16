@@ -21,7 +21,7 @@ import requiredValidator from './validation/requiredValidator.js'
 import typeValidator from './validation/typeValidator/index.js'
 import ValidationContext from './ValidationContext.js'
 
-function shouldCheck (key: string) {
+function shouldCheck (key: string): boolean {
   if (key === '$pushAll') { throw new Error('$pushAll is not supported; use $push + $each') }
   return !['$pull', '$pullAll', '$pop', '$slice'].includes(key)
 }
@@ -56,9 +56,9 @@ function doValidation ({
   obj,
   schema,
   validationContext
-}: DoValidationProps) {
+}: DoValidationProps): ValidationError[] {
   // First do some basic checks of the object, and throw errors if necessary
-  if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) {
+  if (obj == null || (typeof obj !== 'object' && typeof obj !== 'function')) {
     throw new Error('The first argument of validate() must be an object')
   }
 
@@ -72,10 +72,11 @@ function doValidation ({
     // Create mongoObject if necessary, cache for speed
     if (mongoObject == null) mongoObject = new MongoObject(obj, schema.blackboxKeys())
 
-    const keyInfo = (mongoObject.getInfoForKey(key) != null) || {
+    const keyInfo = mongoObject.getInfoForKey(key) ?? {
       operator: null,
       value: undefined
     }
+
     return {
       ...keyInfo,
       isSet: keyInfo.value !== undefined
@@ -93,7 +94,7 @@ function doValidation ({
     op: string | null,
     isInArrayItemObject: boolean,
     isInSubObject: boolean
-  ) {
+  ): void {
     // Get the schema for this key, marking invalid if there isn't one.
     if (def == null) {
       // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
@@ -157,8 +158,8 @@ function doValidation ({
         ((val !== undefined && val !== null) ||
           (affectedKeyGeneric?.slice(-2) === '.$' &&
             val === null &&
-            !def.optional)),
-      ...((extendedCustomContext != null) || {})
+            def.optional !== true)),
+      ...(extendedCustomContext ?? {})
     }
 
     const builtInValidators: ValidatorFunction[] = [
@@ -167,17 +168,20 @@ function doValidation ({
       allowedValuesValidator
     ]
     const validators = builtInValidators
+      // @ts-expect-error
       .concat(schema._validators)
+      // @ts-expect-error
       .concat(SimpleSchema._validators)
 
     // Loop through each of the definitions in the SimpleSchemaGroup.
     // If any return true, we're valid.
     const fieldIsValid = def.type.some((typeDef) => {
-      // If the type is SimpleSchema.Any, then it is valid:
+      // If the type is SimpleSchema.Any, then it is valid
       if (typeDef === SimpleSchema.Any) return true
 
       const { type, ...definitionWithoutType } = def // eslint-disable-line no-unused-vars
 
+      // @ts-expect-error
       const finalValidatorContext: ValidatorContext = {
         ...validatorContext,
 
@@ -244,11 +248,11 @@ function doValidation ({
     operator = null,
     isInArrayItemObject = false,
     isInSubObject = false
-  }: CheckObjProps) {
+  }: CheckObjProps): void {
     let affectedKeyGeneric: string | null | undefined
     let def
 
-    if (affectedKey) {
+    if (affectedKey != null) {
       // When we hit a blackbox key, we don't progress any further
       if (schema.keyIsInBlackBox(affectedKey)) return
 
@@ -291,7 +295,7 @@ function doValidation ({
         },
         validationContext,
         value: val,
-        ...((extendedCustomContext != null) || {})
+        ...(extendedCustomContext ?? {})
       }
 
       // Perform validation for this key
@@ -318,7 +322,7 @@ function doValidation ({
     // descendent keys can be validated.
     if (
       (val === undefined || val === null) &&
-      ((def == null) || (!def.optional && childKeys && childKeys.length > 0))
+      ((def == null) || (def.optional !== true && childKeys.length > 0))
     ) {
       val = {}
     }
@@ -328,12 +332,13 @@ function doValidation ({
       val.forEach((v, i) => {
         checkObj({
           val: v,
-          affectedKey: `${affectedKey}.${i}`,
+          affectedKey: `${affectedKey as string}.${i}`,
           operator
         })
       })
     } else if (
       isObjectWeShouldTraverse(val) &&
+      // @ts-expect-error
       ((def == null) || !schema._blackboxKeys.has(affectedKey ?? ''))
     ) {
       // Loop through object keys
@@ -345,7 +350,7 @@ function doValidation ({
       // required as if it's not a modifier
       isInArrayItemObject = affectedKeyGeneric?.slice(-2) === '.$'
 
-      const checkedKeys = []
+      const checkedKeys: string[] = []
 
       // Check all present keys plus all keys defined by the schema.
       // This allows us to detect extra keys not allowed by the schema plus
@@ -369,7 +374,7 @@ function doValidation ({
     }
   }
 
-  function checkModifier (mod: Record<string, any>) {
+  function checkModifier (mod: Record<string, any>): void {
     // Loop through operators
     Object.keys(mod).forEach((op) => {
       const opObj = mod[op]
@@ -423,7 +428,9 @@ function doValidation ({
   }
 
   // Custom whole-doc validators
+  // @ts-expect-error
   const docValidators = schema._docValidators.concat(
+    // @ts-expect-error
     SimpleSchema._docValidators
   )
   const docValidatorContext: DocValidatorContext = {
@@ -435,7 +442,7 @@ function doValidation ({
     obj,
     schema,
     validationContext,
-    ...((extendedCustomContext != null) || {})
+    ...(extendedCustomContext ?? {})
   }
   docValidators.forEach((func) => {
     const errors = func.call(docValidatorContext, obj)
@@ -444,13 +451,13 @@ function doValidation ({
         'Custom doc validator must return an array of error objects'
       )
     }
-    if (errors.length) validationErrors = validationErrors.concat(errors)
+    if (errors.length > 0) validationErrors = validationErrors.concat(errors)
   })
 
   const addedFieldNames: string[] = []
   validationErrors = validationErrors.filter((errObj) => {
     // Remove error types the user doesn't care about
-    if (ignoreTypes?.includes(errObj.type)) return false
+    if (ignoreTypes?.includes(errObj.type) === true) return false
     // Make sure there is only one error per fieldName
     if (addedFieldNames.includes(errObj.name)) return false
 

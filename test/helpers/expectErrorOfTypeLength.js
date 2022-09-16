@@ -1,12 +1,13 @@
-import expect from 'expect';
-import validate from './validate';
+import expect from 'expect'
 
-export default function expectErrorOfTypeLength(type, ...args) {
-  const errors = validate(...args).validationErrors();
+import validate from './validate'
 
-  let errorCount = 0;
+export default function expectErrorOfTypeLength (type, ...args) {
+  const errors = validate(...args).validationErrors()
+
+  let errorCount = 0
   errors.forEach((error) => {
-    if (error.type === type) errorCount++;
-  });
-  return expect(errorCount);
+    if (error.type === type) errorCount++
+  })
+  return expect(errorCount)
 }

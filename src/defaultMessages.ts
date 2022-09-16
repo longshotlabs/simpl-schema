@@ -1,3 +1,5 @@
+import { MessageBoxOptions } from 'message-box'
+
 import regExpObj from './regExp.js'
 
 const regExpMessages = [
@@ -14,7 +16,7 @@ const regExpMessages = [
   { exp: regExpObj.Phone, msg: 'must be a valid phone number' }
 ]
 
-const defaultMessages = {
+const defaultMessages: MessageBoxOptions = {
   initialLanguage: 'en',
   messages: {
     en: {
@@ -33,12 +35,12 @@ const defaultMessages = {
       noDecimal: '{{{label}}} must be an integer',
       notAllowed: '{{{value}}} is not an allowed value',
       expectedType: '{{{label}}} must be of type {{dataType}}',
-      regEx ({ label, regExp }) {
+      regEx ({ label, regExp }: { label?: string, regExp?: string }): string {
         // See if there's one where exp matches this expression
         let msgObj
-        if (regExp) {
+        if (regExp != null) {
           msgObj = regExpMessages.find(
-            (o) => o.exp && o.exp.toString() === regExp
+            (o) => o.exp != null && o.exp.toString() === regExp
           )
         }
 
@@ -46,7 +48,7 @@ const defaultMessages = {
           ? msgObj.msg
           : 'failed regular expression validation'
 
-        return `${label} ${regExpMessage}`
+        return `${label as string} ${regExpMessage}`
       },
       keyNotInSchema: '{{name}} is not allowed by the schema'
     }

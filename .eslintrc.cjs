@@ -15,4 +15,7 @@ module.exports = {
     "@typescript-eslint/triple-slash-reference": "off",
     "simple-import-sort/imports": "error",
   },
+  env: {
+    mocha: true
+  }
 };

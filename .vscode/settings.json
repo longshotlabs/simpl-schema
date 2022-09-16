@@ -7,14 +7,24 @@
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "eslint.format.enable": true,
+  "javascript.format.enable": false,
   "javascript.validate.enable": false,
   "prettier.enable": false,
   "standard.enable": false,
   "standard.engine": "ts-standard",
-  "[javascript,javascriptreact,typescript,typescriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
 }

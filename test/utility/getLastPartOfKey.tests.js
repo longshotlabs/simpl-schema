@@ -1,14 +1,15 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from "expect";
-import getLastPartOfKey from "../../src/utility/getLastPartOfKey.ts";
+import expect from 'expect'
 
-describe("getLastPartOfKey", function () {
-  it("returns the correct string for a non-array key", function () {
-    expect(getLastPartOfKey("a.b.c", "a")).toBe("b.c");
-  });
+import getLastPartOfKey from '../../src/utility/getLastPartOfKey.ts'
 
-  it("returns the correct string for an array key", function () {
-    expect(getLastPartOfKey("a.b.$.c", "a.b")).toBe("c");
-  });
-});
+describe('getLastPartOfKey', function () {
+  it('returns the correct string for a non-array key', function () {
+    expect(getLastPartOfKey('a.b.c', 'a')).toBe('b.c')
+  })
+
+  it('returns the correct string for an array key', function () {
+    expect(getLastPartOfKey('a.b.$.c', 'a.b')).toBe('c')
+  })
+})

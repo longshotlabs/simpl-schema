@@ -1,7 +1,8 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import expect from 'expect';
-import { SimpleSchema } from './SimpleSchema';
+import expect from 'expect'
+
+import { SimpleSchema } from './SimpleSchema'
 
 describe('SimpleSchema', function () {
   it('pick', function () {
@@ -10,30 +11,30 @@ describe('SimpleSchema', function () {
       'foo.bar': { type: String },
       fooArray: { type: Array },
       'fooArray.$': { type: Object },
-      'fooArray.$.bar': { type: String },
-    });
+      'fooArray.$.bar': { type: String }
+    })
 
-    let newSchema = schema.pick('foo');
-    expect(Object.keys(newSchema.schema())).toEqual(['foo', 'foo.bar']);
+    let newSchema = schema.pick('foo')
+    expect(Object.keys(newSchema.schema())).toEqual(['foo', 'foo.bar'])
 
-    newSchema = schema.pick('fooArray');
-    expect(Object.keys(newSchema.schema())).toEqual(['fooArray', 'fooArray.$', 'fooArray.$.bar']);
+    newSchema = schema.pick('fooArray')
+    expect(Object.keys(newSchema.schema())).toEqual(['fooArray', 'fooArray.$', 'fooArray.$.bar'])
 
-    newSchema = schema.pick('foo', 'fooArray');
-    expect(Object.keys(newSchema.schema())).toEqual(['foo', 'foo.bar', 'fooArray', 'fooArray.$', 'fooArray.$.bar']);
+    newSchema = schema.pick('foo', 'fooArray')
+    expect(Object.keys(newSchema.schema())).toEqual(['foo', 'foo.bar', 'fooArray', 'fooArray.$', 'fooArray.$.bar'])
 
-    newSchema = schema.pick('blah');
-    expect(Object.keys(newSchema.schema())).toEqual([]);
-  });
+    newSchema = schema.pick('blah')
+    expect(Object.keys(newSchema.schema())).toEqual([])
+  })
 
   it('error when you do not pick the parent', () => {
     const schema = new SimpleSchema({
       level1: { type: Object },
-      'level1.level2': { type: Boolean },
-    });
+      'level1.level2': { type: Boolean }
+    })
 
     expect(() => {
-      schema.pick('level1.level2');
-    }).toThrow('"level1.level2" is in the schema but "level1" is not');
-  });
-});
+      schema.pick('level1.level2')
+    }).toThrow('"level1.level2" is in the schema but "level1" is not')
+  })
+})

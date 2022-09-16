@@ -46,7 +46,7 @@ export interface SimpleSchemaOptions {
 export interface TypeDefinitionProps {
   allowedValues?: AllowedValues | (() => AllowedValues)
   blackbox?: boolean
-  custom?: () => void
+  custom?: ValidatorFunction
   exclusiveMax?: boolean
   exclusiveMin?: boolean
   maxCount?: number
