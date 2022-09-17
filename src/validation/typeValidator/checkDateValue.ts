@@ -2,15 +2,15 @@ import { SimpleSchema } from '../../SimpleSchema.js'
 import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 import { dateToDateString } from '../../utility/index.js'
 
-export default function doDateChecks (def: SchemaKeyDefinition, keyValue: Date): ValidationErrorResult | undefined {
+export default function checkDateValue (def: SchemaKeyDefinition, value: Date): ValidationErrorResult | undefined {
   // Is it an invalid date?
-  if (isNaN(keyValue.getTime())) { return { type: SimpleSchema.ErrorTypes.BAD_DATE } }
+  if (isNaN(value.getTime())) { return { type: SimpleSchema.ErrorTypes.BAD_DATE } }
 
   // Is it earlier than the minimum date?
   if (
     def.min !== undefined &&
     typeof (def.min as Date).getTime === 'function' &&
-    (def.min as Date).getTime() > keyValue.getTime()
+    (def.min as Date).getTime() > value.getTime()
   ) {
     return {
       type: SimpleSchema.ErrorTypes.MIN_DATE,
@@ -22,7 +22,7 @@ export default function doDateChecks (def: SchemaKeyDefinition, keyValue: Date):
   if (
     def.max !== undefined &&
     typeof (def.max as Date).getTime === 'function' &&
-    (def.max as Date).getTime() < keyValue.getTime()
+    (def.max as Date).getTime() < value.getTime()
   ) {
     return {
       type: SimpleSchema.ErrorTypes.MAX_DATE,

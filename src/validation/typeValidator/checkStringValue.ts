@@ -1,30 +1,30 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
 import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 
-export default function doStringChecks (
+export default function checkStringValue (
   def: SchemaKeyDefinition,
-  keyValue: string
+  value: string
 ): ValidationErrorResult | undefined {
   // Is it a String?
-  if (typeof keyValue !== 'string') {
+  if (typeof value !== 'string') {
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'String' }
   }
 
   // Is the string too long?
-  if (def.max !== null && (def.max as number) < keyValue.length) {
+  if (def.max !== null && (def.max as number) < value.length) {
     return { type: SimpleSchema.ErrorTypes.MAX_STRING, max: def.max }
   }
 
   // Is the string too short?
-  if (def.min !== null && (def.min as number) > keyValue.length) {
+  if (def.min !== null && (def.min as number) > value.length) {
     return { type: SimpleSchema.ErrorTypes.MIN_STRING, min: def.min }
   }
 
   // Does the string match the regular expression?
   if (
-    (def.skipRegExCheckForEmptyStrings !== true || keyValue !== '') &&
+    (def.skipRegExCheckForEmptyStrings !== true || value !== '') &&
     def.regEx instanceof RegExp &&
-    !def.regEx.test(keyValue)
+    !def.regEx.test(value)
   ) {
     return {
       type: SimpleSchema.ErrorTypes.FAILED_REGULAR_EXPRESSION,
@@ -36,7 +36,7 @@ export default function doStringChecks (
   if (Array.isArray(def.regEx)) {
     let regExError: ValidationErrorResult | undefined
     def.regEx.every((re) => {
-      if (!re.test(keyValue)) {
+      if (!re.test(value)) {
         regExError = {
           type: SimpleSchema.ErrorTypes.FAILED_REGULAR_EXPRESSION,
           regExp: re.toString()

@@ -1,48 +1,47 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
 import { SchemaKeyTypeDefinition, TypeValidatorContext, ValidationErrorResult } from '../../types.js'
-import doArrayChecks from './doArrayChecks.js'
-import doDateChecks from './doDateChecks.js'
-import doNumberChecks from './doNumberChecks.js'
-import doStringChecks from './doStringChecks.js'
+import checkArrayValue from './checkArrayValue.js'
+import checkDateValue from './checkDateValue.js'
+import checkNumberValue from './checkNumberValue.js'
+import checkStringValue from './checkStringValue.js'
 
-export default function typeValidator (this: TypeValidatorContext): ValidationErrorResult | undefined {
-  if (!this.valueShouldBeChecked) return
+export function checkValueType (info: TypeValidatorContext): ValidationErrorResult | undefined {
+  const { definition: def, operator: op, value, valueShouldBeChecked } = info
 
-  const def = this.definition
+  if (!valueShouldBeChecked) return
+
   const expectedType = def.type
-  const keyValue = this.value
-  const op = this.operator
 
-  if (expectedType === String) return doStringChecks(def, keyValue)
-  if (expectedType === Number) return doNumberChecks(def, keyValue, op, false)
-  if (expectedType === SimpleSchema.Integer) { return doNumberChecks(def, keyValue, op, true) }
+  if (expectedType === String) return checkStringValue(def, value)
+  if (expectedType === Number) return checkNumberValue(def, value, op, false)
+  if (expectedType === SimpleSchema.Integer) return checkNumberValue(def, value, op, true)
 
   if (expectedType === Boolean) {
     // Is it a boolean?
-    if (typeof keyValue === 'boolean') return
+    if (typeof value === 'boolean') return
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Boolean' }
   }
 
   if (expectedType === Object || SimpleSchema.isSimpleSchema(expectedType)) {
     // Is it an object?
     if (
-      keyValue === Object(keyValue) &&
-      typeof keyValue[Symbol.iterator] !== 'function' &&
-      !(keyValue instanceof Date)
+      value === Object(value) &&
+      typeof value[Symbol.iterator] !== 'function' &&
+      !(value instanceof Date)
     ) { return }
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Object' }
   }
 
-  if (expectedType === Array) return doArrayChecks(def, keyValue)
+  if (expectedType === Array) return checkArrayValue(def, value)
 
   if (expectedType instanceof Function) {
     // Generic constructor checks
-    if (!(keyValue instanceof expectedType)) {
+    if (!(value instanceof expectedType)) {
       // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
       const dateTypeIsOkay =
         expectedType === Date &&
         op === '$currentDate' &&
-        (keyValue === true || JSON.stringify(keyValue) === '{"$type":"date"}')
+        (value === true || JSON.stringify(value) === '{"$type":"date"}')
 
       if (expectedType !== Date || !dateTypeIsOkay) {
         return {
@@ -56,16 +55,16 @@ export default function typeValidator (this: TypeValidatorContext): ValidationEr
     if (expectedType === Date) {
       // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
       if (op === '$currentDate') {
-        return doDateChecks(def, new Date())
+        return checkDateValue(def, new Date())
       }
-      return doDateChecks(def, keyValue)
+      return checkDateValue(def, value)
     }
   }
 }
 
 export function isValueTypeValid (typeDefinitions: SchemaKeyTypeDefinition[], value: any, operator: string | null): boolean {
   return typeDefinitions.some((definition) => {
-    const typeValidationError = typeValidator.call({
+    const typeValidationError = checkValueType({
       valueShouldBeChecked: true,
       definition,
       value,
@@ -73,4 +72,8 @@ export function isValueTypeValid (typeDefinitions: SchemaKeyTypeDefinition[], va
     })
     return typeValidationError === undefined
   })
+}
+
+export default function typeValidator (this: TypeValidatorContext): ValidationErrorResult | undefined {
+  return checkValueType(this)
 }

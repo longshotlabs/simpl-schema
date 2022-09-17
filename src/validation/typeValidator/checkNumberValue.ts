@@ -1,14 +1,14 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
 import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 
-export default function doNumberChecks (
+export default function checkNumberValue (
   def: SchemaKeyDefinition,
-  keyValue: number,
+  value: number,
   op: string | null,
   expectsInteger: boolean
 ): ValidationErrorResult | undefined {
   // Is it a valid number?
-  if (typeof keyValue !== 'number' || isNaN(keyValue)) {
+  if (typeof value !== 'number' || isNaN(value)) {
     return {
       type: SimpleSchema.ErrorTypes.EXPECTED_TYPE,
       dataType: expectsInteger ? 'Integer' : 'Number'
@@ -20,8 +20,8 @@ export default function doNumberChecks (
     op !== '$inc' &&
     def.max !== null &&
     (def.exclusiveMax === true
-      ? (def.max as number) <= keyValue
-      : (def.max as number) < keyValue)
+      ? (def.max as number) <= value
+      : (def.max as number) < value)
   ) {
     return {
       type: def.exclusiveMax === true
@@ -36,8 +36,8 @@ export default function doNumberChecks (
     op !== '$inc' &&
     def.min !== null &&
     (def.exclusiveMin === true
-      ? (def.min as number) >= keyValue
-      : (def.min as number) > keyValue)
+      ? (def.min as number) >= value
+      : (def.min as number) > value)
   ) {
     return {
       type: def.exclusiveMin === true
@@ -48,7 +48,7 @@ export default function doNumberChecks (
   }
 
   // Is it an integer if we expect an integer?
-  if (expectsInteger && !Number.isInteger(keyValue)) {
+  if (expectsInteger && !Number.isInteger(value)) {
     return { type: SimpleSchema.ErrorTypes.MUST_BE_INTEGER }
   }
 }
