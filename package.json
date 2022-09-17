@@ -53,7 +53,6 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
-    "message-box": "^0.2.7",
     "mongo-object": "^3.0.0"
   }
 }
