@@ -2,7 +2,7 @@
 
 import { expect } from 'expect'
 
-import getLastPartOfKey from '../../src/utility/getLastPartOfKey.js'
+import { getLastPartOfKey } from '../../src/utility/index.js'
 
 describe('getLastPartOfKey', function () {
   it('returns the correct string for a non-array key', function () {

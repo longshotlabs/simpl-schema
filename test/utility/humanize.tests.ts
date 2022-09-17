@@ -2,7 +2,7 @@
 
 import { expect } from 'expect'
 
-import { humanize } from '../src/utility/humanize.js'
+import { humanize } from '../../src/utility/index.js'
 
 describe('humanize', function () {
   it('works', function () {
