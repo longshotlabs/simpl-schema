@@ -32,17 +32,69 @@ export type CustomAutoValueContext = Record<string, unknown>
 export type CustomValidatorContext = Record<string, unknown>
 
 export interface CleanOptions {
+  /**
+   * Should cleaning try to automatically convert the type of values to match the type expected by the schema?
+   * @default true
+   */
   autoConvert?: boolean
+  /**
+   * This object will be added to the `this` context of autoValue functions.
+   */
   extendAutoValueContext?: CustomAutoValueContext
+  /**
+   * Should cleaning delete any properties of the object that are not present in the schema?
+   * @default true
+   */
   filter?: boolean
+  /**
+   * Should cleaning use defaultValue and autoValue functions to automatically add values for some fields?
+   * @default true
+   */
   getAutoValues?: boolean
+  /**
+   * Is the object being cleaned a MongoDB modifier document?
+   * @default false
+   */
   isModifier?: boolean
+  /**
+   * Will the modifier object being cleaned be used to do an upsert? This is used
+   * to determine whether $setOnInsert should be added to it for default values.
+   * @default false
+   */
   isUpsert?: boolean
+  /**
+   * If you already have the MongoObject instance, pass it to improve performance.
+   */
   mongoObject?: MongoObject
+  /**
+   * Should cleaning mutate the input object? Set this to true to improve performance if you don't mind mutating the object you're cleaning.
+   */
   mutate?: boolean
+  /**
+   * Should cleaning remove keys in a normal object or a $set object where the value is an empty string?
+   * @default true
+   */
   removeEmptyStrings?: boolean
+  /**
+   * Should cleaning remove all null items from all arrays? Set to true only if you don't have any sparse arrays.
+   * @default false
+   */
   removeNullsFromArrays?: boolean
+  /**
+   * Should cleaning remove whitespace characters from the beginning and end of all strings?
+   * @default true
+   */
   trimStrings?: boolean
+}
+
+export interface NodeContext {
+  genericKey: string
+  isArrayItem: boolean
+  operator: string
+  position: string
+  remove: () => void
+  updateValue: (newValue: any) => void
+  value: any
 }
 
 export type GetErrorMessageFn = (error: ValidationError, label: string | null) => string | undefined

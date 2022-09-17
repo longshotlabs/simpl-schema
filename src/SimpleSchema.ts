@@ -231,8 +231,8 @@ class SimpleSchema {
    * have been run to produce a result.
    */
   schema (): ResolvedSchemaDefinition
-  schema (key: string): StandardSchemaKeyDefinition
-  schema (key?: string): ResolvedSchemaDefinition | StandardSchemaKeyDefinition {
+  schema (key: string): StandardSchemaKeyDefinition | null
+  schema (key?: string): ResolvedSchemaDefinition | StandardSchemaKeyDefinition | null {
     if (key == null) return this._schema
 
     const genericKey = MongoObject.makeKeyGeneric(key)
@@ -250,7 +250,7 @@ class SimpleSchema {
       )
     }
 
-    return keySchema as StandardSchemaKeyDefinition
+    return keySchema
   }
 
   /**
@@ -499,7 +499,6 @@ class SimpleSchema {
       // If the schema key is the test key, it's allowed.
       if (loopKey === key) return true
 
-      const fieldSchema = this.schema(loopKey)
       const compare1 = key.slice(0, loopKey.length + 2)
       const compare2 = compare1.slice(0, -1)
 
@@ -518,7 +517,7 @@ class SimpleSchema {
       // Subschemas
       let allowed = false
       const subKey = key.slice(loopKey.length + 1)
-      fieldSchema.type.definitions.forEach((typeDef) => {
+      this.schema(loopKey)?.type.definitions.forEach((typeDef) => {
         if (!SimpleSchema.isSimpleSchema(typeDef.type)) return
         if ((typeDef.type as SimpleSchema).allowsKey(subKey)) allowed = true
       })

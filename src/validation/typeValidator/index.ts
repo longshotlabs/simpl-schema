@@ -1,5 +1,5 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { TypeValidatorContext, ValidationErrorResult } from '../../types.js'
+import { SchemaKeyTypeDefinition, TypeValidatorContext, ValidationErrorResult } from '../../types.js'
 import doArrayChecks from './doArrayChecks.js'
 import doDateChecks from './doDateChecks.js'
 import doNumberChecks from './doNumberChecks.js'
@@ -61,4 +61,16 @@ export default function typeValidator (this: TypeValidatorContext): ValidationEr
       return doDateChecks(def, keyValue)
     }
   }
+}
+
+export function isValueTypeValid (typeDefinitions: SchemaKeyTypeDefinition[], value: any, operator: string | null): boolean {
+  return typeDefinitions.some((definition) => {
+    const typeValidationError = typeValidator.call({
+      valueShouldBeChecked: true,
+      definition,
+      value,
+      operator
+    })
+    return typeValidationError === undefined
+  })
 }
