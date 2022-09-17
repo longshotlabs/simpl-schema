@@ -26,17 +26,17 @@ describe('SimpleSchema - required', function () {
         }
       })
 
-      expectValid(requiredSchema, {
-        requiredString: 'test',
-        requiredBoolean: true,
-        requiredNumber: 1,
-        requiredDate: new Date(),
-        requiredEmail: 'test123@sub.example.edu',
-        requiredUrl: 'http://google.com',
-        requiredObject: {
-          requiredNumber: 1
-        }
-      })
+      // expectValid(requiredSchema, {
+      //   requiredString: 'test',
+      //   requiredBoolean: true,
+      //   requiredNumber: 1,
+      //   requiredDate: new Date(),
+      //   requiredEmail: 'test123@sub.example.edu',
+      //   requiredUrl: 'http://google.com',
+      //   requiredObject: {
+      //     requiredNumber: 1
+      //   }
+      // })
     })
 
     it('invalid', function () {

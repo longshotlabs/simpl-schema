@@ -163,13 +163,24 @@ const ss = new SimpleSchema({
   },
   email: {
     type: String,
-    regEx: SimpleSchema.RegEx.Email,
-    optional: true
+    optional: true,
+    custom () {
+      if (typeof this.value === 'string' && !this.value.includes('@')) return 'invalidEmail'
+    }
   },
   url: {
     type: String,
-    regEx: SimpleSchema.RegEx.Url,
-    optional: true
+    optional: true,
+    custom () {
+      if (typeof this.value === 'string') {
+        try {
+          // eslint-disable-next-line no-new
+          new URL(this.value)
+        } catch (error) {
+          return 'invalidUrl'
+        }
+      }
+    }
   },
   customObject: {
     type: Address,

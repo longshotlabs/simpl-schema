@@ -5,7 +5,6 @@ import clean from './clean.js'
 import { getDefaultErrorMessage } from './defaultMessages.js'
 import { ClientError } from './errors.js'
 import expandShorthand from './expandShorthand.js'
-import regExpObj from './regExp.js'
 import SimpleSchemaGroup from './SimpleSchemaGroup.js'
 import {
   AutoValueContext,
@@ -961,8 +960,6 @@ class SimpleSchema {
   }
 
   static Any = '___Any___'
-
-  static RegEx = regExpObj
 
   static addValidator (func: ValidatorFunction): void {
     SimpleSchema._validators.push(func)

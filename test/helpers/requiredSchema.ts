@@ -15,7 +15,9 @@ const requiredSchema = new SimpleSchema({
   },
   requiredEmail: {
     type: String,
-    regEx: SimpleSchema.RegEx.Email
+    custom () {
+      if (typeof this.value === 'string' && !this.value.includes('@')) return 'invalidEmail'
+    }
   },
   requiredUrl: {
     type: String,
@@ -24,7 +26,7 @@ const requiredSchema = new SimpleSchema({
       try {
         new URL(this.value); // eslint-disable-line
       } catch (err) {
-        return 'badUrl'
+        return 'invalidUrl'
       }
     }
   },
@@ -48,8 +50,8 @@ const requiredSchema = new SimpleSchema({
   }
 }, {
   getErrorMessage (errorInfo, label) {
-    if (errorInfo.type === 'regEx' && errorInfo.name === 'requiredEmail') return `${String(label)} is not a valid email address`
-    if (errorInfo.type === 'regEx' && errorInfo.name === 'requiredUrl') return `${String(label)} is not a valid URL`
+    if (errorInfo.type === 'invalidEmail') return `${String(label)} is not a valid email address`
+    if (errorInfo.type === 'invalidUrl') return `${String(label)} is not a valid URL`
   }
 })
 

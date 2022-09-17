@@ -528,7 +528,7 @@ describe('SimpleSchema', function () {
       },
       'emails.$.address': {
         type: String,
-        regEx: SimpleSchema.RegEx.Email
+        regEx: /bar/
       },
       'emails.$.verified': {
         type: Boolean
