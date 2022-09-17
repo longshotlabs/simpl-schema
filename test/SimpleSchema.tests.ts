@@ -640,7 +640,7 @@ describe('SimpleSchema', function () {
 
       // In order for the message at the top of the stack trace to be useful,
       // we set it to the first validation error message.
-      expect(error.message).toBe('Int must be of type Integer [validation-error]')
+      expect(error.message).toBe('Int must be of type Integer')
     }
 
     try {
@@ -730,7 +730,7 @@ describe('SimpleSchema', function () {
 
       // In order for the message at the top of the stack trace to be useful,
       // we set it to the first validation error message.
-      expect(error.message).toBe('Int must be of type Integer [validation-error]')
+      expect(error.message).toBe('Int must be of type Integer')
     }
 
     try {

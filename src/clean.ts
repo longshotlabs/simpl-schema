@@ -4,7 +4,7 @@ import MongoObject from 'mongo-object'
 import convertToProperType from './clean/convertToProperType.js'
 import setAutoValues from './clean/setAutoValues.js'
 import { SimpleSchema } from './SimpleSchema.js'
-import { CleanOptions, StandardSchemaKeyDefinition } from './types.js'
+import { CleanOptions } from './types.js'
 import { isEmptyObject, looksLikeModifier } from './utility/index.js'
 import typeValidator from './validation/typeValidator/index.js'
 
@@ -107,7 +107,7 @@ function clean (
           return // no reason to do more
         }
 
-        const outerDef = ss.schema(gKey) as StandardSchemaKeyDefinition
+        const outerDef = ss.schema(gKey)
         const defs = outerDef?.type.definitions
         const def = defs?.[0]
 
@@ -158,7 +158,7 @@ function clean (
           cleanOptions.removeEmptyStrings === true &&
           (this.operator == null || this.operator === '$set') &&
           typeof val === 'string' &&
-          val.length > 0
+          val.length === 0
         ) {
           // For a document, we remove any fields that are being set to an empty string
           this.remove()

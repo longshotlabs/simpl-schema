@@ -230,6 +230,8 @@ class SimpleSchema {
    * if you want the evaluated definition, where any properties that are functions
    * have been run to produce a result.
    */
+  schema (): ResolvedSchemaDefinition
+  schema (key: string): StandardSchemaKeyDefinition
   schema (key?: string): ResolvedSchemaDefinition | StandardSchemaKeyDefinition {
     if (key == null) return this._schema
 
@@ -242,7 +244,7 @@ class SimpleSchema {
       this.forEachAncestorSimpleSchema(
         key,
         (simpleSchema, ancestor, subSchemaKey) => {
-          if (!found) keySchema = simpleSchema.schema(subSchemaKey) as StandardSchemaKeyDefinition
+          if (!found) keySchema = simpleSchema.schema(subSchemaKey)
           if (keySchema != null) found = true
         }
       )
@@ -288,10 +290,10 @@ class SimpleSchema {
    */
   getDefinition (
     key: string,
-    propList: string[] | null,
+    propList?: string[] | null,
     functionContext: Record<string, unknown> = {}
   ): StandardSchemaKeyDefinitionWithSimpleTypes | undefined {
-    const defs = this.schema(key) as StandardSchemaKeyDefinition
+    const defs = this.schema(key)
     if (defs == null) return
 
     const getPropIterator = (obj: Record<string, any>, newObj: Record<string, any>) => {
@@ -308,8 +310,8 @@ class SimpleSchema {
             ...functionContext
           })
           // Inflect label if undefined
-          if (prop === 'label' && typeof newObj[prop] !== 'string') {
-            newObj[prop] = inflectedLabel(
+          if (prop === 'label' && typeof newObj.label !== 'string') {
+            newObj.label = inflectedLabel(
               key,
               this._constructorOptions.humanizeAutoLabels
             )
@@ -321,14 +323,21 @@ class SimpleSchema {
     }
 
     const result: StandardSchemaKeyDefinitionWithSimpleTypes = {
-      // Resolve all the types and convert to a normal array to make it easier to use.
-      type: (defs.type?.definitions ?? []).map((typeDef) => {
-        const newTypeDef: Partial<StandardSchemaKeyDefinitionWithSimpleTypes['type'][number]> = {}
+      type: []
+    }
+
+    Object.keys(defs).forEach(getPropIterator(defs, result))
+
+    // Resolve all the types and convert to a normal array to make it easier to use.
+    if (Array.isArray(defs.type?.definitions)) {
+      result.type = defs.type.definitions.map((typeDef) => {
+        const newTypeDef: (SchemaKeyTypeDefinition & { type: SupportedTypes }) = {
+          type: String // will be overwritten
+        }
         Object.keys(typeDef).forEach(getPropIterator(typeDef, newTypeDef))
-        return newTypeDef as StandardSchemaKeyDefinitionWithSimpleTypes['type'][number]
+        return newTypeDef
       })
     }
-    Object.keys(defs).forEach(getPropIterator(defs, result))
 
     return result
   }
@@ -349,7 +358,7 @@ class SimpleSchema {
     const fieldSchema = this.schema(key)
     if (fieldSchema == null) return
 
-    const fieldType = (fieldSchema.type as SimpleSchemaGroup).singleType
+    const fieldType = (fieldSchema.type).singleType
 
     if (fieldType === String) {
       type = 'string'
@@ -363,7 +372,7 @@ class SimpleSchema {
       const arrayItemFieldSchema = this.schema(`${key}.$`)
       if (arrayItemFieldSchema == null) return
 
-      const arrayItemFieldType = (arrayItemFieldSchema.type as SimpleSchemaGroup).singleType
+      const arrayItemFieldType = (arrayItemFieldSchema.type).singleType
       if (arrayItemFieldType === String) {
         type = 'stringArray'
       } else if (
@@ -468,7 +477,7 @@ class SimpleSchema {
         if (this._blackboxKeys.has(ancestor)) {
           isInBlackBox = true
         } else {
-          const testKeySchema = this.schema(ancestor) as StandardSchemaKeyDefinition
+          const testKeySchema = this.schema(ancestor)
           if (testKeySchema != null) {
             testKeySchema.type.definitions.forEach((typeDef) => {
               if (!SimpleSchema.isSimpleSchema(typeDef.type)) return
@@ -490,7 +499,7 @@ class SimpleSchema {
       // If the schema key is the test key, it's allowed.
       if (loopKey === key) return true
 
-      const fieldSchema = this.schema(loopKey) as StandardSchemaKeyDefinition
+      const fieldSchema = this.schema(loopKey)
       const compare1 = key.slice(0, loopKey.length + 2)
       const compare2 = compare1.slice(0, -1)
 
@@ -825,7 +834,7 @@ class SimpleSchema {
 
       const [schemaInstance, innerKey] = this.nearestSimpleSchemaInstance(key)
       if (schemaInstance == null || innerKey == null) return
-
+      if (schemaInstance._schema[innerKey] === undefined) return
       schemaInstance._schema[innerKey].label = label
     })
   }
