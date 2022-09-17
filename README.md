@@ -1135,6 +1135,19 @@ const schema = new SimpleSchema({
 })
 ```
 
+You can also do this globally for all schemas:
+
+```js
+globalThis.simpleSchemaGlobalConfig = {
+  getErrorMessage(error, label) {
+    if (error.type === 'too_long') return `${label} is too long!`
+    // Returning undefined will fall back to using defaults
+  }
+};
+```
+
+A `getErrorMessage` function in schema options will be tried before a global `getErrorMessage` function. If the schema `getErrorMessage` returns `undefined`, the global `getErrorMessage` will be called, and if that returns `undefined`, the built-in English message will be used.
+
 ## Other Validation Context Methods
 
 `myContext.keyIsInvalid(key)` returns true if the specified key is currently

@@ -908,6 +908,11 @@ class SimpleSchema {
       if (message !== undefined) return message
     }
 
+    if (globalThis.simpleSchemaGlobalConfig?.getErrorMessage !== undefined) {
+      message = globalThis.simpleSchemaGlobalConfig?.getErrorMessage(errorInfo, label)
+      if (message !== undefined) return message
+    }
+
     return getDefaultErrorMessage(errorInfo, label)
   }
 

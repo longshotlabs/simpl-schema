@@ -4,6 +4,15 @@ import { SimpleSchema } from './SimpleSchema.js'
 import SimpleSchemaGroup from './SimpleSchemaGroup.js'
 import ValidationContext from './ValidationContext.js'
 
+export interface GlobalConfig {
+  getErrorMessage?: GetErrorMessageFn
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var simpleSchemaGlobalConfig: GlobalConfig
+}
+
 export type AllowedValues = any[] | Set<any>
 
 export type ValueOrFunctionThatReturnsValue<T> = T | (() => T)
@@ -36,9 +45,11 @@ export interface CleanOptions {
   trimStrings?: boolean
 }
 
+export type GetErrorMessageFn = (error: ValidationError, label: string | null) => string | undefined
+
 export interface SimpleSchemaOptions {
   clean?: CleanOptions
-  getErrorMessage?: (error: ValidationError, label: string | null) => string | undefined
+  getErrorMessage?: GetErrorMessageFn
   humanizeAutoLabels?: boolean
   keepRawDefinition?: boolean
   requiredByDefault?: boolean
