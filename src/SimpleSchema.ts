@@ -170,8 +170,9 @@ class SimpleSchema {
    * @param [obj] An object to test
    * @returns True if the given object appears to be a SimpleSchema instance
    */
-  static isSimpleSchema (obj: any): boolean {
-    return obj == null ? false : (obj instanceof SimpleSchema || obj._schema)
+  static isSimpleSchema (obj: unknown): boolean {
+    if (obj == null) return false
+    return obj instanceof SimpleSchema || Object.prototype.hasOwnProperty.call(obj, '_schema')
   }
 
   /**

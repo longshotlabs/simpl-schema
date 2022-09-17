@@ -205,7 +205,7 @@ export interface DocValidatorContext extends CustomValidatorContext {
 
 export type FunctionPropContext = Omit<ValidatorContext, 'addValidationErrors' | 'valueShouldBeChecked'>
 
-export type DocValidatorFunction = (this: DocValidatorContext, obj: Record<string, any>) => ValidationError[]
+export type DocValidatorFunction = (this: DocValidatorContext, obj: Record<string, unknown>) => ValidationError[]
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export type ValidatorFunction = (this: ValidatorContext) => void | undefined | boolean | string | ValidationErrorResult
 
