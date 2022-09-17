@@ -99,7 +99,7 @@ class SimpleSchema {
   private readonly _constructorOptions: SimpleSchemaOptions = {}
   private _docValidators: DocValidatorFunction[] = []
   private _firstLevelSchemaKeys: string[] = []
-  private readonly _rawDefinition: SchemaDefinitionWithShorthand = {}
+  private readonly _rawDefinition: SchemaDefinitionWithShorthand | null = null
   private _schema: ResolvedSchemaDefinition = {}
   private _schemaKeys: string[] = []
   // Named validation contexts
@@ -140,7 +140,7 @@ class SimpleSchema {
   /**
   /* @returns The entire raw schema definition passed in the constructor
   */
-  get rawDefinition (): SchemaDefinitionWithShorthand {
+  get rawDefinition (): SchemaDefinitionWithShorthand | null {
     return this._rawDefinition
   }
 
@@ -200,9 +200,9 @@ class SimpleSchema {
     const genericKey = MongoObject.makeKeyGeneric(key)
     if (genericKey == null) return [null, null]
 
-    if (this._schema[genericKey] !== null) return [this, genericKey]
+    if (this._schema[genericKey] !== undefined) return [this, genericKey]
 
-    // If not defined in this schema, see if it's defined in a subschema
+    // If not defined in this schema, see if it's defined in a sub-schema
     let innerKey
     let nearestSimpleSchemaInstance: SimpleSchema | null = null
     this.forEachAncestorSimpleSchema(
@@ -822,21 +822,19 @@ class SimpleSchema {
   }
 
   /**
-   * Change schema labels on the fly, causing mySchema.label computation
-   * to rerun. Useful when the user changes the language.
+   * Change schema labels on the fly. Useful when the user changes the language.
    *
    * @param labels A dictionary of all the new label values, by schema key.
    */
   labels (labels: Record<string, string | (() => string)>): void {
-    Object.keys(labels).forEach((key) => {
-      const label = labels[key]
-      if (typeof label !== 'string' && typeof label !== 'function') return
+    for (const [key, label] of Object.entries(labels)) {
+      if (typeof label !== 'string' && typeof label !== 'function') continue
 
+      // Support setting labels that were actually originally defined in a sub-schema
       const [schemaInstance, innerKey] = this.nearestSimpleSchemaInstance(key)
-      if (schemaInstance == null || innerKey == null) return
-      if (schemaInstance._schema[innerKey] === undefined) return
+      if (schemaInstance == null || innerKey == null) continue
       schemaInstance._schema[innerKey].label = label
-    })
+    }
   }
 
   /**
