@@ -60,16 +60,6 @@ describe('SimpleSchema', function () {
     )
   })
 
-  it('does not allow prototype pollution', function () {
-    const obj = {}
-    // @ts-expect-error
-    expect(obj.polluted).toBe(undefined)
-    const badObj = JSON.parse('{"__proto__":{"polluted":"yes"}}')
-    SimpleSchema.setDefaultMessages(badObj)
-    // @ts-expect-error
-    expect(obj.polluted).toBe(undefined)
-  })
-
   describe('nesting', function () {
     it('throws an error if a nested schema defines a field that its parent also defines', function () {
       expect(function () {

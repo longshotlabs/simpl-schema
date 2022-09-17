@@ -1,5 +1,3 @@
-import '@babel/polyfill'
-
 import { SimpleSchema } from '../../src/SimpleSchema.js'
 import Address from './Address.js'
 
@@ -222,12 +220,12 @@ const testSchema = new SimpleSchema({
     type: refSchema,
     optional: true
   }
-})
-
-testSchema.messageBox.messages({
-  minCount: 'blah',
-  'regEx email': '[label] is not a valid email address',
-  'badUrl url': '[label] is not a valid URL'
+}, {
+  getErrorMessage (errorInfo, label) {
+    if (errorInfo.type === 'minCount') return 'blah'
+    if (errorInfo.type === 'regEx' && errorInfo.name === 'email') return `${String(label)} is not a valid email address`
+    if (errorInfo.type === 'badUrl' && errorInfo.name === 'url') return `${String(label)} is not a valid URL`
+  }
 })
 
 export default testSchema

@@ -46,11 +46,11 @@ const requiredSchema = new SimpleSchema({
     optional: true,
     min: 20
   }
-})
-
-requiredSchema.messageBox.messages({
-  'regEx requiredEmail': '[label] is not a valid email address',
-  'regEx requiredUrl': '[label] is not a valid URL'
+}, {
+  getErrorMessage (errorInfo, label) {
+    if (errorInfo.type === 'regEx' && errorInfo.name === 'requiredEmail') return `${String(label)} is not a valid email address`
+    if (errorInfo.type === 'regEx' && errorInfo.name === 'requiredUrl') return `${String(label)} is not a valid URL`
+  }
 })
 
 export default requiredSchema

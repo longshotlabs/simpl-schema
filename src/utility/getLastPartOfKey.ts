@@ -5,7 +5,7 @@
  * getLastPartOfKey('a.b.c', 'a') returns 'b.c'
  * getLastPartOfKey('a.b.$.c', 'a.b') returns 'c'
  */
-export default function getLastPartOfKey (key: string, ancestorKey: string) {
+export default function getLastPartOfKey (key: string, ancestorKey: string): string {
   let lastPart = ''
   const startString = `${ancestorKey}.`
   if (key.indexOf(startString) === 0) {

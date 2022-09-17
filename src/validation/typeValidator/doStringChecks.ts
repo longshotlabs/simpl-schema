@@ -1,10 +1,10 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { SchemaKeyDefinition } from '../../types.js'
+import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 
 export default function doStringChecks (
   def: SchemaKeyDefinition,
   keyValue: string
-) {
+): ValidationErrorResult | undefined {
   // Is it a String?
   if (typeof keyValue !== 'string') {
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'String' }
@@ -34,7 +34,7 @@ export default function doStringChecks (
 
   // If regEx is an array of regular expressions, does the string match all of them?
   if (Array.isArray(def.regEx)) {
-    let regExError
+    let regExError: ValidationErrorResult | undefined
     def.regEx.every((re) => {
       if (!re.test(keyValue)) {
         regExError = {
@@ -45,6 +45,6 @@ export default function doStringChecks (
       }
       return true
     })
-    if (regExError) return regExError
+    if (regExError !== undefined) return regExError
   }
 }

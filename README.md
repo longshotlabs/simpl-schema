@@ -1065,19 +1065,11 @@ If you want to reactively display an arbitrary validation error and it is not po
 - `type`: The type of error. Any string you want, or one of the strings in the `SimpleSchema.ErrorTypes` list.
 - `value`: Optional. The value that was not valid. Will be used to replace the `[value]` placeholder in error messages.
 
-If you use a custom string for `type`, be sure to define a message for it. (See [Customizing Validation Messages](#customizing-validation-messages)).
+If you use a custom string for `type`, be sure to register a getErrorMessage function. (See [Customizing Validation Messages](#customizing-validation-messages)).
 
 Example:
 
 ```js
-SimpleSchema.setDefaultMessages({
-  messages: {
-    en: {
-      wrongPassword: "Wrong password",
-    },
-  },
-});
-
 myValidationContext.addValidationErrors([
   { name: "password", type: "wrongPassword" },
 ]);
@@ -1130,30 +1122,17 @@ There may be a `message` property, but usually the error message is constructed 
 
 ## Customizing Validation Messages
 
-Error messages are managed by the [message-box](https://github.com/aldeed/node-message-box) package.
-
-In most cases you probably want to set default messages to be used by all `SimpleSchema` instances. Example:
+The built-in validation errors have built-in English messages associated with them. However, if you have custom validation error types, need messages in other languages, or just want to change some default messages, you will want to register a `getErrorMessage` function for your schema.
 
 ```js
-SimpleSchema.setDefaultMessages({
-  messages: {
-    en: {
-      too_long: "Too long!",
-    },
-  },
-});
-```
-
-The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/simpl-schema/blob/main/package/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
-
-The `MessageBox` instance for a specific schema instance is `simpleSchemaInstance.messageBox`. You can call `messages` function on this to update the messages for that schema only. Example:
-
-```js
-simpleSchemaInstance.messageBox.messages({
-  en: {
-    too_long: "Too long!",
-  },
-});
+const schema = new SimpleSchema({
+  name: String
+}, {
+  getErrorMessage(error, label) {
+    if (error.type === 'too_long') return `${label} is too long!`
+    // Returning undefined will fall back to using defaults
+  }
+})
 ```
 
 ## Other Validation Context Methods

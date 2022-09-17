@@ -1,7 +1,7 @@
 /**
  * Given a Date instance, returns a date string of the format YYYY-MM-DD
  */
-export default function dateToDateString (date: Date) {
+export default function dateToDateString (date: Date): string {
   let month: number | string = date.getUTCMonth() + 1
   if (month < 10) month = `0${month}`
   let day: number | string = date.getUTCDate()

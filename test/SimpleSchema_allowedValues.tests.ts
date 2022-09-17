@@ -1,7 +1,5 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 
-import '@babel/polyfill'
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'

@@ -1,11 +1,11 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { TypeValidatorContext } from '../../types.js'
+import { TypeValidatorContext, ValidationErrorResult } from '../../types.js'
 import doArrayChecks from './doArrayChecks.js'
 import doDateChecks from './doDateChecks.js'
 import doNumberChecks from './doNumberChecks.js'
 import doStringChecks from './doStringChecks.js'
 
-export default function typeValidator (this: TypeValidatorContext) {
+export default function typeValidator (this: TypeValidatorContext): ValidationErrorResult | undefined {
   if (!this.valueShouldBeChecked) return
 
   const def = this.definition

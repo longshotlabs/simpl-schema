@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
-import clone from 'clone'
-import MessageBox from 'message-box'
 import MongoObject from 'mongo-object'
 
 import clean from './clean.js'
-import defaultMessages from './defaultMessages.js'
+import { getDefaultErrorMessage } from './defaultMessages.js'
 import { ClientError } from './errors.js'
 import expandShorthand from './expandShorthand.js'
 import regExpObj from './regExp.js'
@@ -29,7 +27,7 @@ import {
   ValidationOptions,
   ValidatorFunction
 } from './types.js'
-import { forEachKeyAncestor, humanize, isEmptyObject, merge } from './utility/index.js'
+import { forEachKeyAncestor, humanize, isEmptyObject } from './utility/index.js'
 import ValidationContext from './ValidationContext.js'
 
 // Exported for tests
@@ -77,7 +75,6 @@ class SimpleSchema {
   public static defaultLabel?: string
   public static validationErrorTransform?: (error: ClientError<ValidationError[]>) => Error
   public static version = 2
-  public messageBox: MessageBox
   public version: number
   // Global constructor options
   private static _constructorOptionDefaults: SimpleSchemaOptions = {
@@ -136,9 +133,6 @@ class SimpleSchema {
     if (this._constructorOptions.keepRawDefinition === true) {
       this._rawDefinition = schema
     }
-
-    // Define default validation error messages
-    this.messageBox = new MessageBox(clone(defaultMessages))
 
     this.version = SimpleSchema.version
   }
@@ -571,7 +565,6 @@ class SimpleSchema {
   _copyWithSchema (schema: SchemaDefinition): SimpleSchema {
     const cl = new SimpleSchema(schema, { ...this._constructorOptions })
     cl._cleanOptions = this._cleanOptions
-    cl.messageBox = this.messageBox.clone()
     return cl
   }
 
@@ -840,11 +833,13 @@ class SimpleSchema {
   /**
    * Gets a field's label or all field labels reactively.
    *
-   * @param [key] The schema key, specific or generic.
+   * @param key The schema key, specific or generic.
    *   Omit this argument to get a dictionary of all labels.
    * @returns The label
    */
-  label (key: string): string | Record<string, string> | null {
+  label (): Record<string, string>
+  label (key: string): string | null
+  label (key?: string): Record<string, string> | string | null {
     // Get all labels
     if (key === null || key === undefined) {
       const result: Record<string, string> = {}
@@ -891,19 +886,22 @@ class SimpleSchema {
     return this.get(key, 'defaultValue')
   }
 
-  // Returns a string message for the given error type and key. Passes through
-  // to message-box pkg.
+  // Returns a string message for the given error type and key.
+  // Defers to a user-provided getErrorMessage function, which
+  // can do custom messages and translations, or falls back to
+  // built-in English defaults.
   messageForError (errorInfo: ValidationError): string {
     const { name } = errorInfo
 
-    return this.messageBox.message(errorInfo, {
-      context: {
-        key: name, // backward compatibility
+    const label = this.label(name)
 
-        // The call to this.label() establishes a reactive dependency, too
-        label: this.label(name)
-      }
-    })
+    let message: string | undefined
+    if (this._constructorOptions.getErrorMessage !== undefined) {
+      message = this._constructorOptions.getErrorMessage(errorInfo, label)
+      if (message !== undefined) return message
+    }
+
+    return getDefaultErrorMessage(errorInfo, label)
   }
 
   /**
@@ -1001,10 +999,6 @@ class SimpleSchema {
   static Integer = 'SimpleSchema.Integer'
 
   static ValidationContext = ValidationContext
-
-  static setDefaultMessages = (messages: Record<string | number | symbol, any>): void => {
-    merge(defaultMessages, messages)
-  }
 }
 
 /*

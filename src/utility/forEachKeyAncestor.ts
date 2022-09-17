@@ -5,7 +5,7 @@
 export default function forEachKeyAncestor (
   key: string,
   loopFunc: (ancestor: string, remainder: string) => void
-) {
+): void {
   let lastDot
 
   // Iterate the dot-syntax hierarchy

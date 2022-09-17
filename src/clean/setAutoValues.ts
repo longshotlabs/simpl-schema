@@ -74,6 +74,7 @@ function setAutoValues (
 
       // Run the autoValue function once for each place in the object that
       // has a value or that potentially should.
+      // @ts-expect-error
       positions.forEach(avRunner.runForPosition.bind(avRunner))
     }
   )

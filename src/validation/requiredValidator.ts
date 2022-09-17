@@ -10,7 +10,7 @@ import { getKeysWithValueInObj } from '../utility/index.js'
 //     * We're validating a key of an object that is an array item.
 //     * We're validating a document (as opposed to a modifier).
 //     * We're validating a key under the $set operator in a modifier, and it's an upsert.
-export default function requiredValidator (this: ValidatorContext) {
+export default function requiredValidator (this: ValidatorContext): string | undefined {
   const {
     definition,
     isInArrayItemObject,

@@ -8,21 +8,19 @@ import { SupportedTypes } from '../types.js'
  * @param type A type
  * @returns Value converted to type.
  */
-export default function convertToProperType (value: any, type: SupportedTypes) {
+export default function convertToProperType (value: any, type: SupportedTypes): any {
   // Can't and shouldn't convert arrays or objects or null
+  if (value === null) return value
+  if (value === undefined) return value
+  if (Array.isArray(value)) return value
   if (
-    Array.isArray(value) ||
-    (value &&
-      (typeof value === 'function' || typeof value === 'object') &&
-      !(value instanceof Date)) ||
-    value === null
-  ) { return value }
+    value !== undefined &&
+    (typeof value === 'function' || typeof value === 'object') &&
+    !(value instanceof Date)
+  ) return value
 
   // Convert to String type
-  if (type === String) {
-    if (value === null || value === undefined) return value
-    return value.toString()
-  }
+  if (type === String) return value.toString()
 
   // Convert to Number type
   if (type === Number || type === SimpleSchema.Integer) {

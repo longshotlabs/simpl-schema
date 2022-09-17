@@ -1,8 +1,8 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { SchemaKeyDefinition } from '../../types.js'
+import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 import { dateToDateString } from '../../utility/index.js'
 
-export default function doDateChecks (def: SchemaKeyDefinition, keyValue: Date) {
+export default function doDateChecks (def: SchemaKeyDefinition, keyValue: Date): ValidationErrorResult | undefined {
   // Is it an invalid date?
   if (isNaN(keyValue.getTime())) { return { type: SimpleSchema.ErrorTypes.BAD_DATE } }
 

@@ -38,6 +38,7 @@ export interface CleanOptions {
 
 export interface SimpleSchemaOptions {
   clean?: CleanOptions
+  getErrorMessage?: (error: ValidationError, label: string | null) => string | undefined
   humanizeAutoLabels?: boolean
   keepRawDefinition?: boolean
   requiredByDefault?: boolean
@@ -53,7 +54,7 @@ export interface TypeDefinitionProps {
   max?: number | Date | (() => number | Date)
   minCount?: number
   min?: number | Date | (() => number | Date)
-  regEx?: RegExp
+  regEx?: RegExp | RegExp[]
   skipRegExCheckForEmptyStrings?: boolean
   trim?: boolean
 }
@@ -118,12 +119,15 @@ export interface ValidationError {
   name: string
   type: string
   value: any
+  [prop: string]: any
 }
 
 export interface ValidationErrorResult {
+  message?: string
   name?: string
   type: string
   value?: any
+  [prop: string]: any
 }
 
 export interface ValidationOptions {

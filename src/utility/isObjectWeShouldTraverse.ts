@@ -1,4 +1,4 @@
-export default function isObjectWeShouldTraverse (val: any) {
+export default function isObjectWeShouldTraverse (val: any): boolean {
   // Some of these types don't exist in old browsers so we'll catch and return false in those cases
   try {
     if (val !== Object(val)) return false

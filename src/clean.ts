@@ -99,7 +99,7 @@ function clean (
             this.remove()
             removedPositions.push(this.position)
           }
-          if (SimpleSchema.debug) {
+          if (SimpleSchema.debug === true) {
             console.info(
               `SimpleSchema.clean: filtered out value that would have affected key "${gKey}", which is not allowed by the schema`
             )
@@ -114,22 +114,23 @@ function clean (
         // Auto-convert values if requested and if possible
         if (cleanOptions.autoConvert === true && def != null) {
           const isValidType = defs.some((definition) => {
-            const errors = typeValidator.call({
+            const typeValidationError = typeValidator.call({
               valueShouldBeChecked: true,
               definition,
               value: val,
               operator: this.operator
             })
-            return errors === undefined
+            return typeValidationError === undefined
           })
 
           if (!isValidType) {
             const newVal = convertToProperType(val, def.type)
             if (newVal !== undefined && newVal !== val) {
-              SimpleSchema.debug &&
+              if (SimpleSchema.debug === true) {
                 console.info(
                   `SimpleSchema.clean: auto-converted value ${String(val)} from ${typeof val} to ${typeof newVal} for ${gKey}`
                 )
+              }
               val = newVal
               this.updateValue(newVal)
             }

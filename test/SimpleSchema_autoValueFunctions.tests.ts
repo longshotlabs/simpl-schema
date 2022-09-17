@@ -15,7 +15,7 @@ describe('SimpleSchema - autoValueFunctions', function () {
 
     const autoValueFunctions = schema.autoValueFunctions()
     expect(autoValueFunctions.length).toBe(1)
-    expect(!!autoValueFunctions[0].func).toBe(true)
+    expect(autoValueFunctions[0].func != null).toBe(true)
     expect(autoValueFunctions[0].fieldName).toBe('a')
     expect(autoValueFunctions[0].closestSubschemaFieldName).toBe('')
   })
@@ -45,15 +45,15 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const autoValueFunctions = schema.autoValueFunctions()
     expect(autoValueFunctions.length).toBe(3)
 
-    expect(!!autoValueFunctions[0].func).toBe(true)
+    expect(autoValueFunctions[0].func != null).toBe(true)
     expect(autoValueFunctions[0].fieldName).toBe('a')
     expect(autoValueFunctions[0].closestSubschemaFieldName).toBe('')
 
-    expect(!!autoValueFunctions[1].func).toBe(true)
+    expect(autoValueFunctions[1].func != null).toBe(true)
     expect(autoValueFunctions[1].fieldName).toBe('a.b')
     expect(autoValueFunctions[1].closestSubschemaFieldName).toBe('')
 
-    expect(!!autoValueFunctions[2].func).toBe(true)
+    expect(autoValueFunctions[2].func != null).toBe(true)
     expect(autoValueFunctions[2].fieldName).toBe('c.z')
     expect(autoValueFunctions[2].closestSubschemaFieldName).toBe('c')
   })
@@ -100,23 +100,23 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const autoValueFunctions = schema.autoValueFunctions()
     expect(autoValueFunctions.length).toBe(5)
 
-    expect(!!autoValueFunctions[0].func).toBe(true)
+    expect(autoValueFunctions[0].func != null).toBe(true)
     expect(autoValueFunctions[0].fieldName).toBe('a')
     expect(autoValueFunctions[0].closestSubschemaFieldName).toBe('')
 
-    expect(!!autoValueFunctions[1].func).toBe(true)
+    expect(autoValueFunctions[1].func != null).toBe(true)
     expect(autoValueFunctions[1].fieldName).toBe('a.b')
     expect(autoValueFunctions[1].closestSubschemaFieldName).toBe('')
 
-    expect(!!autoValueFunctions[2].func).toBe(true)
+    expect(autoValueFunctions[2].func != null).toBe(true)
     expect(autoValueFunctions[2].fieldName).toBe('c.z')
     expect(autoValueFunctions[2].closestSubschemaFieldName).toBe('c')
 
-    expect(!!autoValueFunctions[3].func).toBe(true)
+    expect(autoValueFunctions[3].func != null).toBe(true)
     expect(autoValueFunctions[3].fieldName).toBe('c.z.y.x')
     expect(autoValueFunctions[3].closestSubschemaFieldName).toBe('c.z.y')
 
-    expect(!!autoValueFunctions[4].func).toBe(true)
+    expect(autoValueFunctions[4].func != null).toBe(true)
     expect(autoValueFunctions[4].fieldName).toBe('c.z.y.x.m')
     expect(autoValueFunctions[4].closestSubschemaFieldName).toBe('c.z.y')
   })
@@ -145,11 +145,11 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const autoValueFunctions = schema.autoValueFunctions()
     expect(autoValueFunctions.length).toBe(2)
 
-    expect(!!autoValueFunctions[0].func).toBe(true)
+    expect(autoValueFunctions[0].func != null).toBe(true)
     expect(autoValueFunctions[0].fieldName).toBe('a')
     expect(autoValueFunctions[0].closestSubschemaFieldName).toBe('')
 
-    expect(!!autoValueFunctions[1].func).toBe(true)
+    expect(autoValueFunctions[1].func != null).toBe(true)
     expect(autoValueFunctions[1].fieldName).toBe('a.b.$.z')
     expect(autoValueFunctions[1].closestSubschemaFieldName).toBe('a.b.$')
   })

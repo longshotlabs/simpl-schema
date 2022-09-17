@@ -1,12 +1,12 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { SchemaKeyDefinition } from '../../types.js'
+import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 
 export default function doNumberChecks (
   def: SchemaKeyDefinition,
   keyValue: number,
   op: string | null,
   expectsInteger: boolean
-) {
+): ValidationErrorResult | undefined {
   // Is it a valid number?
   if (typeof keyValue !== 'number' || isNaN(keyValue)) {
     return {

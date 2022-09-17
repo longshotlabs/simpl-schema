@@ -1,10 +1,10 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { SchemaKeyDefinition } from '../../types.js'
+import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 
 export default function doArrayChecks (
   def: SchemaKeyDefinition,
   keyValue: unknown
-) {
+): ValidationErrorResult | undefined {
   // Is it an array?
   if (!Array.isArray(keyValue)) {
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Array' }

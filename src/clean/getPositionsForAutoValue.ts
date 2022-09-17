@@ -61,6 +61,7 @@ export default function getPositionsForAutoValue ({
   if (!fieldName.includes('.') && positions.length === 0) {
     positions.push({
       key: fieldName,
+      // @ts-expect-error incorrect type in mongo-object package
       value: undefined,
       operator: isModifier === true ? '$set' : null,
       position: isModifier === true ? `$set[${fieldName}]` : fieldName
@@ -79,6 +80,7 @@ export default function getPositionsForAutoValue ({
       if (positions.find((i) => i.position === childPosition) == null) {
         positions.push({
           key: `${info.key}.${lastPart}`,
+          // @ts-expect-error incorrect type in mongo-object package
           value: undefined,
           operator: info.operator,
           position: childPosition
@@ -118,8 +120,9 @@ export default function getPositionsForAutoValue ({
         if (key != null) {
           positions.push({
             key,
+            // @ts-expect-error incorrect type in mongo-object package
             value: undefined,
-            operator: operator ? '$set' : null,
+            operator: operator == null ? null : '$set',
             position: wouldBePosition
           })
         }
