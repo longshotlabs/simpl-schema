@@ -110,8 +110,6 @@ npm install simpl-schema
 
 There are other NPM packages named `simpleschema` and `simple-schema`. Make sure you install the right package. There is no "e" on "simpl".
 
-NOTE: You may also need to load the `babel-polyfill` package if you get any errors related to missing ES6 functions in certain browsers.
-
 ## Lingo
 
 In this documentation:
