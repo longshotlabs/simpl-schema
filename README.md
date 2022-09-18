@@ -86,7 +86,6 @@ There are also reasons not to choose this package. Because of all it does, this 
   - [Best Practice Code Examples](#best-practice-code-examples)
     - [Make a field conditionally required](#make-a-field-conditionally-required)
     - [Validate one key against another](#validate-one-key-against-another)
-    - [Translation of Regular Expression Messages](#translation-of-regular-expression-messages)
   - [Debug Mode](#debug-mode)
   - [Extending the Schema Options](#extending-the-schema-options)
   - [Add On Packages](#add-on-packages)
@@ -642,9 +641,7 @@ schema.labels({
 });
 ```
 
-If you have enabled Tracker reactivity, this method causes reactive labels to update.
-
-To get the label for a field, use `schema.label(fieldName)`, which returns a usable string. If you have enabled Tracker reactivity, this method is reactive.
+To get the label for a field, use `schema.label(fieldName)`, which returns a usable string.
 
 ### optional
 
@@ -893,7 +890,7 @@ An unnamed validation context is not persisted anywhere. It can be useful when y
 
 ### Validating an Object
 
-To validate an object against the schema in a validation context, call `validationContextInstance.validate(obj, options)`. This method returns `true` if the object is valid according to the schema or `false` if it is not. It also stores a list of invalid fields and corresponding error messages in the context object and causes the reactive methods to react if you injected Tracker reactivity.
+To validate an object against the schema in a validation context, call `validationContextInstance.validate(obj, options)`. This method returns `true` if the object is valid according to the schema or `false` if it is not. It also stores a list of invalid fields and corresponding error messages in the context object.
 
 You can call `myContext.isValid()` to see if the object last passed into `validate()` was found to be valid. This is a reactive method that returns `true` or `false`.
 
@@ -1105,7 +1102,7 @@ Call `myValidationContext.validationErrors()` to get the full array of validatio
 
 There may also be a `value` property, which is the value that was invalid.
 
-There may be a `message` property, but usually the error message is constructed from message templates. You should call `ctxt.keyErrorMessage(key)` to get a reactive message string rather than using `error.message` directly.
+There may be a `message` property, but usually the error message is constructed from message templates. You should call `ctxt.keyErrorMessage(key)` to get a message string rather than using `error.message` directly.
 
 ## Customizing Validation Messages
 
@@ -1239,12 +1236,6 @@ Here's an example of declaring one value valid or invalid based on another
 value using a custom validation function.
 
 ```js
-SimpleSchema.messageBox.messages({
-  en: {
-    passwordMismatch: "Passwords do not match",
-  },
-});
-
 MySchema = new SimpleSchema({
   password: {
     type: String,

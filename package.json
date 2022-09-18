@@ -19,17 +19,25 @@
     "LICENSE",
     "README.md"
   ],
-  "exports": "./dist/main.js",
-  "main": "./dist/main.js",
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/esm/main.js",
+  "types": "./dist/esm/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/main.js",
+      "require": "./dist/cjs/main.js"
+    }
+  },
   "engines": {
     "node": ">=14.16"
   },
   "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -fr dist/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./scripts/post-build.sh",
     "check": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx",
     "lint:fix": "eslint . --fix --ext ts,tsx",
+    "prepublishOnly": "npm run build",
     "test": "mocha"
   },
   "devDependencies": {
