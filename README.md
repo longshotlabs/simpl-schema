@@ -1,18 +1,26 @@
 # SimpleSchema (simpl-schema NPM package)
 
-[![Lint, Test, and (Maybe) Publish](<https://github.com/aldeed/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push>)](https://github.com/aldeed/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
+[![Lint, Test, and (Maybe) Publish](<https://github.com/longshotlabs/simpl-schema/workflows/Lint,%20Test,%20and%20(Maybe)%20Publish/badge.svg?event=push>)](https://github.com/longshotlabs/simpl-schema/actions?query=workflow%3A%22Lint%2C+Test%2C+and+%28Maybe%29+Publish%22)
 
 SimpleSchema validates JavaScript objects to ensure they match a schema. It can also clean the objects to automatically convert types, remove unsupported properties, and add automatic values such that the object is then more likely to pass validation.
 
 There are a lot of similar packages for validating objects. These are some of the features of this package that might be good reasons to choose this one over another:
 
+- Written in TypeScript and published with support for both CommonJS and ESM.
 - Isomorphic. Works in NodeJS and modern browsers.
-- The object you validate can be a MongoDB modifier. SimpleSchema understands how to properly validate it such that the object in the database, after undergoing modification, will be valid.
+- Package has been maintained for 10 years and is mature
+- Has nearly 500 tests and is used in production apps of various sizes
+- The object you validate can be a MongoDB [update document](https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/write-operations/change-a-document/) (also known as "modifier" object). SimpleSchema understands how to properly validate it such that the object in the database, after undergoing modification, will be valid.
+- Object cleaning feature can fix potential validation errors automatically, avoiding unnecessary errors for your users. Cleaning also supports MongoDB update documents.
 - Powerful customizable error message system with decent English language defaults and support for localization, which makes it easy to drop this package in and display the validation error messages to end users.
-- Has hundreds of tests and is used in production apps of various sizes
-- Used by the [Collection2](https://github.com/aldeed/meteor-collection2) and [AutoForm](https://github.com/aldeed/meteor-autoform) Meteor packages.
+- Used by [Mailchimp Open Commerce](https://mailchimp.com/developer/open-commerce/)
+- Used by the [Collection2](https://github.com/Meteor-Community-Packages/meteor-collection2) and [AutoForm](https://github.com/Meteor-Community-Packages/meteor-autoform) Meteor packages.
 
-There are also reasons not to choose this package. Because of all it does, this package is more complex than (but still "simple" :) ) and slower than some other packages. Based on your needs, you should decide whether these tradeoffs are acceptable. One faster but less powerful option is [simplecheck](https://www.npmjs.com/package/simplecheck).
+There are also reasons not to choose this package. Because of all it does, this package is more complex than (but still "simple" :) ) and slower than some other packages. Based on your needs, you should decide whether these tradeoffs are acceptable. Other packages you might consider:
+
+- [simplecheck](https://www.npmjs.com/package/simplecheck)
+- [joi](https://joi.dev/)
+- [yup](https://www.npmjs.com/package/yup)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -20,14 +28,14 @@ There are also reasons not to choose this package. Because of all it does, this 
 **Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
 
 - [SimpleSchema (simpl-schema NPM package)](#simpleschema-simpl-schema-npm-package)
-  - [The History of SimpleSchema](#the-history-of-simpleschema)
   - [Installation](#installation)
   - [Lingo](#lingo)
+  - [The History of SimpleSchema](#the-history-of-simpleschema)
   - [Quick Start](#quick-start)
     - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
     - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
     - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
-    - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
+    - [Validate a MongoDB Update Document](#validate-a-mongodb-update-document)
     - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
     - [Set Default Options for One Schema](#set-default-options-for-one-schema)
     - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
@@ -76,7 +84,6 @@ There are also reasons not to choose this package. Because of all it does, this 
     - [Custom Field Validation](#custom-field-validation)
     - [Custom Whole-Document Validators](#custom-whole-document-validators)
     - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
-    - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
     - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
   - [Customizing Validation Messages](#customizing-validation-messages)
   - [Other Validation Context Methods](#other-validation-context-methods)
@@ -97,12 +104,6 @@ There are also reasons not to choose this package. Because of all it does, this 
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## The History of SimpleSchema
-
-SimpleSchema was first released as a Meteor package in mid-2013. Version 1.0 was released in September 2014. In mid-2016, version 2.0 was released as an NPM package, which can be used in Meteor, NodeJS, or static browser apps.
-
-If you are migrating from the Meteor package, refer to the [CHANGELOG](https://github.com/aldeed/meteor-simple-schema/blob/master/CHANGELOG.md#200)
-
 ## Installation
 
 ```bash
@@ -119,6 +120,13 @@ In this documentation:
 
 - "key", "field", and "property" generally all mean the same thing: an identifier for some part of an object that is validated by your schema. SimpleSchema uses dot notation to identify nested keys.
 - "validate" means to check whether an object matches what you expect, for example, having the expected keys with the expected data types, expected string lengths, etc.
+- [MongoDB operators](https://www.mongodb.com/docs/manual/reference/operator/update-field/)
+
+## The History of SimpleSchema
+
+SimpleSchema was first released as a Meteor package in mid-2013. Version 1.0 was released in September 2014. In mid-2016, version 2.0 was released as an NPM package, which can be used in Meteor, NodeJS, or static browser apps.
+
+If you are migrating from the Meteor package, refer to the [CHANGELOG](https://github.com/longshotlabs/meteor-simple-schema/blob/master/CHANGELOG.md#200)
 
 ## Quick Start
 
@@ -163,7 +171,7 @@ console.log(validationContext.isValid());
 console.log(validationContext.validationErrors());
 ```
 
-### Validate a MongoDB Modifier
+### Validate a MongoDB Update Document
 
 ```js
 import SimpleSchema from "simpl-schema";
@@ -251,16 +259,16 @@ const cleanDoc = mySchema.clean(doc);
 console.log(typeof cleanDoc.name); // string
 ```
 
-Works for a MongoDB modifier, too:
+Works for a MongoDB [update document](https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/write-operations/change-a-document/) (also known as "modifier" object), too:
 
 ```js
 import SimpleSchema from "simpl-schema";
 
 const mySchema = new SimpleSchema({ name: String });
-const modifier = { $set: { name: 123 } };
-const cleanModifier = mySchema.clean(modifier);
+const updateDoc = { $set: { name: 123 } };
+const cleanUpdateDoc = mySchema.clean(updateDoc);
 // doc is now mutated to hopefully have a better chance of passing validation
-console.log(typeof cleanModifier.$set.name); // string
+console.log(typeof cleanUpdateDoc.$set.name); // string
 ```
 
 ## Defining a Schema
@@ -358,7 +366,7 @@ is equivalent to:
 }
 ```
 
-**Note:** This only applies to shorthand definitions, not to the longhand definition. This example will throw an error `{ friends: { type: [String] } }` even though it was valid in [the meteor-version of this package](https://github.com/aldeed/meteor-simple-schema/).
+**Note:** This only applies to shorthand definitions, not to the longhand definition. This example will throw an error: `{ friends: { type: [String] } }`.
 
 ### Multiple Definitions For One Key
 
@@ -654,7 +662,7 @@ With complex keys, it might be difficult to understand what "required" means. He
 - If `type` is `Array`, then "required" means that key must have a value, but an empty array is fine. (If an empty array is _not_ fine, add the `minCount: 1` option.)
 - For array items (when the key name ends with ".$"), if `optional` is true, then `null` values are valid. If array items are required, then any `null` items will fail the type check.
 - If a key is required at a deeper level, the key must have a value _only if_ the object it belongs to is present.
-- When the object being validated is a Mongo modifier object, changes that would unset or `null` a required key result in validation errors.
+- When the object being validated is a MongoDB [update document](https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/write-operations/change-a-document/) (also known as "modifier" object), changes that would unset or `null` a required key result in validation errors.
 
 That last point can be confusing, so let's look at a couple examples:
 
@@ -781,23 +789,23 @@ An `autoValue` function `this` context provides a variety of properties and meth
 - `this.genericKey`: The generic schema key for which the autoValue is running (`$` in place of actual array index).
 - `this.isInArrayItemObject`: True if we're traversing an object that's in an array.
 - `this.isInSubObject`: True if we're traversing an object that's somewhere within another object.
-- `this.isModifier`: True if this is running on a MongoDB modifier object.
-- `this.isSet`: True if the field is already set in the document or modifier
+- `this.isModifier`: True if this is running on a MongoDB [update document](https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/write-operations/change-a-document/) (also known as "modifier" object).
+- `this.isSet`: True if the field is already set in the document
 - `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
 - `this.obj`: The full object.
-- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
+- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the update document in which this field is being changed. For example, if the update document were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
 - `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 - `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
 - `this.unset()`: Call this method to prevent the original value from being used when you return undefined.
-- `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
+- `this.value`: If isSet = true, this contains the field's current (requested) value in the document.
 
-If an `autoValue` function does not return anything (i.e., returns `undefined`), the field's value will be whatever the document or modifier says it should be. If that field is already in the document or modifier, it stays in the document or modifier with the same value. If it's not in the document or modifier, it's still not there. If you don't want it to be in the doc or modifier, you must call `this.unset()`.
+If an `autoValue` function does not return anything (i.e., returns `undefined`), the field's value will be whatever the document says it should be. If that field is already in the document, it stays in the document with the same value. If it's not in the document, it's still not there. If you don't want it to be in the doc, you must call `this.unset()`.
 
 Any other return value will be used as the field's value. You may also return special pseudo-modifier objects for update operations. Examples are `{$inc: 1}` and `{$push: new Date}`.
 
 #### autoValue gotchas
 
-- If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to [issue #204](https://github.com/aldeed/simpl-schema/issues/204).
+- If your autoValue for one field relies on the autoValue or defaultValue of another field, make sure that the other field is listed before the field that relies on it in the schema. autoValues are run in order from least nested, to most nested, so you can assume that parent values will be set, but for fields at the same level, schema order matters. Refer to [issue #204](https://github.com/longshotlabs/simpl-schema/issues/204).
 - An `autoValue` function will always run during cleaning even if that field is not in the object being cleaned. This allows you to provide complex default values. If your function applies only when there is a value, you should add `if (!this.isSet) return;` at the top.
 
 ### Function Properties
@@ -808,15 +816,15 @@ You may have noticed that many of the rule properties can be set to functions th
 - `this.genericKey`: The generic schema key for which the autoValue is running (`$` in place of actual array index).
 - `this.isInArrayItemObject`: True if we're traversing an object that's in an array.
 - `this.isInSubObject`: True if we're traversing an object that's somewhere within another object.
-- `this.isModifier`: True if this is running on a MongoDB modifier object.
-- `this.isSet`: True if the field is already set in the document or modifier
+- `this.isModifier`: True if this is running on a MongoDB [update document](https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/write-operations/change-a-document/) (also known as "modifier" object).
+- `this.isSet`: True if the field is already set in the document
 - `this.key`: The schema key for which the autoValue is running. This is usually known, but if your autoValue function is shared among various keys or if your schema is used as a subschema in another schema, this can be useful.
 - `this.obj`: The full object.
-- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the modifier in which this field is being changed. For example, if the modifier were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
+- `this.operator`: If isSet = true and isUpdate = true, this contains the name of the update operator in the update document in which this field is being changed. For example, if the update document were `{$set: {name: "Alice"}}`, in the autoValue function for the `name` field, `this.isSet` would be true, `this.value` would be "Alice", and `this.operator` would be "$set".
 - `this.parentField()`: Use this method to get information about the parent object. Works the same way as `field()`.
 - `this.siblingField()`: Use this method to get information about other fields that have the same parent object. Works the same way as `field()`. This is helpful when you use sub-schemas or when you're dealing with arrays of objects.
 - `this.validationContext`: The current validation context
-- `this.value`: If isSet = true, this contains the field's current (requested) value in the document or modifier.
+- `this.value`: If isSet = true, this contains the field's current (requested) value in the document.
 
 ### Getting field properties
 
@@ -838,10 +846,8 @@ schema.get("friends", "maxCount"); // 3
 
 ### The Object to Validate
 
-The object you pass in when validating can be a normal object, or it can be
-a Mongo modifier object (with `$set`, etc. keys). In other words, you can pass
-in the exact object that you are going to pass to `Collection.insert()` or
-`Collection.update()`. This is what the [collection2](https://atmospherejs.com/aldeed/collection2) package does for you.
+The object you pass in when validating can be a normal object, an instance of any class, or a MongoDB [update document](https://www.mongodb.com/docs/drivers/node/current/fundamentals/crud/write-operations/change-a-document/) (also known as "modifier" object). It can also be an array of any of these. In other words, you can pass
+in the exact reference that you are going to pass to `insertOne`, `insertMany`, `updateOne`, or `updateMany`. (This is what the [Collection2](https://github.com/Meteor-Community-Packages/meteor-collection2) Meteor package does for you.)
 
 ### Ways to Perform Validation
 
@@ -1059,38 +1065,6 @@ myValidationContext.addValidationErrors([
 ]);
 ```
 
-### Asynchronous Custom Validation on the Client
-
-NOTE: To use the `unique` option in this example, you need to be in a Meteor app with the `aldeed:schema-index` package added.
-
-Validation runs synchronously for many reasons, and likely always will. This makes it difficult to wait for asynchronous results as part of custom validation. Here's one example of how you might validate that a username is unique on the client, without publishing all usernames to every client:
-
-```js
-username: {
-  type: String,
-  regEx: /^[a-z0-9A-Z_]{3,15}$/,
-  unique: true,
-  custom() {
-    if (Meteor.isClient && this.isSet) {
-      Meteor.call("accountsIsUsernameAvailable", this.value, (error, result) => {
-        if (!result) {
-          this.validationContext.addValidationErrors([{
-            name: "username",
-            type: "notUnique"
-          }]);
-        }
-      });
-    }
-  }
-}
-```
-
-Note that we're calling our "accountsIsUsernameAvailable" server method and waiting for an asynchronous result, which is a boolean that indicates whether that username is available. If it's taken, we manually invalidate the `username` key with a "notUnique" error.
-
-This doesn't change the fact that validation is synchronous. If you use this with an autoform and there are no validation errors, the form would still be submitted. However, the user creation would fail and a second or two later, the form would display the "notUnique" error, so the end result is very similar to actual asynchronous validation.
-
-You can use a technique similar to this to work around asynchronicity issues in both client and server code.
-
 ### Getting a List of Invalid Keys and Validation Error Messages
 
 _This is a reactive method if you have enabled Tracker reactivity._
@@ -1285,7 +1259,7 @@ This project exists thanks to all the people who contribute. [[Contribute]](CONT
 
 ## Sponsors
 
-You can support this project by [becoming a sponsor](https://github.com/sponsors/aldeed).
+You can support this project by [becoming a sponsor](https://github.com/sponsors/longshotlabs).
 
 ## License
 
