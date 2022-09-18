@@ -8,9 +8,7 @@ There are a lot of similar packages for validating objects. These are some of th
 
 - Isomorphic. Works in NodeJS and modern browsers.
 - The object you validate can be a MongoDB modifier. SimpleSchema understands how to properly validate it such that the object in the database, after undergoing modification, will be valid.
-- Optional Tracker reactivity for Meteor apps
 - Powerful customizable error message system with decent English language defaults and support for localization, which makes it easy to drop this package in and display the validation error messages to end users.
-- Recommended by MDG, the group that makes Meteor
 - Has hundreds of tests and is used in production apps of various sizes
 - Used by the [Collection2](https://github.com/aldeed/meteor-collection2) and [AutoForm](https://github.com/aldeed/meteor-autoform) Meteor packages.
 
@@ -21,82 +19,81 @@ There are also reasons not to choose this package. Because of all it does, this 
 
 **Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
 
-- [The History of SimpleSchema](#the-history-of-simpleschema)
-- [Installation](#installation)
-- [Lingo](#lingo)
-- [Quick Start](#quick-start)
-  - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
-  - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
-  - [Validate a Meteor Method Argument and Satisfy `audit-argument-checks`](#validate-a-meteor-method-argument-and-satisfy-audit-argument-checks)
-  - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
-  - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
-  - [Enable Meteor Tracker Reactivity](#enable-meteor-tracker-reactivity)
-  - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
-  - [Set Default Options for One Schema](#set-default-options-for-one-schema)
-  - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
-  - [Explicitly Clean an Object](#explicitly-clean-an-object)
-- [Defining a Schema](#defining-a-schema)
-  - [Shorthand Definitions](#shorthand-definitions)
-  - [Longhand Definitions](#longhand-definitions)
-  - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
-  - [More Shorthand](#more-shorthand)
-  - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
-  - [Extending Schemas](#extending-schemas)
-    - [Overriding When Extending](#overriding-when-extending)
-  - [Subschemas](#subschemas)
-  - [Extracting Schemas](#extracting-schemas)
-  - [Raw Definition](#raw-definition)
-- [Schema Keys](#schema-keys)
-- [Schema Rules](#schema-rules)
-  - [type](#type)
-  - [label](#label)
-  - [optional](#optional)
-  - [required](#required)
-  - [min/max](#minmax)
-  - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
-  - [minCount/maxCount](#mincountmaxcount)
-  - [allowedValues](#allowedvalues)
-  - [regEx](#regex)
-  - [blackbox](#blackbox)
-  - [trim](#trim)
-  - [custom](#custom)
-  - [defaultValue](#defaultvalue)
-  - [autoValue](#autovalue)
-    - [autoValue gotchas](#autovalue-gotchas)
-  - [Function Properties](#function-properties)
-  - [Getting field properties](#getting-field-properties)
-- [Validating Data](#validating-data)
-  - [The Object to Validate](#the-object-to-validate)
-  - [Ways to Perform Validation](#ways-to-perform-validation)
-    - [Named Validation Contexts](#named-validation-contexts)
-    - [Unnamed Validation Contexts](#unnamed-validation-contexts)
-  - [Validating an Object](#validating-an-object)
-  - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
-  - [Validation Options](#validation-options)
-  - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
-    - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
-  - [Custom Field Validation](#custom-field-validation)
-  - [Custom Whole-Document Validators](#custom-whole-document-validators)
-  - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
-  - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
-  - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
-- [Customizing Validation Messages](#customizing-validation-messages)
-- [Other Validation Context Methods](#other-validation-context-methods)
-- [Other SimpleSchema Methods](#other-simpleschema-methods)
-- [Cleaning Objects](#cleaning-objects)
-- [Dates](#dates)
-- [Best Practice Code Examples](#best-practice-code-examples)
-  - [Make a field conditionally required](#make-a-field-conditionally-required)
-  - [Validate one key against another](#validate-one-key-against-another)
-  - [Translation of Regular Expression Messages](#translation-of-regular-expression-messages)
-- [Debug Mode](#debug-mode)
-- [Extending the Schema Options](#extending-the-schema-options)
-- [Add On Packages](#add-on-packages)
-- [Contributors](#contributors)
-- [Sponsors](#sponsors)
-- [License](#license)
-- [Contributing](#contributing)
-  - [Thanks](#thanks)
+- [SimpleSchema (simpl-schema NPM package)](#simpleschema-simpl-schema-npm-package)
+  - [The History of SimpleSchema](#the-history-of-simpleschema)
+  - [Installation](#installation)
+  - [Lingo](#lingo)
+  - [Quick Start](#quick-start)
+    - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
+    - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
+    - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
+    - [Validate a MongoDB Modifier](#validate-a-mongodb-modifier)
+    - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
+    - [Set Default Options for One Schema](#set-default-options-for-one-schema)
+    - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
+    - [Explicitly Clean an Object](#explicitly-clean-an-object)
+  - [Defining a Schema](#defining-a-schema)
+    - [Shorthand Definitions](#shorthand-definitions)
+    - [Longhand Definitions](#longhand-definitions)
+    - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
+    - [More Shorthand](#more-shorthand)
+    - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
+    - [Extending Schemas](#extending-schemas)
+      - [Overriding When Extending](#overriding-when-extending)
+    - [Subschemas](#subschemas)
+    - [Extracting Schemas](#extracting-schemas)
+    - [Raw Definition](#raw-definition)
+  - [Schema Keys](#schema-keys)
+  - [Schema Rules](#schema-rules)
+    - [type](#type)
+    - [label](#label)
+    - [optional](#optional)
+    - [required](#required)
+    - [min/max](#minmax)
+    - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
+    - [minCount/maxCount](#mincountmaxcount)
+    - [allowedValues](#allowedvalues)
+    - [regEx](#regex)
+    - [skipRegExCheckForEmptyStrings](#skipregexcheckforemptystrings)
+    - [blackbox](#blackbox)
+    - [trim](#trim)
+    - [custom](#custom)
+    - [defaultValue](#defaultvalue)
+    - [autoValue](#autovalue)
+      - [autoValue gotchas](#autovalue-gotchas)
+    - [Function Properties](#function-properties)
+    - [Getting field properties](#getting-field-properties)
+  - [Validating Data](#validating-data)
+    - [The Object to Validate](#the-object-to-validate)
+    - [Ways to Perform Validation](#ways-to-perform-validation)
+      - [Named Validation Contexts](#named-validation-contexts)
+      - [Unnamed Validation Contexts](#unnamed-validation-contexts)
+    - [Validating an Object](#validating-an-object)
+    - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
+    - [Validation Options](#validation-options)
+    - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
+      - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
+    - [Custom Field Validation](#custom-field-validation)
+    - [Custom Whole-Document Validators](#custom-whole-document-validators)
+    - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
+    - [Asynchronous Custom Validation on the Client](#asynchronous-custom-validation-on-the-client)
+    - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
+  - [Customizing Validation Messages](#customizing-validation-messages)
+  - [Other Validation Context Methods](#other-validation-context-methods)
+  - [Other SimpleSchema Methods](#other-simpleschema-methods)
+  - [Cleaning Objects](#cleaning-objects)
+  - [Dates](#dates)
+  - [Best Practice Code Examples](#best-practice-code-examples)
+    - [Make a field conditionally required](#make-a-field-conditionally-required)
+    - [Validate one key against another](#validate-one-key-against-another)
+  - [Debug Mode](#debug-mode)
+  - [Extending the Schema Options](#extending-the-schema-options)
+  - [Add On Packages](#add-on-packages)
+  - [Contributors](#contributors)
+  - [Sponsors](#sponsors)
+  - [License](#license)
+  - [Contributing](#contributing)
+    - [Thanks](#thanks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -149,33 +146,6 @@ new SimpleSchema({
 }).validate([{ name: "Bill" }, { name: 2 }]);
 ```
 
-### Validate a Meteor Method Argument and Satisfy `audit-argument-checks`
-
-To avoid errors about not checking all arguments when you are using SimpleSchema to validate Meteor method arguments, you must pass `check` as an option when creating your SimpleSchema instance.
-
-```js
-import SimpleSchema from "simpl-schema";
-import { check } from "meteor/check";
-import { Meteor } from "meteor/meteor";
-
-SimpleSchema.defineValidationErrorTransform((error) => {
-  const ddpError = new Meteor.Error(error.message);
-  ddpError.error = "validation-error";
-  ddpError.details = error.details;
-  return ddpError;
-});
-
-const myMethodObjArgSchema = new SimpleSchema({ name: String }, { check });
-
-Meteor.methods({
-  myMethod(obj) {
-    myMethodObjArgSchema.validate(obj);
-
-    // Now do other method stuff knowing that obj satisfies the schema
-  },
-});
-```
-
 ### Validate an Object and Get the Errors
 
 ```js
@@ -214,41 +184,6 @@ validationContext.validate(
 console.log(validationContext.isValid());
 console.log(validationContext.validationErrors());
 ```
-
-### Enable Meteor Tracker Reactivity
-
-```js
-import SimpleSchema from "simpl-schema";
-import { Tracker } from "meteor/tracker";
-
-const validationContext = new SimpleSchema(
-  {
-    name: String,
-  },
-  { tracker: Tracker }
-).newContext();
-
-Tracker.autorun(function () {
-  console.log(validationContext.isValid());
-  console.log(validationContext.validationErrors());
-});
-
-validationContext.validate({
-  name: 2,
-});
-
-validationContext.validate({
-  name: "Joe",
-});
-```
-
-Passing in `Tracker` causes the following functions to become reactive:
-
-- ValidationContext#keyIsInvalid
-- ValidationContext#keyErrorMessage
-- ValidationContext#isValid
-- ValidationContext#validationErrors
-- SimpleSchema#label
 
 ### Automatically Clean the Object Before Validating It
 
@@ -706,9 +641,7 @@ schema.labels({
 });
 ```
 
-If you have enabled Tracker reactivity, this method causes reactive labels to update.
-
-To get the label for a field, use `schema.label(fieldName)`, which returns a usable string. If you have enabled Tracker reactivity, this method is reactive.
+To get the label for a field, use `schema.label(fieldName)`, which returns a usable string.
 
 ### optional
 
@@ -794,22 +727,9 @@ _Can also be a function that returns a regular expression or an array of them_
 
 Any regular expression that must be matched for the key to be valid, or an array of regular expressions that will be tested in order.
 
-The `SimpleSchema.RegEx` object defines standard regular expressions you can use as the value for the `regEx` key.
+In earlier releases, the `SimpleSchema.RegEx` object defined standard regular expressions that you could use as the value for the `regEx` key. However, many of these were prone to DDoS security risks, causing this package to be flagged by security audit tooling. We no longer include any built-in regular expressions. We encourage you to use a `custom` function or some other method of validating any strings with complex requirements. If necessary, you can look back at the code for previous SimpleSchema releases and copy specific built-in regular expressions into your codebase.
 
-- `SimpleSchema.RegEx.Email` for emails (uses a permissive regEx recommended by W3C, which most browsers use. Does not require a TLD)
-- `SimpleSchema.RegEx.EmailWithTLD` for emails that must have the TLD portion (.com, etc.). Emails like `me@localhost` and `me@192.168.1.1` won't pass this one.
-- `SimpleSchema.RegEx.Domain` for external domains and the domain only (requires a tld like `.com`)
-- `SimpleSchema.RegEx.WeakDomain` for less strict domains and IPv4 and IPv6
-- `SimpleSchema.RegEx.IP` for IPv4 or IPv6
-- `SimpleSchema.RegEx.IPv4` for just IPv4
-- `SimpleSchema.RegEx.IPv6` for just IPv6
-- `SimpleSchema.RegEx.Url` for http, https and ftp urls
-- `SimpleSchema.RegEx.Id` for IDs generated by `Random.id()` of the random package, also usable to validate a relation id.
-- `SimpleSchema.RegEx.idOfLength(min, max)` for IDs generated by `Random.id(length)` where min/max define lower and upper bounds.
-  Call without params for allowing an arbitrary length. Call with `min` only for fixed length.
-  Call with `max = null` for fixed lower and arbitrary upper bounds.
-- `SimpleSchema.RegEx.ZipCode` for 5- and 9-digit ZIP codes
-- `SimpleSchema.RegEx.Phone` for phone numbers (taken from Google's libphonenumber library)
+Also, check out [recheck](https://makenowjust-labs.github.io/recheck/docs/intro/), which includes an ESLint plugin you can add to your project to avoid accidentally writing regular expressions that could be attacked.
 
 ### skipRegExCheckForEmptyStrings
 
@@ -970,7 +890,7 @@ An unnamed validation context is not persisted anywhere. It can be useful when y
 
 ### Validating an Object
 
-To validate an object against the schema in a validation context, call `validationContextInstance.validate(obj, options)`. This method returns `true` if the object is valid according to the schema or `false` if it is not. It also stores a list of invalid fields and corresponding error messages in the context object and causes the reactive methods to react if you injected Tracker reactivity.
+To validate an object against the schema in a validation context, call `validationContextInstance.validate(obj, options)`. This method returns `true` if the object is valid according to the schema or `false` if it is not. It also stores a list of invalid fields and corresponding error messages in the context object.
 
 You can call `myContext.isValid()` to see if the object last passed into `validate()` was found to be valid. This is a reactive method that returns `true` or `false`.
 
@@ -1129,19 +1049,11 @@ If you want to reactively display an arbitrary validation error and it is not po
 - `type`: The type of error. Any string you want, or one of the strings in the `SimpleSchema.ErrorTypes` list.
 - `value`: Optional. The value that was not valid. Will be used to replace the `[value]` placeholder in error messages.
 
-If you use a custom string for `type`, be sure to define a message for it. (See [Customizing Validation Messages](#customizing-validation-messages)).
+If you use a custom string for `type`, be sure to register a getErrorMessage function. (See [Customizing Validation Messages](#customizing-validation-messages)).
 
 Example:
 
 ```js
-SimpleSchema.setDefaultMessages({
-  messages: {
-    en: {
-      wrongPassword: "Wrong password",
-    },
-  },
-});
-
 myValidationContext.addValidationErrors([
   { name: "password", type: "wrongPassword" },
 ]);
@@ -1190,35 +1102,35 @@ Call `myValidationContext.validationErrors()` to get the full array of validatio
 
 There may also be a `value` property, which is the value that was invalid.
 
-There may be a `message` property, but usually the error message is constructed from message templates. You should call `ctxt.keyErrorMessage(key)` to get a reactive message string rather than using `error.message` directly.
+There may be a `message` property, but usually the error message is constructed from message templates. You should call `ctxt.keyErrorMessage(key)` to get a message string rather than using `error.message` directly.
 
 ## Customizing Validation Messages
 
-Error messages are managed by the [message-box](https://github.com/aldeed/node-message-box) package.
-
-In most cases you probably want to set default messages to be used by all `SimpleSchema` instances. Example:
+The built-in validation errors have built-in English messages associated with them. However, if you have custom validation error types, need messages in other languages, or just want to change some default messages, you will want to register a `getErrorMessage` function for your schema.
 
 ```js
-SimpleSchema.setDefaultMessages({
-  messages: {
-    en: {
-      too_long: "Too long!",
-    },
-  },
-});
+const schema = new SimpleSchema({
+  name: String
+}, {
+  getErrorMessage(error, label) {
+    if (error.type === 'too_long') return `${label} is too long!`
+    // Returning undefined will fall back to using defaults
+  }
+})
 ```
 
-The object syntax is the same as shown [here](https://github.com/aldeed/node-message-box#defining-messages) for `MessageBox.defaults`. When you call `setDefaultMessages`, it simply extends [the default defaults](https://github.com/aldeed/simpl-schema/blob/main/package/lib/defaultMessages.js#L18). **Be sure to call it before you create any of your SimpleSchema instances**
-
-The `MessageBox` instance for a specific schema instance is `simpleSchemaInstance.messageBox`. You can call `messages` function on this to update the messages for that schema only. Example:
+You can also do this globally for all schemas:
 
 ```js
-simpleSchemaInstance.messageBox.messages({
-  en: {
-    too_long: "Too long!",
-  },
-});
+globalThis.simpleSchemaGlobalConfig = {
+  getErrorMessage(error, label) {
+    if (error.type === 'too_long') return `${label} is too long!`
+    // Returning undefined will fall back to using defaults
+  }
+};
 ```
+
+A `getErrorMessage` function in schema options will be tried before a global `getErrorMessage` function. If the schema `getErrorMessage` returns `undefined`, the global `getErrorMessage` will be called, and if that returns `undefined`, the built-in English message will be used.
 
 ## Other Validation Context Methods
 
@@ -1324,12 +1236,6 @@ Here's an example of declaring one value valid or invalid based on another
 value using a custom validation function.
 
 ```js
-SimpleSchema.messageBox.messages({
-  en: {
-    passwordMismatch: "Passwords do not match",
-  },
-});
-
 MySchema = new SimpleSchema({
   password: {
     type: String,
@@ -1347,44 +1253,6 @@ MySchema = new SimpleSchema({
     },
   },
 });
-```
-
-### Translation of Regular Expression Messages
-
-The built-in English messages for regular expressions use a function, so to provide similar messages in another language, you can also use a function with a switch statement:
-
-```js
-messages: {
-  fr: {
-    regEx({ label, regExp }) {
-                switch (regExp) {
-                    case (SimpleSchema.RegEx.Email.toString()):
-                    case (SimpleSchema.RegEx.EmailWithTLD.toString()):
-                        return "Cette adresse e-mail est incorrecte";
-                    case (SimpleSchema.RegEx.Domain.toString()):
-                    case (SimpleSchema.RegEx.WeakDomain.toString()):
-                        return "Ce champ doit être un domaine valide";
-                    case (SimpleSchema.RegEx.IP.toString()):
-                        return "Cette adresse IP est invalide";
-                    case (SimpleSchema.RegEx.IPv4.toString()):
-                        return "Cette adresse IPv4 est invalide";
-                    case (SimpleSchema.RegEx.IPv6.toString()):
-                        return "Cette adresse IPv6 est invalide";
-                    case (SimpleSchema.RegEx.Url.toString()):
-                        return "Cette URL est invalide";
-                    case (SimpleSchema.RegEx.Id.toString()):
-                        return "Cet identifiant alphanumérique est invalide";
-                    case (SimpleSchema.RegEx.ZipCode.toString()):
-                        return "Ce code postal est invalide";
-                    case (SimpleSchema.RegEx.Phone.toString()):
-                        return "Ce numéro de téléphone est invalide";
-                    default:
-                        return "Ce champ n'a pas passé la validation Regex";
-                }
-            },
-    }
-  }
-}
 ```
 
 ## Debug Mode

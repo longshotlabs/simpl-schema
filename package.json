@@ -1,0 +1,66 @@
+{
+  "name": "simpl-schema",
+  "version": "0.0.0-development",
+  "description": "A schema validation package that supports direct validation of MongoDB update modifier objects.",
+  "author": "Eric Dobbertin <eric@dairystatedesigns.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/longshotlabs/simpl-schema.git",
+    "directory": "package"
+  },
+  "bugs": {
+    "url": "https://github.com/longshotlabs/simpl-schema/issues"
+  },
+  "homepage": "https://github.com/longshotlabs/simpl-schema",
+  "type": "module",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/esm/main.js",
+  "types": "./dist/esm/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/main.js",
+      "require": "./dist/cjs/main.js"
+    }
+  },
+  "engines": {
+    "node": ">=14.16"
+  },
+  "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
+  "scripts": {
+    "build": "rm -fr dist/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./scripts/post-build.sh",
+    "check": "tsc --noEmit",
+    "lint": "eslint . --ext ts,tsx",
+    "lint:fix": "eslint . --fix --ext ts,tsx",
+    "prepublishOnly": "npm run build",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "@types/clone": "^2.1.1",
+    "@types/mocha": "^9.1.1",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "eslint": "^8.20.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-redos": "^4.4.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0",
+    "expect": "^29.0.3",
+    "mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "ts-standard": "^11.0.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "clone": "^2.1.2",
+    "mongo-object": "^3.0.0"
+  }
+}

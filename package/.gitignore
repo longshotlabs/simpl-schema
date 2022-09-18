@@ -1,7 +1,0 @@
-dist
-.DS_Store
-node_modules
-npm-debug.log
-.idea
-LICENSE
-README.md

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig-base.json",
+  "ts-node": {
+    "files": true
+  },
+  "compilerOptions": {
+    "declaration": true,
+    "module": "node16",
+    "outDir": "dist/esm"
+  }
+}
