@@ -16,8 +16,7 @@ import {
   SchemaDefinition,
   SchemaDefinitionWithShorthand,
   SchemaKeyDefinition,
-  SchemaKeyTypeDefinition,
-  SchemaKeyTypeDefinitionWithShorthand,
+  SchemaKeyDefinitionWithOneType,
   SimpleSchemaOptions,
   StandardSchemaKeyDefinition,
   StandardSchemaKeyDefinitionWithSimpleTypes,
@@ -331,7 +330,7 @@ class SimpleSchema {
     // Resolve all the types and convert to a normal array to make it easier to use.
     if (Array.isArray(defs.type?.definitions)) {
       result.type = defs.type.definitions.map((typeDef) => {
-        const newTypeDef: (SchemaKeyTypeDefinition & { type: SupportedTypes }) = {
+        const newTypeDef: SchemaKeyDefinitionWithOneType = {
           type: String // will be overwritten
         }
         Object.keys(typeDef).forEach(getPropIterator(typeDef, newTypeDef))
@@ -870,7 +869,7 @@ class SimpleSchema {
    */
   get (
     key: string,
-    prop: keyof StandardSchemaKeyDefinitionWithSimpleTypes | keyof SchemaKeyTypeDefinition,
+    prop: keyof StandardSchemaKeyDefinitionWithSimpleTypes | keyof StandardSchemaKeyDefinition,
     functionContext?: Record<string, unknown>
   ): any {
     const def = this.getDefinition(key, ['type', prop], functionContext)
@@ -884,7 +883,7 @@ class SimpleSchema {
     const oneType = def.type[0]
     if (oneType === SimpleSchema.Any) return undefined
 
-    return (oneType as SchemaKeyTypeDefinition)?.[prop as keyof SchemaKeyTypeDefinition]
+    return (oneType as SchemaKeyDefinitionWithOneType)?.[prop as keyof StandardSchemaKeyDefinition]
   }
 
   // shorthand for getting defaultValue
@@ -955,7 +954,7 @@ class SimpleSchema {
     return (schema as SimpleSchema).validate(obj, options)
   }
 
-  static oneOf (...definitions: SchemaKeyTypeDefinitionWithShorthand[]): SimpleSchemaGroup {
+  static oneOf (...definitions: Array<SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor>): SimpleSchemaGroup {
     return new SimpleSchemaGroup(...definitions)
   }
 
@@ -1087,14 +1086,14 @@ function standardizeDefinition (def: SchemaKeyDefinition): StandardSchemaKeyDefi
   if (def.type instanceof SimpleSchemaGroup) {
     standardizedDef.type = def.type.clone()
   } else {
-    const groupProps: Partial<SchemaKeyTypeDefinition> = {}
+    const groupProps: Partial<SchemaKeyDefinitionWithOneType> = {}
     for (const prop of Object.keys(def)) {
       if (oneOfProps.includes(prop)) {
         // @ts-expect-error Copying properties
         groupProps[prop] = def[prop]
       }
     }
-    standardizedDef.type = new SimpleSchemaGroup(groupProps as SchemaKeyTypeDefinition)
+    standardizedDef.type = new SimpleSchemaGroup(groupProps as SchemaKeyDefinitionWithOneType)
   }
 
   return standardizedDef as StandardSchemaKeyDefinition

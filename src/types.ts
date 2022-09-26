@@ -122,12 +122,6 @@ export interface TypeDefinitionProps {
   trim?: boolean
 }
 
-export interface SchemaKeyTypeDefinition extends TypeDefinitionProps {
-  type: SupportedTypes
-}
-
-export type SchemaKeyTypeDefinitionWithShorthand = SchemaKeyTypeDefinition | SupportedTypes | RegExpConstructor | SimpleSchemaGroup
-
 export interface FunctionOptionContext {
   key?: string | null
   [prop: string]: unknown
@@ -150,7 +144,7 @@ export interface StandardSchemaKeyDefinition extends SchemaKeyDefinitionBase {
 }
 
 export interface StandardSchemaKeyDefinitionWithSimpleTypes extends SchemaKeyDefinitionBase {
-  type: Array<(SchemaKeyTypeDefinition & { type: SupportedTypes }) | '___Any___'>
+  type: Array<SchemaKeyDefinitionWithOneType | '___Any___'>
 }
 
 export type SchemaKeyDefinition = StandardSchemaKeyDefinition | SchemaKeyDefinitionWithOneType

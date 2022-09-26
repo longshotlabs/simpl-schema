@@ -5,9 +5,8 @@ import {
   DocValidatorContext,
   FieldInfo,
   FunctionPropContext,
-  SchemaKeyTypeDefinition,
+  SchemaKeyDefinitionWithOneType,
   StandardSchemaKeyDefinitionWithSimpleTypes,
-  SupportedTypes,
   ValidationError,
   ValidatorContext,
   ValidatorFunction
@@ -191,14 +190,14 @@ function doValidation ({
         // and add them to inner props like "type" and "min"
         definition: {
           ...definitionWithoutType,
-          ...typeDef as SchemaKeyTypeDefinition & { type: SupportedTypes }
+          ...typeDef as SchemaKeyDefinitionWithOneType
         }
       }
 
       // Add custom field validators to the list after the built-in
       // validators but before the schema and global validators.
       const fieldValidators = validators.slice(0)
-      const customFn = (typeDef as SchemaKeyTypeDefinition).custom
+      const customFn = (typeDef as SchemaKeyDefinitionWithOneType).custom
       if (customFn != null) fieldValidators.splice(builtInValidators.length, 0, customFn)
 
       // We use _.every just so that we don't continue running more validator

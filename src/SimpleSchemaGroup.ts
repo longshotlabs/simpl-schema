@@ -1,14 +1,14 @@
 import MongoObject from 'mongo-object'
 
-import { SchemaKeyTypeDefinition, SchemaKeyTypeDefinitionWithShorthand, SupportedTypes } from './types.js'
+import { SchemaKeyDefinitionWithOneType, SupportedTypes } from './types.js'
 
 class SimpleSchemaGroup {
-  public definitions: SchemaKeyTypeDefinition[] = []
+  public definitions: SchemaKeyDefinitionWithOneType[] = []
 
-  constructor (...definitions: SchemaKeyTypeDefinitionWithShorthand[]) {
+  constructor (...definitions: Array<SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor>) {
     this.definitions = definitions.map((definition) => {
       if (MongoObject.isBasicObject(definition)) {
-        return { ...definition as SchemaKeyTypeDefinition }
+        return { ...definition as SchemaKeyDefinitionWithOneType }
       }
 
       if (definition instanceof RegExp) {
