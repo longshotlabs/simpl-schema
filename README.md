@@ -630,6 +630,7 @@ One of the following:
 - Any custom or built-in class like `Date`
 - Another `SimpleSchema` instance, meaning `Object` type with this schema
 - `SimpleSchema.oneOf(...)`, with multiple of the above types
+- `SimpleSchema.Any`
 
 ### label
 
