@@ -570,7 +570,7 @@ const userSchema = new SimpleSchema(
     number: "SimpleSchema.Integer",
     email: String,
   },
-  { keepRawDefintion: true }
+  { keepRawDefinition: true }
 );
 userSchema.rawDefinition;
 //{
