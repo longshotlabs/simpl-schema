@@ -71,6 +71,37 @@ const propsThatCanBeFunction = [
 class SimpleSchema {
   public static debug?: boolean
   public static defaultLabel?: string
+
+  /**
+   * Packages that want to allow and check additional options
+   * should add the option names to this set.
+   */
+  public static supportedConstructorOptions = new Set([
+    'clean',
+    'getErrorMessage',
+    'humanizeAutoLabels',
+    'keepRawDefinition',
+    'requiredByDefault'
+  ])
+
+  /**
+   * Packages that want to allow and check additional options
+   * should add the option names to this set.
+   */
+  public static supportedCleanOptions = new Set([
+    'autoConvert',
+    'extendAutoValueContext',
+    'filter',
+    'getAutoValues',
+    'isModifier',
+    'isUpsert',
+    'mongoObject',
+    'mutate',
+    'removeEmptyStrings',
+    'removeNullsFromArrays',
+    'trimStrings'
+  ])
+
   public static validationErrorTransform?: (error: ClientError<ValidationError[]>) => Error
   public static version = 2
   public version: number
@@ -114,6 +145,12 @@ class SimpleSchema {
       ...options
     }
     delete this._constructorOptions.clean // stored separately below
+
+    Object.getOwnPropertyNames(this._constructorOptions).forEach((opt) => {
+      if (!SimpleSchema.supportedConstructorOptions.has(opt)) {
+        console.warn(`Unsupported "${opt}" option passed to SimpleSchema constructor`)
+      }
+    })
 
     // Schema-level defaults for cleaning
     this._cleanOptions = {

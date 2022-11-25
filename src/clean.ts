@@ -40,6 +40,12 @@ function clean (
     ...options
   }
 
+  Object.getOwnPropertyNames(cleanOptions).forEach((opt) => {
+    if (!SimpleSchema.supportedCleanOptions.has(opt)) {
+      console.warn(`Unsupported "${opt}" option passed to SimpleSchema clean`)
+    }
+  })
+
   // Clone so we do not mutate
   const cleanDoc = cleanOptions.mutate === true ? doc : clone(doc)
 
