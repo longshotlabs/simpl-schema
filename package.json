@@ -29,7 +29,8 @@
     }
   },
   "engines": {
-    "node": ">=14.16"
+    "node": ">=14.16",
+    "npm": ">=8"
   },
   "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
   "scripts": {
