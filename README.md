@@ -93,6 +93,7 @@ There are also reasons not to choose this package. Because of all it does, this 
   - [Validate one key against another](#validate-one-key-against-another)
 - [Debug Mode](#debug-mode)
 - [Extending the Schema Options](#extending-the-schema-options)
+- [Converting a SimpleSchema to a JSONSchema](#converting-a-simpleschema-to-a-jsonschema)
 - [Add On Packages](#add-on-packages)
 - [Contributors](#contributors)
 - [Sponsors](#sponsors)
@@ -1242,6 +1243,18 @@ SimpleSchema.extendOptions(["index", "unique", "denyInsert", "denyUpdate"]);
 ```
 
 Obviously you need to ensure that `extendOptions` is called before any SimpleSchema instances are created with those options.
+
+## Converting a SimpleSchema to a JSONSchema
+
+```ts
+import { toJsonSchema } from 'simpl-schema'
+
+const schema = new SimpleSchema({
+  name: String
+})
+
+const jsonSchema = toJsonSchema(schema)
+```
 
 ## Add On Packages
 
