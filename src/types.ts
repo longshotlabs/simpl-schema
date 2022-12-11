@@ -101,6 +101,7 @@ export type GetErrorMessageFn = (error: ValidationError, label: string | null) =
 
 export interface SimpleSchemaOptions {
   clean?: CleanOptions
+  defaultLabel?: string
   getErrorMessage?: GetErrorMessageFn
   humanizeAutoLabels?: boolean
   keepRawDefinition?: boolean

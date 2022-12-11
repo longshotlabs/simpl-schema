@@ -1210,7 +1210,7 @@ function standardizeDefinition (def: SchemaKeyDefinition): StandardSchemaKeyDefi
 function checkAndScrubDefinition (
   fieldName: string,
   definition: StandardSchemaKeyDefinition,
-  options: any,
+  options: SimpleSchemaOptions,
   allKeys: Set<string>
 ): void {
   if (definition.type == null) throw new Error(`${fieldName} key is missing "type"`)
