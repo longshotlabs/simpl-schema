@@ -1,6 +1,6 @@
 import { ObjectToValidate } from '../types.js'
 
-export function appendAffectedKey (affectedKey: string | null | undefined, key: string): string | null | undefined {
+export function appendAffectedKey (affectedKey: string | undefined, key: string): string | undefined {
   if (key === '$each') return affectedKey
   return affectedKey == null ? key : `${affectedKey}.${key}`
 }

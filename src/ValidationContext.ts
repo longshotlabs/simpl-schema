@@ -3,6 +3,7 @@ import MongoObject from 'mongo-object'
 import doValidation from './doValidation.js'
 import { SimpleSchema } from './SimpleSchema.js'
 import { CleanOptions, ObjectToValidate, ValidationError, ValidationOptions } from './types.js'
+import { looksLikeModifier } from './utility/index.js'
 
 export default class ValidationContext {
   public name?: string
@@ -88,6 +89,17 @@ export default class ValidationContext {
       upsert: isUpsert = false
     }: ValidationOptions = {}
   ): boolean {
+    // First do some basic checks of the object, and throw errors if necessary
+    if (obj == null || (typeof obj !== 'object' && typeof obj !== 'function')) {
+      throw new Error('The first argument of validate() must be an object')
+    }
+
+    if (!isModifier && looksLikeModifier(obj)) {
+      throw new Error(
+        'When the validation object contains mongo operators, you must set the modifier option to true'
+      )
+    }
+
     const validationErrors = doValidation({
       extendedCustomContext,
       ignoreTypes,

@@ -290,6 +290,33 @@ class SimpleSchema {
   }
 
   /**
+   * @param key One specific or generic key for which to get all possible schemas.
+   * @returns An potentially empty array of possible definitions for one key
+   *
+   * Note that this returns the raw, unevaluated definition object. Use `getDefinition`
+   * if you want the evaluated definition, where any properties that are functions
+   * have been run to produce a result.
+   */
+  schemas (key: string): StandardSchemaKeyDefinition[] {
+    const schemas: StandardSchemaKeyDefinition[] = []
+
+    const genericKey = MongoObject.makeKeyGeneric(key)
+    const keySchema = genericKey == null ? null : this._schema[genericKey]
+    if (keySchema != null) schemas.push(keySchema)
+
+    // See if it's defined in any subschema
+    this.forEachAncestorSimpleSchema(
+      key,
+      (simpleSchema, ancestor, subSchemaKey) => {
+        const keyDef = simpleSchema.schema(subSchemaKey)
+        if (keyDef != null) schemas.push(keyDef)
+      }
+    )
+
+    return schemas
+  }
+
+  /**
    * @returns {Object} The entire schema object with subschemas merged. This is the
    * equivalent of what schema() returned in SimpleSchema < 2.0
    *
@@ -329,9 +356,45 @@ class SimpleSchema {
     propList?: string[] | null,
     functionContext: Record<string, unknown> = {}
   ): StandardSchemaKeyDefinitionWithSimpleTypes | undefined {
-    const defs = this.schema(key)
-    if (defs == null) return
+    const schemaKeyDefinition = this.schema(key)
+    if (schemaKeyDefinition == null) return
+    return this.resolveDefinitionForSchema(key, schemaKeyDefinition, propList, functionContext)
+  }
 
+  /**
+   * Returns the evaluated definition for one key in the schema
+   *
+   * @param key Generic or specific schema key
+   * @param [propList] Array of schema properties you need; performance optimization
+   * @param [functionContext] The context to use when evaluating schema options that are functions
+   * @returns The schema definition for the requested key
+   */
+  getDefinitions (
+    key: string,
+    propList?: string[] | null,
+    functionContext: Record<string, unknown> = {}
+  ): StandardSchemaKeyDefinitionWithSimpleTypes[] {
+    const schemaKeyDefinitions = this.schemas(key)
+    return schemaKeyDefinitions.map((def) => {
+      return this.resolveDefinitionForSchema(key, def, propList, functionContext)
+    })
+  }
+
+  /**
+   * Resolves the definition for one key in the schema
+   *
+   * @param key Generic or specific schema key
+   * @param schemaKeyDefinition Unresolved definition as returned from simpleSchema.schema()
+   * @param [propList] Array of schema properties you need; performance optimization
+   * @param [functionContext] The context to use when evaluating schema options that are functions
+   * @returns The schema definition for the requested key
+   */
+  resolveDefinitionForSchema (
+    key: string,
+    schemaKeyDefinition: StandardSchemaKeyDefinition,
+    propList?: string[] | null,
+    functionContext: Record<string, unknown> = {}
+  ): StandardSchemaKeyDefinitionWithSimpleTypes {
     const getPropIterator = (obj: Record<string, any>, newObj: Record<string, any>) => {
       return (prop: string): void => {
         if (Array.isArray(propList) && !propList.includes(prop)) return
@@ -362,11 +425,11 @@ class SimpleSchema {
       type: []
     }
 
-    Object.keys(defs).forEach(getPropIterator(defs, result))
+    Object.keys(schemaKeyDefinition).forEach(getPropIterator(schemaKeyDefinition, result))
 
     // Resolve all the types and convert to a normal array to make it easier to use.
-    if (Array.isArray(defs.type?.definitions)) {
-      result.type = defs.type.definitions.map((typeDef) => {
+    if (Array.isArray(schemaKeyDefinition.type?.definitions)) {
+      result.type = schemaKeyDefinition.type.definitions.map((typeDef) => {
         const newTypeDef: SchemaKeyDefinitionWithOneType = {
           type: String // will be overwritten
         }
