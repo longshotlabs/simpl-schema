@@ -28,7 +28,6 @@ import {
 import { forEachKeyAncestor, humanize, isEmptyObject } from './utility/index.js'
 import ValidationContext from './ValidationContext.js'
 
-// Exported for tests
 export const schemaDefinitionOptions = [
   'autoValue',
   'defaultValue',
