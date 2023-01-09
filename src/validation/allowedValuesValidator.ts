@@ -10,7 +10,8 @@ export default function allowedValuesValidator (this: ValidatorContext): undefin
   let isAllowed
   // set defined in scope and allowedValues is its instance
   if (typeof Set === 'function' && allowedValues instanceof Set) {
-    isAllowed = allowedValues.has(this.value)
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    isAllowed = (allowedValues as Set<any>).has(this.value)
   } else {
     isAllowed = (allowedValues as any[]).includes(this.value)
   }

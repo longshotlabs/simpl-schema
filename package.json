@@ -39,14 +39,15 @@
     "lint": "eslint . --ext ts,tsx",
     "lint:fix": "eslint . --fix --ext ts,tsx",
     "prepublishOnly": "npm run build",
-    "test": "mocha"
+    "test": "mocha",
+    "test:watch": "npm test -- --watch"
   },
   "devDependencies": {
     "@types/clone": "^2.1.1",
     "@types/json-schema": "^7.0.11",
-    "@types/mocha": "^9.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.30.7",
-    "@typescript-eslint/parser": "^5.30.7",
+    "@types/mocha": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
     "eslint": "^8.20.0",
     "eslint-config-standard-with-typescript": "^22.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -55,16 +56,16 @@
     "eslint-plugin-redos": "^4.4.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0",
-    "expect": "^29.0.3",
-    "mocha": "^10.0.0",
+    "expect": "^29.3.1",
+    "mocha": "^10.2.0",
     "semantic-release": "^19.0.5",
     "ts-node": "^10.9.1",
     "ts-standard": "^11.0.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "clone": "^2.1.2",
-    "mongo-object": "^3.0.0"
+    "mongo-object": "^3.0.1"
   },
   "release": {
     "branches": [
