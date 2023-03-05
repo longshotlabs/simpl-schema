@@ -111,6 +111,14 @@ function doValidation ({
   if (wholeDocumentErrors.length > 0) {
     validationErrors.push(...wholeDocumentErrors)
   }
+  
+  function isIgnoredKey (key: string): boolean {
+    if (!Array.isArray(keysToValidate)) return false
+    for (const keyToValidate of keysToValidate) {
+      if (keyToValidate === key || key.startsWith(`${key}.`)) return false
+    }
+    return true
+  }
 
   const addedFieldNames = new Set<string>()
   return validationErrors.filter((errObj) => {
@@ -119,7 +127,7 @@ function doValidation ({
     // Make sure there is only one error per fieldName
     if (addedFieldNames.has(errObj.name)) return false
     // Make sure we only add errors for keys that the user requested
-    if (Array.isArray(keysToValidate) && keysToValidate?.some((key) => errObj.name.startsWith(key))) return false
+    if (isIgnoredKey(errObj.name)) return false
 
     addedFieldNames.add(errObj.name)
     return true
