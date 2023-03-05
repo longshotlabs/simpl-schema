@@ -118,6 +118,8 @@ function doValidation ({
     if (ignoreTypes?.includes(errObj.type) === true) return false
     // Make sure there is only one error per fieldName
     if (addedFieldNames.has(errObj.name)) return false
+    // Make sure we only add errors for keys that the user requested
+    if (Array.isArray(keysToValidate) && !keysToValidate.includes(errObj.name)) return false
 
     addedFieldNames.add(errObj.name)
     return true
