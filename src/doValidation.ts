@@ -115,7 +115,7 @@ function doValidation ({
   function isIgnoredKey (key: string): boolean {
     if (!Array.isArray(keysToValidate)) return false
     for (const keyToValidate of keysToValidate) {
-      if (keyToValidate === key || key.startsWith(`${key}.`)) return false
+      if (keyToValidate === key || key.startsWith(`${keyToValidate}.`)) return false
     }
     return true
   }
