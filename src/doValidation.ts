@@ -111,7 +111,7 @@ function doValidation ({
   if (wholeDocumentErrors.length > 0) {
     validationErrors.push(...wholeDocumentErrors)
   }
-  
+
   function isIgnoredKey (key: string): boolean {
     if (!Array.isArray(keysToValidate)) return false
     for (const keyToValidate of keysToValidate) {
