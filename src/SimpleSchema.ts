@@ -80,7 +80,8 @@ class SimpleSchema {
     'getErrorMessage',
     'humanizeAutoLabels',
     'keepRawDefinition',
-    'requiredByDefault'
+    'requiredByDefault',
+    'defaultLabel'
   ])
 
   /**
