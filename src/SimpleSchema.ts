@@ -933,7 +933,7 @@ class SimpleSchema {
   }
 
   /**
-   * Gets a field's label or all field labels reactively.
+   * Gets a field's label or all field labels
    *
    * @param key The schema key, specific or generic.
    *   Omit this argument to get a dictionary of all labels.

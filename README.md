@@ -26,80 +26,81 @@ There are also reasons not to choose this package. Because of all it does, this 
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [Installation](#installation)
-- [Lingo](#lingo)
-- [The History of SimpleSchema](#the-history-of-simpleschema)
-- [Quick Start](#quick-start)
-  - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
-  - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
-  - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
-  - [Validate a MongoDB Update Document](#validate-a-mongodb-update-document)
-  - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
-  - [Set Default Options for One Schema](#set-default-options-for-one-schema)
-  - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
-  - [Explicitly Clean an Object](#explicitly-clean-an-object)
-- [Defining a Schema](#defining-a-schema)
-  - [Shorthand Definitions](#shorthand-definitions)
-  - [Longhand Definitions](#longhand-definitions)
-  - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
-  - [More Shorthand](#more-shorthand)
-  - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
-  - [Extending Schemas](#extending-schemas)
-    - [Overriding When Extending](#overriding-when-extending)
-  - [Subschemas](#subschemas)
-  - [Extracting Schemas](#extracting-schemas)
-  - [Raw Definition](#raw-definition)
-- [Schema Keys](#schema-keys)
-- [Schema Rules](#schema-rules)
-  - [type](#type)
-  - [label](#label)
-  - [optional](#optional)
-  - [required](#required)
-  - [min/max](#minmax)
-  - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
-  - [minCount/maxCount](#mincountmaxcount)
-  - [allowedValues](#allowedvalues)
-  - [regEx](#regex)
-  - [skipRegExCheckForEmptyStrings](#skipregexcheckforemptystrings)
-  - [blackbox](#blackbox)
-  - [trim](#trim)
-  - [custom](#custom)
-  - [defaultValue](#defaultvalue)
-  - [autoValue](#autovalue)
-    - [autoValue gotchas](#autovalue-gotchas)
-  - [Function Properties](#function-properties)
-  - [Getting field properties](#getting-field-properties)
-- [Validating Data](#validating-data)
-  - [The Object to Validate](#the-object-to-validate)
-  - [Ways to Perform Validation](#ways-to-perform-validation)
-    - [Named Validation Contexts](#named-validation-contexts)
-    - [Unnamed Validation Contexts](#unnamed-validation-contexts)
-  - [Validating an Object](#validating-an-object)
-  - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
-  - [Validation Options](#validation-options)
-  - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
-    - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
-  - [Custom Field Validation](#custom-field-validation)
-  - [Custom Whole-Document Validators](#custom-whole-document-validators)
-  - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
-  - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
-- [Customizing Validation Messages](#customizing-validation-messages)
-- [Other Validation Context Methods](#other-validation-context-methods)
-- [Other SimpleSchema Methods](#other-simpleschema-methods)
-- [Cleaning Objects](#cleaning-objects)
-- [Dates](#dates)
-- [Best Practice Code Examples](#best-practice-code-examples)
-  - [Make a field conditionally required](#make-a-field-conditionally-required)
-  - [Validate one key against another](#validate-one-key-against-another)
-- [Debug Mode](#debug-mode)
-- [Extending the Schema Options](#extending-the-schema-options)
-- [Converting a SimpleSchema to a JSONSchema](#converting-a-simpleschema-to-a-jsonschema)
-- [Add On Packages](#add-on-packages)
-- [Contributors](#contributors)
-- [Sponsors](#sponsors)
-- [License](#license)
-- [Contributing](#contributing)
-  - [Thanks](#thanks)
+- [SimpleSchema (simpl-schema NPM package)](#simpleschema-simpl-schema-npm-package)
+  - [Installation](#installation)
+  - [Lingo](#lingo)
+  - [The History of SimpleSchema](#the-history-of-simpleschema)
+  - [Quick Start](#quick-start)
+    - [Validate an Object and Throw an Error](#validate-an-object-and-throw-an-error)
+    - [Validate an Array of Objects and Throw an Error](#validate-an-array-of-objects-and-throw-an-error)
+    - [Validate an Object and Get the Errors](#validate-an-object-and-get-the-errors)
+    - [Validate a MongoDB Update Document](#validate-a-mongodb-update-document)
+    - [Automatically Clean the Object Before Validating It](#automatically-clean-the-object-before-validating-it)
+    - [Set Default Options for One Schema](#set-default-options-for-one-schema)
+    - [Set Default Options for All Schemas](#set-default-options-for-all-schemas)
+    - [Explicitly Clean an Object](#explicitly-clean-an-object)
+  - [Defining a Schema](#defining-a-schema)
+    - [Shorthand Definitions](#shorthand-definitions)
+    - [Longhand Definitions](#longhand-definitions)
+    - [Mixing Shorthand with Longhand](#mixing-shorthand-with-longhand)
+    - [More Shorthand](#more-shorthand)
+    - [Multiple Definitions For One Key](#multiple-definitions-for-one-key)
+    - [Extending Schemas](#extending-schemas)
+      - [Overriding When Extending](#overriding-when-extending)
+    - [Subschemas](#subschemas)
+    - [Extracting Schemas](#extracting-schemas)
+    - [Raw Definition](#raw-definition)
+  - [Schema Keys](#schema-keys)
+  - [Schema Rules](#schema-rules)
+    - [type](#type)
+    - [label](#label)
+    - [optional](#optional)
+    - [required](#required)
+    - [min/max](#minmax)
+    - [exclusiveMin/exclusiveMax](#exclusiveminexclusivemax)
+    - [minCount/maxCount](#mincountmaxcount)
+    - [allowedValues](#allowedvalues)
+    - [regEx](#regex)
+    - [skipRegExCheckForEmptyStrings](#skipregexcheckforemptystrings)
+    - [blackbox](#blackbox)
+    - [trim](#trim)
+    - [custom](#custom)
+    - [defaultValue](#defaultvalue)
+    - [autoValue](#autovalue)
+      - [autoValue gotchas](#autovalue-gotchas)
+    - [Function Properties](#function-properties)
+    - [Getting field properties](#getting-field-properties)
+  - [Validating Data](#validating-data)
+    - [The Object to Validate](#the-object-to-validate)
+    - [Ways to Perform Validation](#ways-to-perform-validation)
+      - [Named Validation Contexts](#named-validation-contexts)
+      - [Unnamed Validation Contexts](#unnamed-validation-contexts)
+    - [Validating an Object](#validating-an-object)
+    - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
+    - [Validation Options](#validation-options)
+    - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
+      - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
+    - [Custom Field Validation](#custom-field-validation)
+    - [Custom Whole-Document Validators](#custom-whole-document-validators)
+    - [Manually Adding a Validation Error](#manually-adding-a-validation-error)
+    - [Getting a List of Invalid Keys and Validation Error Messages](#getting-a-list-of-invalid-keys-and-validation-error-messages)
+  - [Customizing Validation Messages](#customizing-validation-messages)
+  - [Other Validation Context Methods](#other-validation-context-methods)
+  - [Other SimpleSchema Methods](#other-simpleschema-methods)
+  - [Cleaning Objects](#cleaning-objects)
+  - [Dates](#dates)
+  - [Best Practice Code Examples](#best-practice-code-examples)
+    - [Make a field conditionally required](#make-a-field-conditionally-required)
+    - [Validate one key against another](#validate-one-key-against-another)
+  - [Debug Mode](#debug-mode)
+  - [Extending the Schema Options](#extending-the-schema-options)
+  - [Converting a SimpleSchema to a JSONSchema](#converting-a-simpleschema-to-a-jsonschema)
+  - [Add On Packages](#add-on-packages)
+  - [Contributors](#contributors)
+  - [Sponsors](#sponsors)
+  - [License](#license)
+  - [Contributing](#contributing)
+    - [Thanks](#thanks)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -856,11 +857,11 @@ There are three ways to validate an object against your schema:
 1. With a unique named validation context, not throwing any Errors (schema.namedContext('someUniqueString').validate())
 1. With the default validation context, not throwing any Errors. (schema.namedContext().validate())
 
-A validation context provides reactive methods for validating and checking the validation status of a particular object.
+A validation context provides methods for validating and checking the validation status of a particular object.
 
 #### Named Validation Contexts
 
-It's usually best to use a named validation context. That way, the context is automatically persisted by name, allowing you to easily rely on its reactive methods.
+It's usually best to use a named validation context. That way, the context is automatically persisted by name, allowing you to easily rely on its methods.
 
 Here is an example of obtaining a named validation context:
 
@@ -890,19 +891,19 @@ const schema = new SimpleSchema({
 const myValidationContext = schema.newContext();
 ```
 
-An unnamed validation context is not persisted anywhere. It can be useful when you need to see if a document is valid but you don't need any of the reactive methods for that context, or if you are going to keep the context reference in memory yourself.
+An unnamed validation context is not persisted anywhere. It can be useful when you need to see if a document is valid but you don't need any of the methods for that context, or if you are going to keep the context reference in memory yourself.
 
 ### Validating an Object
 
 To validate an object against the schema in a validation context, call `validationContextInstance.validate(obj, options)`. This method returns `true` if the object is valid according to the schema or `false` if it is not. It also stores a list of invalid fields and corresponding error messages in the context object.
 
-You can call `myContext.isValid()` to see if the object last passed into `validate()` was found to be valid. This is a reactive method that returns `true` or `false`.
+You can call `myContext.isValid()` to see if the object last passed into `validate()` was found to be valid. Returns `true` or `false`.
 
 For a list of options, see the [Validation Options](#validation-options) section.
 
 ### Validating Only Some Keys in an Object
 
-You may have the need to (re)validate certain keys while leaving any errors for other keys unchanged. For example, if you have several errors on a form and you want to revalidate only the invalid field the user is currently typing in. For this situation, call `myContext.validate` with the `keys` option set to an array of keys that should be validated. This may cause all of the reactive methods to react.
+You may have the need to (re)validate certain keys while leaving any errors for other keys unchanged. For example, if you have several errors on a form and you want to revalidate only the invalid field the user is currently typing in. For this situation, call `myContext.validate` with the `keys` option set to an array of keys that should be validated.
 
 This method returns `true` only if all the specified schema keys and their descendent keys are valid according to the schema. Otherwise it returns `false`.
 
@@ -1043,7 +1044,7 @@ Whole-document validators have the following available on `this` context:
 
 ### Manually Adding a Validation Error
 
-If you want to reactively display an arbitrary validation error and it is not possible to use a custom validation function (perhaps you have to call a function `onSubmit` or wait for asynchronous results), you can add one or more errors to a validation context at any time by calling `myContext.addValidationErrors(errors)`, where `errors` is an array of error objects with the following format:
+If you want to display an arbitrary validation error and it is not possible to use a custom validation function (perhaps you have to call a function `onSubmit` or wait for asynchronous results), you can add one or more errors to a validation context at any time by calling `myContext.addValidationErrors(errors)`, where `errors` is an array of error objects with the following format:
 
 ```js
 {name: key, type: errorType, value: anyValue}
@@ -1064,8 +1065,6 @@ myValidationContext.addValidationErrors([
 ```
 
 ### Getting a List of Invalid Keys and Validation Error Messages
-
-_This is a reactive method if you have enabled Tracker reactivity._
 
 Call `myValidationContext.validationErrors()` to get the full array of validation errors. Each object in the array has at least two keys:
 
@@ -1107,11 +1106,10 @@ A `getErrorMessage` function in schema options will be tried before a global `ge
 ## Other Validation Context Methods
 
 `myContext.keyIsInvalid(key)` returns true if the specified key is currently
-invalid, or false if it is valid. This is a reactive method.
+invalid, or false if it is valid.
 
 `myContext.keyErrorMessage(key)` returns the error message for the specified
-key if it is invalid. If it is valid, this method returns an empty string. This
-is a reactive method.
+key if it is invalid. If it is valid, this method returns an empty string.
 
 Call `myContext.reset()` if you need to reset the validation context, clearing out any invalid field messages and making it valid.
 

@@ -73,7 +73,7 @@ export default class ValidationContext {
   }
 
   /**
-   * Validates the object against the SimpleSchema and sets a reactive array of error objects
+   * Validates the object against the SimpleSchema and sets an array of error objects
    * @param obj Object to be validated
    * @param options Validation options
    * @returns True if valid; otherwise false
