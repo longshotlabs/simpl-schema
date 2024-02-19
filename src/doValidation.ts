@@ -74,6 +74,7 @@ function doValidation ({
       for (const field of fields) {
         const fieldErrors = validateField({
           affectedKey: field.key,
+          keysToValidate,
           obj,
           op,
           schema,
@@ -87,6 +88,7 @@ function doValidation ({
     }
   } else {
     const fieldErrors = validateField({
+      keysToValidate,
       obj,
       schema,
       val: obj,

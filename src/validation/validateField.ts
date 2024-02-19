@@ -141,153 +141,153 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
       ...(extendedCustomContext ?? {})
     }
 
-    if (!shouldValidateKey({
+    if (shouldValidateKey({
       affectedKey,
       affectedKeyGeneric: affectedKeyGeneric ?? undefined,
       keysToValidate
-    })) return []
-
+    })) {
     // Perform validation for this key
-    for (const currentDef of schema.getDefinitions(affectedKey, null, functionsContext)) {
-      def = currentDef
+      for (const currentDef of schema.getDefinitions(affectedKey, null, functionsContext)) {
+        def = currentDef
 
-      // Whenever we try a new possible schema, clear any field errors from the previous tried schema
-      fieldValidationErrors.length = 0
+        // Whenever we try a new possible schema, clear any field errors from the previous tried schema
+        fieldValidationErrors.length = 0
 
-      const validatorContext: Omit<ValidatorContext, 'definition'> = {
-        ...functionsContext,
-        addValidationErrors (errors: ValidationError[]) {
-          errors.forEach((error) => fieldValidationErrors.push(error))
-        },
-        // Value checks are not necessary for null or undefined values, except
-        // for non-optional null array items, or for $unset or $rename values
-        valueShouldBeChecked: shouldCheckValue({
-          affectedKeyGeneric: affectedKeyGeneric ?? undefined,
-          isOptional: currentDef.optional as boolean,
-          op,
-          val
-        })
-      }
-
-      // Loop through each of the definitions in the SimpleSchemaGroup.
-      // If the value matches any, we are valid and can stop checking the rest.
-      for (const [typeIndex, typeDef] of currentDef.type.entries()) {
-        // If the type is SimpleSchema.Any, then it is valid
-        if (typeDef === SimpleSchema.Any) break
-
-        const nonAnyTypeDefinition = typeDef as SchemaKeyDefinitionWithOneType
-        const { type, ...definitionWithoutType } = currentDef
-
-        // @ts-expect-error
-        const finalValidatorContext: ValidatorContext = {
-          ...validatorContext,
-
-          // Take outer definition props like "optional" and "label"
-          // and add them to inner props like "type" and "min"
-          definition: {
-            ...definitionWithoutType,
-            ...nonAnyTypeDefinition
-          }
-        }
-
-        // Order of these validators is important
-        const customFieldValidator = nonAnyTypeDefinition.custom
-        const fieldValidators = [
-          requiredValidator,
-          typeValidator,
-          allowedValuesValidator,
-          ...(customFieldValidator == null ? [] : [customFieldValidator]),
-          // @ts-expect-error It's fine to access private method from here
-          ...schema._validators,
-          // @ts-expect-error It's fine to access private method from here
-          ...SimpleSchema._validators
-        ]
-
-        const fieldValidationErrorsForThisType = []
-        for (const fieldValidator of fieldValidators) {
-          const result = fieldValidator.call(finalValidatorContext)
-
-          // If the validator returns a string, assume it is the error type.
-          if (typeof result === 'string') {
-            fieldValidationErrorsForThisType.push({
-              name: affectedKey,
-              type: result,
-              value: val
-            })
-          }
-
-          // If the validator returns an object, assume it is an error object.
-          if (typeof result === 'object' && result !== null) {
-            fieldValidationErrorsForThisType.push({
-              name: affectedKey,
-              value: val,
-              ...result
-            })
-          }
-        }
-
-        if (SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
-          const itemErrors = validateField({
-            extendedCustomContext,
-            keysToValidate,
-            obj: val,
+        const validatorContext: Omit<ValidatorContext, 'definition'> = {
+          ...functionsContext,
+          addValidationErrors (errors: ValidationError[]) {
+            errors.forEach((error) => fieldValidationErrors.push(error))
+          },
+          // Value checks are not necessary for null or undefined values, except
+          // for non-optional null array items, or for $unset or $rename values
+          valueShouldBeChecked: shouldCheckValue({
+            affectedKeyGeneric: affectedKeyGeneric ?? undefined,
+            isOptional: currentDef.optional as boolean,
             op,
-            schema: nonAnyTypeDefinition.type as SimpleSchema,
-            val,
-            validationContext
+            val
           })
-          if (itemErrors.length > 0) {
-            fieldValidationErrorsForThisType.push(...itemErrors.map((error) => ({ ...error, name: `${affectedKey}.${error.name}` })))
-          }
         }
 
-        // As soon as we find a type for which the value is valid, stop checking more
-        if (fieldValidationErrorsForThisType.length === 0) {
+        // Loop through each of the definitions in the SimpleSchemaGroup.
+        // If the value matches any, we are valid and can stop checking the rest.
+        for (const [typeIndex, typeDef] of currentDef.type.entries()) {
+        // If the type is SimpleSchema.Any, then it is valid
+          if (typeDef === SimpleSchema.Any) break
+
+          const nonAnyTypeDefinition = typeDef as SchemaKeyDefinitionWithOneType
+          const { type, ...definitionWithoutType } = currentDef
+
+          // @ts-expect-error
+          const finalValidatorContext: ValidatorContext = {
+            ...validatorContext,
+
+            // Take outer definition props like "optional" and "label"
+            // and add them to inner props like "type" and "min"
+            definition: {
+              ...definitionWithoutType,
+              ...nonAnyTypeDefinition
+            }
+          }
+
+          // Order of these validators is important
+          const customFieldValidator = nonAnyTypeDefinition.custom
+          const fieldValidators = [
+            requiredValidator,
+            typeValidator,
+            allowedValuesValidator,
+            ...(customFieldValidator == null ? [] : [customFieldValidator]),
+            // @ts-expect-error It's fine to access private method from here
+            ...schema._validators,
+            // @ts-expect-error It's fine to access private method from here
+            ...SimpleSchema._validators
+          ]
+
+          const fieldValidationErrorsForThisType = []
+          for (const fieldValidator of fieldValidators) {
+            const result = fieldValidator.call(finalValidatorContext)
+
+            // If the validator returns a string, assume it is the error type.
+            if (typeof result === 'string') {
+              fieldValidationErrorsForThisType.push({
+                name: affectedKey,
+                type: result,
+                value: val
+              })
+            }
+
+            // If the validator returns an object, assume it is an error object.
+            if (typeof result === 'object' && result !== null) {
+              fieldValidationErrorsForThisType.push({
+                name: affectedKey,
+                value: val,
+                ...result
+              })
+            }
+          }
+
+          if (SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
+            const itemErrors = validateField({
+              extendedCustomContext,
+              keysToValidate,
+              obj: val,
+              op,
+              schema: nonAnyTypeDefinition.type as SimpleSchema,
+              val,
+              validationContext
+            })
+            if (itemErrors.length > 0) {
+              fieldValidationErrorsForThisType.push(...itemErrors.map((error) => ({ ...error, name: `${affectedKey}.${error.name}` })))
+            }
+          }
+
+          // As soon as we find a type for which the value is valid, stop checking more
+          if (fieldValidationErrorsForThisType.length === 0) {
           // One we have chosen a valid schema, there is no need to validate the
           // properties of this object because we validated all the way down
-          if (SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
-            return fieldValidationErrors
+            if (SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
+              return fieldValidationErrors
+            }
+            break
           }
-          break
+
+          if (typeIndex === currentDef.type.length - 1) {
+            fieldValidationErrors.push(...fieldValidationErrorsForThisType)
+          }
         }
 
-        if (typeIndex === currentDef.type.length - 1) {
-          fieldValidationErrors.push(...fieldValidationErrorsForThisType)
-        }
+        // If it's valid with this schema, we don't need to try any more
+        if (fieldValidationErrors.length === 0) break
       }
 
-      // If it's valid with this schema, we don't need to try any more
-      if (fieldValidationErrors.length === 0) break
-    }
-
-    // Mark invalid if not found in schema
-    if (def == null) {
+      // Mark invalid if not found in schema
+      if (def == null) {
       // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
-      if (
-        op === '$unset' ||
+        if (
+          op === '$unset' ||
         (op === '$currentDate' && affectedKey.endsWith('.$type'))
-      ) {
-        return []
+        ) {
+          return []
+        }
+
+        return [
+          {
+            name: affectedKey,
+            type: SimpleSchema.ErrorTypes.KEY_NOT_IN_SCHEMA,
+            value: val
+          }
+        ]
       }
 
-      return [
-        {
-          name: affectedKey,
-          type: SimpleSchema.ErrorTypes.KEY_NOT_IN_SCHEMA,
-          value: val
-        }
-      ]
-    }
-
-    // For $rename, make sure that the new name is allowed by the schema
-    if (op === '$rename' && !schema.allowsKey(val)) {
-      return [
-        {
-          name: val,
-          type: SimpleSchema.ErrorTypes.KEY_NOT_IN_SCHEMA,
-          value: null
-        }
-      ]
+      // For $rename, make sure that the new name is allowed by the schema
+      if (op === '$rename' && !schema.allowsKey(val)) {
+        return [
+          {
+            name: val,
+            type: SimpleSchema.ErrorTypes.KEY_NOT_IN_SCHEMA,
+            value: null
+          }
+        ]
+      }
     }
 
     // Loop through arrays

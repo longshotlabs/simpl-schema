@@ -1198,4 +1198,16 @@ describe('SimpleSchema', function () {
       })
     })
   })
+
+  it('keys not in the keys list are not validated', function () {
+    const schema = new SimpleSchema({
+      foo: String,
+      bar: String
+    })
+    const context = schema.newContext()
+    context.validate({ foo: 'bizz' }, { keys: ['foo'] })
+
+    // If keys option would be respected, there should not be any validation errors
+    expect(context.validationErrors().length).toBe(0)
+  })
 })
