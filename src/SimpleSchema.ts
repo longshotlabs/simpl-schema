@@ -897,16 +897,13 @@ class SimpleSchema {
   // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   validator (options: ValidationOptions & { clean?: boolean, returnErrorsPromise?: boolean } = {}): (obj: Record<string, any>) => void | Promise<ValidationError[]> {
     return (obj: Record<string, any>) => {
-      const optionsClone = { ...options }
-      if (options.clean === true) {
-        // Do this here and pass into both functions for better performance
-        optionsClone.mongoObject = new MongoObject(obj, this.blackboxKeys())
-        this.clean(obj, optionsClone)
+      const { clean, returnErrorsPromise, ...validationOptions } = options
+      // Do this here and pass into both functions for better performance
+      const mongoObject = new MongoObject(obj, this.blackboxKeys())
+      if (clean === true) {
+        this.clean(obj, { mongoObject })
       }
-      if (options.returnErrorsPromise === true) {
-        return this.validateAndReturnErrorsPromise(obj, optionsClone)
-      }
-      return this.validate(obj, optionsClone)
+      return returnErrorsPromise === true ? this.validateAndReturnErrorsPromise(obj, { ...validationOptions, mongoObject }) : this.validate(obj, { ...validationOptions, mongoObject })
     }
   }
 
