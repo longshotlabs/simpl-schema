@@ -5,6 +5,7 @@ import { getLastPartOfKey, getParentOfKey } from '../utility/index.js'
 interface GetPositionsForAutoValueProps {
   fieldName: string
   isModifier?: boolean
+  isUpsert?: boolean
   mongoObject: MongoObject
 }
 
@@ -42,6 +43,7 @@ interface PositionInfo {
 export default function getPositionsForAutoValue ({
   fieldName,
   isModifier,
+  isUpsert,
   mongoObject
 }: GetPositionsForAutoValueProps): PositionInfo[] {
   // Positions for this field
@@ -127,6 +129,18 @@ export default function getPositionsForAutoValue ({
           })
         }
       }
+    })
+  }
+
+  // If we made it this far, we still want to call the autoValue
+  // function once for the field, so we'll add a would-be position for it.
+  if (positions.length === 0 && isModifier === true && isUpsert !== true) {
+    positions.push({
+      key: fieldName,
+      // @ts-expect-error incorrect type in mongo-object package
+      value: undefined,
+      operator: '$set',
+      position: `$set[${fieldName}]`
     })
   }
 

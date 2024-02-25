@@ -69,6 +69,7 @@ function setAutoValues (
       const positions = getPositionsForAutoValue({
         fieldName,
         isModifier,
+        isUpsert,
         mongoObject
       })
 

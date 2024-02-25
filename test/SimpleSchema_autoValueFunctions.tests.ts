@@ -153,4 +153,40 @@ describe('SimpleSchema - autoValueFunctions', function () {
     expect(autoValueFunctions[1].fieldName).toBe('a.b.$.z')
     expect(autoValueFunctions[1].closestSubschemaFieldName).toBe('a.b.$')
   })
+
+  it('modifier with autovalue in subschema', function () {
+    const datesSchema = new SimpleSchema({
+      updatedAt: {
+        type: Date,
+        label: 'Updated At',
+        optional: true,
+        autoValue: function () {
+          return new Date()
+        }
+      }
+    })
+
+    const schema = new SimpleSchema({
+      otherStuff: {
+        type: String,
+        optional: true
+      },
+      dates: {
+        type: datesSchema,
+        label: 'Dates',
+        optional: true,
+        defaultValue: {}
+      }
+    })
+
+    const modifier = {
+      $set: { otherStuff: 'someOtherString' }
+    }
+
+    const cleanedModifier = schema.clean(modifier, {
+      isModifier: true
+    }) as any
+    expect(cleanedModifier.$set['dates.updatedAt']).not.toBeUndefined()
+    expect(cleanedModifier.$set['dates.updatedAt']).toBeInstanceOf(Date)
+  })
 })
