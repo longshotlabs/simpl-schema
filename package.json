@@ -39,7 +39,7 @@
     "lint": "eslint . --ext ts,tsx",
     "lint:fix": "eslint . --fix --ext ts,tsx",
     "prepublishOnly": "npm run build",
-    "test": "mocha",
+    "test": "NODE_NO_WARNINGS=1 mocha",
     "test:watch": "npm test -- --watch"
   },
   "devDependencies": {
