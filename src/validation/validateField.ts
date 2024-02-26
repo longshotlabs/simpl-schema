@@ -146,7 +146,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
       affectedKeyGeneric: affectedKeyGeneric ?? undefined,
       keysToValidate
     })) {
-    // Perform validation for this key
+      // Perform validation for this key
       for (const currentDef of schema.getDefinitions(affectedKey, null, functionsContext)) {
         def = currentDef
 
@@ -171,7 +171,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
         // Loop through each of the definitions in the SimpleSchemaGroup.
         // If the value matches any, we are valid and can stop checking the rest.
         for (const [typeIndex, typeDef] of currentDef.type.entries()) {
-        // If the type is SimpleSchema.Any, then it is valid
+          // If the type is SimpleSchema.Any, then it is valid
           if (typeDef === SimpleSchema.Any) break
 
           const nonAnyTypeDefinition = typeDef as SchemaKeyDefinitionWithOneType
@@ -225,7 +225,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
             }
           }
 
-          if (SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
+          if (val !== undefined && SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
             const itemErrors = validateField({
               extendedCustomContext,
               keysToValidate,
@@ -242,8 +242,8 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
 
           // As soon as we find a type for which the value is valid, stop checking more
           if (fieldValidationErrorsForThisType.length === 0) {
-          // One we have chosen a valid schema, there is no need to validate the
-          // properties of this object because we validated all the way down
+            // One we have chosen a valid schema, there is no need to validate the
+            // properties of this object because we validated all the way down
             if (SimpleSchema.isSimpleSchema(nonAnyTypeDefinition.type)) {
               return fieldValidationErrors
             }
@@ -261,7 +261,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
 
       // Mark invalid if not found in schema
       if (def == null) {
-      // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
+        // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
         if (
           op === '$unset' ||
         (op === '$currentDate' && affectedKey.endsWith('.$type'))

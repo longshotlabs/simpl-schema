@@ -136,6 +136,21 @@ describe('SimpleSchema - required', function () {
         enemies: [{}]
       }).toBe(2)
     })
+
+    it('optional object subschema', function () {
+      const addressSchema = new SimpleSchema({
+        city: String,
+        street: String
+      })
+      const personSchema = new SimpleSchema({
+        name: String,
+        address: { type: addressSchema, optional: true }
+      })
+
+      expectRequiredErrorLength(personSchema, {
+        name: 'Bob'
+      }).toBe(0)
+    })
   })
 
   describe('requiredByDefault', function () {
