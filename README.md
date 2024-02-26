@@ -77,6 +77,7 @@ There are also reasons not to choose this package. Because of all it does, this 
       - [Unnamed Validation Contexts](#unnamed-validation-contexts)
     - [Validating an Object](#validating-an-object)
     - [Validating Only Some Keys in an Object](#validating-only-some-keys-in-an-object)
+    - [Validating Multiple Objects in an Array](#validating-multiple-objects-in-an-array)
     - [Validation Options](#validation-options)
     - [Validating and Throwing ValidationErrors](#validating-and-throwing-validationerrors)
       - [Customize the Error That is Thrown](#customize-the-error-that-is-thrown)
@@ -906,6 +907,10 @@ For a list of options, see the [Validation Options](#validation-options) section
 You may have the need to (re)validate certain keys while leaving any errors for other keys unchanged. For example, if you have several errors on a form and you want to revalidate only the invalid field the user is currently typing in. For this situation, call `myContext.validate` with the `keys` option set to an array of keys that should be validated.
 
 This method returns `true` only if all the specified schema keys and their descendent keys are valid according to the schema. Otherwise it returns `false`.
+
+### Validating Multiple Objects in an Array
+
+As a convenience, you may pass an array of objects to the `validate` function and SimpleSchema will validate them all. The first error found will cause the whole array to be considered invalid. The array itself is not validated, so validation will pass if it is empty and field names will not begin with `$`.
 
 ### Validation Options
 
