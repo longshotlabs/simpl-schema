@@ -170,7 +170,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
 
         // Loop through each of the definitions in the SimpleSchemaGroup.
         // If the value matches any, we are valid and can stop checking the rest.
-        for (const [typeIndex, typeDef] of currentDef.type.entries()) {
+        for (const [typeIndex, typeDef] of Array.from(currentDef.type.entries())) {
           // If the type is SimpleSchema.Any, then it is valid
           if (typeDef === SimpleSchema.Any) break
 
