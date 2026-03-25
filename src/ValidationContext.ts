@@ -1,4 +1,4 @@
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import doValidation from './doValidation.js'
 import { SimpleSchema } from './SimpleSchema.js'

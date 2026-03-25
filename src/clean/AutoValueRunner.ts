@@ -1,5 +1,5 @@
 import clone from 'clone'
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import { AutoValueContext, AutoValueFunction, FieldInfo } from '../types.js'
 import { getParentOfKey } from '../utility/index.js'

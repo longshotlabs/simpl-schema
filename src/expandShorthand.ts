@@ -1,4 +1,4 @@
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import { SchemaDefinition, SchemaDefinitionWithShorthand, SupportedTypes } from './types.js'
 

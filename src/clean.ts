@@ -1,5 +1,5 @@
 import clone from 'clone'
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import convertToProperType from './clean/convertToProperType.js'
 import setAutoValues from './clean/setAutoValues.js'

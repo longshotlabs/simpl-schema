@@ -1,4 +1,4 @@
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import { AutoValueFunctionDetails, CustomAutoValueContext } from '../types.js'
 import AutoValueRunner from './AutoValueRunner.js'

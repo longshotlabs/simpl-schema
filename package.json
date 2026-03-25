@@ -57,7 +57,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0",
     "expect": "^29.3.1",
-    "mocha": "^10.2.0",
+    "mocha": "^11.7.5",
     "semantic-release": "^22.0.12",
     "ts-node": "^10.9.2",
     "ts-standard": "^12.0.2",
@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
-    "mongo-object": "^3.0.1"
+    "mongo-object": "^3.0.4"
   },
   "release": {
     "branches": [

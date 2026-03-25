@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import clean from './clean.js'
 import { getDefaultErrorMessage } from './defaultMessages.js'

@@ -1,4 +1,4 @@
-import MongoObject from 'mongo-object'
+import { MongoObject } from 'mongo-object'
 
 import { SimpleSchema, ValidationContext } from '../SimpleSchema.js'
 import { FieldInfo, FunctionPropContext, SchemaKeyDefinitionWithOneType, StandardSchemaKeyDefinitionWithSimpleTypes, ValidationError, ValidatorContext } from '../types.js'
