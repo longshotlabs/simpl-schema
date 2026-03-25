@@ -42,9 +42,7 @@ function doValidation ({
     for (const [op, opObj] of Object.entries<Record<string, any>>(obj)) {
       // If non-operators are mixed in, throw error
       if (op.slice(0, 1) !== '$') {
-        throw new Error(
-              `Expected '${op}' to be a modifier operator like '$set'`
-        )
+        throw new Error(`Expected '${op}' to be a modifier operator like '$set'`)
       }
       if (!shouldCheck(op)) continue
 
