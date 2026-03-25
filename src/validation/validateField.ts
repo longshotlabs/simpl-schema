@@ -1,7 +1,7 @@
 import { MongoObject } from 'mongo-object'
 
 import { SimpleSchema, ValidationContext } from '../SimpleSchema.js'
-import { FieldInfo, FunctionPropContext, SchemaKeyDefinitionWithOneType, StandardSchemaKeyDefinitionWithSimpleTypes, ValidationError, ValidatorContext } from '../types.js'
+import type { FieldInfo, FunctionPropContext, SchemaKeyDefinitionWithOneType, StandardSchemaKeyDefinitionWithSimpleTypes, ValidationError, ValidatorContext } from '../types.js'
 import { appendAffectedKey, getParentOfKey, isObjectWeShouldTraverse } from '../utility/index.js'
 import allowedValuesValidator from './allowedValuesValidator.js'
 import requiredValidator from './requiredValidator.js'

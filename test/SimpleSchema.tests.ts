@@ -4,7 +4,7 @@ import { expect } from 'expect'
 
 import { ClientError } from '../src/errors.js'
 import { SimpleSchema } from '../src/SimpleSchema.js'
-import { AnyClass, FunctionOptionContext, ValidationError } from '../src/types.js'
+import type { AnyClass, FunctionOptionContext, ValidationError } from '../src/types.js'
 import expectErrorOfTypeLength from './helpers/expectErrorOfTypeLength.js'
 import expectValid from './helpers/expectValid.js'
 import testSchema from './helpers/testSchema.js'

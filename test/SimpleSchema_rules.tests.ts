@@ -3,7 +3,7 @@
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
-import { FunctionPropContext } from '../src/types.js'
+import type { FunctionPropContext } from '../src/types.js'
 
 describe('SimpleSchema - Rules', function () {
   it('Rules should be passed the object being validated', function () {
