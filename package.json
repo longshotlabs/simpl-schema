@@ -57,7 +57,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0",
     "expect": "^29.3.1",
-    "mocha": "^11.7.5",
+    "mocha": "^12.0.3",
     "semantic-release": "25.0.9",
     "ts-node": "^10.9.2",
     "ts-standard": "^12.0.2",
