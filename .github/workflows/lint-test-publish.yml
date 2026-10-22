@@ -51,6 +51,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.repository_owner == 'longshotlabs' && github.ref == 'refs/heads/main' }}
     needs: [lint, test]
+    permissions:
+      contents: write # Clone and tag releases
+      issues: write # Comment on issues
+      pull-requests: write # Comment on PRs
+      id-token: write # REQUIRED for OIDC Trusted Publishing
     defaults:
       run:
         shell: bash
@@ -70,4 +75,3 @@ jobs:
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
