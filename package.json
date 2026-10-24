@@ -36,8 +36,9 @@
     "check": "tsc --noEmit",
     "lint": "oxlint . && oxfmt --check .",
     "lint:fix": "oxlint --fix . && oxfmt --write .",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run test:build",
     "test": "NODE_NO_WARNINGS=1 mocha",
+    "test:build": "npm run build && node scripts/test-build.cjs",
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
