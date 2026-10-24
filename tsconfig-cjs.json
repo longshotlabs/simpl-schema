@@ -1,8 +1,9 @@
 {
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "module": "node16",
+    "module": "commonjs",
     "outDir": "dist/cjs",
-    "rootDir": "src"
+    "rootDir": "src",
+    "moduleResolution": "bundler"
   }
 }
