@@ -193,6 +193,10 @@ console.log(validationContext.isValid())
 console.log(validationContext.validationErrors())
 ```
 
+Array update paths may use `$[]` to target all array items or `$[identifier]` to target items selected by MongoDB's `arrayFilters` option. Define the array item schema using `$`, such as `someArray.$.name`, and validate the update document with `{ modifier: true }`.
+
+SimpleSchema validates the values and field paths in the update document. It does not validate the separate `arrayFilters` option or evaluate which existing array items match those filters.
+
 ### Automatically Clean the Object Before Validating It
 
 TO DO
