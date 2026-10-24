@@ -5,7 +5,7 @@ import { SchemaDefinition, SchemaDefinitionWithShorthand, SupportedTypes } from 
 /**
  * Clones a schema object, expanding shorthand as it does it.
  */
-export default function expandShorthand (schema: SchemaDefinitionWithShorthand): SchemaDefinition {
+export default function expandShorthand(schema: SchemaDefinitionWithShorthand): SchemaDefinition {
   const schemaClone: SchemaDefinition = {}
 
   Object.keys(schema).forEach((key) => {
@@ -20,9 +20,7 @@ export default function expandShorthand (schema: SchemaDefinitionWithShorthand):
     // CASE 2: The definition is an array of some type
     if (Array.isArray(definition)) {
       if (Array.isArray(definition[0])) {
-        throw new Error(
-          `Array shorthand may only be used to one level of depth (${key})`
-        )
+        throw new Error(`Array shorthand may only be used to one level of depth (${key})`)
       }
       const type = definition[0]
       schemaClone[key] = { type: Array }

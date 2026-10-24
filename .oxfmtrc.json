@@ -1,0 +1,12 @@
+{
+  "ignorePatterns": ["dist/**/*", "node_modules/**/*"],
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "semi": false,
+  "trailingComma": "none",
+  "quoteProps": "as-needed",
+  "tabWidth": 2,
+  "useTabs": false,
+  "printWidth": 100,
+  "sortImports": true
+}

@@ -10,16 +10,8 @@ import { getKeysWithValueInObj } from '../utility/index.js'
 //     * We're validating a key of an object that is an array item.
 //     * We're validating a document (as opposed to a modifier).
 //     * We're validating a key under the $set operator in a modifier, and it's an upsert.
-export default function requiredValidator (this: ValidatorContext): string | undefined {
-  const {
-    definition,
-    isInArrayItemObject,
-    isInSubObject,
-    key,
-    obj,
-    operator,
-    value
-  } = this
+function requiredValidator(this: ValidatorContext): string | undefined {
+  const { definition, isInArrayItemObject, isInSubObject, key, obj, operator, value } = this
   const { optional } = definition
 
   if (optional === true) return
@@ -28,7 +20,9 @@ export default function requiredValidator (this: ValidatorContext): string | und
   if (value === null) return SimpleSchema.ErrorTypes.REQUIRED
 
   // If operator would remove, we add required
-  if (operator === '$unset' || operator === '$rename') { return SimpleSchema.ErrorTypes.REQUIRED }
+  if (operator === '$unset' || operator === '$rename') {
+    return SimpleSchema.ErrorTypes.REQUIRED
+  }
 
   // The rest of these apply only if the value is undefined
   if (value !== undefined) return
@@ -42,10 +36,7 @@ export default function requiredValidator (this: ValidatorContext): string | und
   // $setOnInsert because they will be created by MongoDB while setting.
   const keysWithValueInSet = getKeysWithValueInObj(obj.$set, key)
   if (keysWithValueInSet.length > 0) return
-  const keysWithValueInSetOnInsert = getKeysWithValueInObj(
-    obj.$setOnInsert,
-    key
-  )
+  const keysWithValueInSetOnInsert = getKeysWithValueInObj(obj.$setOnInsert, key)
   if (keysWithValueInSetOnInsert.length > 0) return
 
   // In the case of $set and $setOnInsert, the value may be undefined here
@@ -54,8 +45,14 @@ export default function requiredValidator (this: ValidatorContext): string | und
   if (fieldInfo.isSet && fieldInfo.value !== null) return
 
   // Required if in an array or sub object
-  if (isInArrayItemObject || isInSubObject) { return SimpleSchema.ErrorTypes.REQUIRED }
+  if (isInArrayItemObject || isInSubObject) {
+    return SimpleSchema.ErrorTypes.REQUIRED
+  }
 
   // If we've got this far with an undefined $set or $setOnInsert value, it's a required error.
-  if (operator === '$set' || operator === '$setOnInsert') { return SimpleSchema.ErrorTypes.REQUIRED }
+  if (operator === '$set' || operator === '$setOnInsert') {
+    return SimpleSchema.ErrorTypes.REQUIRED
+  }
 }
+
+export default requiredValidator

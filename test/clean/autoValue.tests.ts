@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../../src/SimpleSchema.js'
@@ -15,7 +13,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.key).toBe('bar')
             expect(this.closestSubschemaFieldName).toBe(null)
             expect(this.isSet).toBe(false)
@@ -57,7 +55,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.isSet).toBe(false)
             expect(this.value).toBe(undefined)
             expect(this.operator).toBe(null)
@@ -99,7 +97,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.isSet).toBe(true)
             expect(this.value).toBe(true)
             expect(this.operator).toBe(null)
@@ -142,7 +140,7 @@ describe('autoValue', function () {
         'foo.bar': {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.parentField()).toEqual({
               isSet: true,
               operator: null,
@@ -161,7 +159,7 @@ describe('autoValue', function () {
         dug: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.key).toBe('dig.dug')
             expect(this.closestSubschemaFieldName).toBe('dig')
           }
@@ -187,7 +185,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.isSet).toBe(true)
             expect(this.value).toBe(false)
             expect(this.operator).toBe(null)
@@ -232,7 +230,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.isSet).toBe(true)
             expect(this.value).toBe(false)
             expect(this.operator).toBe('$set')
@@ -283,7 +281,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.isSet).toBe(true)
             expect(this.value).toBe(false)
             expect(this.operator).toBe('$set')
@@ -337,7 +335,7 @@ describe('autoValue', function () {
         bar: {
           type: Boolean,
           optional: true,
-          autoValue () {
+          autoValue() {
             expect(this.isSet).toBe(false)
             expect(this.value).toBe(undefined)
             expect(this.operator).toBe('$set')
@@ -387,7 +385,7 @@ describe('autoValue', function () {
       updatesHistory: {
         type: Array,
         optional: true,
-        autoValue () {
+        autoValue() {
           const content = this.field('content')
           if (content.isSet) {
             if (this.operator == null) {
@@ -457,7 +455,7 @@ describe('autoValue', function () {
       },
       'avArrayOfObjects.$.foo': {
         type: String,
-        autoValue () {
+        autoValue() {
           return 'bar'
         }
       }
@@ -514,7 +512,7 @@ describe('autoValue', function () {
       psuedoEach: {
         type: Array,
         optional: true,
-        autoValue () {
+        autoValue() {
           if (this.isSet && this.operator === '$set') {
             return {
               $push: {
@@ -555,13 +553,13 @@ describe('autoValue', function () {
       },
       someDefault: {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (!this.isSet) return 5
         }
       },
       updateCount: {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.operator == null) return 0
           return { $inc: 1 }
         }
@@ -569,7 +567,7 @@ describe('autoValue', function () {
       firstWord: {
         type: String,
         optional: true,
-        autoValue () {
+        autoValue() {
           const content = this.field<string>('content')
           if (content.isSet) return content.value.split(' ')[0]
           this.unset()
@@ -619,7 +617,7 @@ describe('autoValue', function () {
     const subSchema = new SimpleSchema({
       value: {
         type: String,
-        autoValue () {
+        autoValue() {
           expect(this.isSet).toBe(true)
           expect(this.operator).toEqual('$set')
           expect(this.value).toEqual('should be overridden by autoValue')
@@ -646,7 +644,9 @@ describe('autoValue', function () {
       { isModifier: true }
     )
 
-    expect((result as Record<'$set', Record<string, string>>).$set['children.$.value']).toBe('autoValue')
+    expect((result as Record<'$set', Record<string, string>>).$set['children.$.value']).toBe(
+      'autoValue'
+    )
   })
 
   it('operator correct for $pull', function () {
@@ -655,7 +655,7 @@ describe('autoValue', function () {
     const schema = new SimpleSchema({
       foo: {
         type: Array,
-        autoValue () {
+        autoValue() {
           called = true
           expect(this.operator).toEqual('$pull')
         }
@@ -683,7 +683,7 @@ describe('autoValue', function () {
       },
       field2: {
         type: String,
-        autoValue () {
+        autoValue() {
           called++
           expect(this.field('field1').value).toBe(1)
           expect(this.siblingField('field1').value).toBe(1)
@@ -711,14 +711,14 @@ describe('autoValue', function () {
         tax: {
           type: Number,
           optional: true,
-          autoValue () {
+          autoValue() {
             return 0.5
           }
         },
         total: {
           type: Number,
           optional: true,
-          autoValue () {
+          autoValue() {
             const amount = this.field<number>('amount').value ?? 0
             const tax = this.field<number>('tax').value ?? 0
             return amount * (1 + tax)
@@ -767,7 +767,7 @@ describe('autoValue', function () {
       },
       'tags.$': {
         type: String,
-        autoValue () {
+        autoValue() {
           if (this.isSet) return this.value.toLowerCase()
         }
       }
@@ -795,7 +795,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested': Object,
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return 5
           }
@@ -839,7 +839,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested': Object,
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return 5
           }
@@ -872,7 +872,7 @@ describe('autoValue', function () {
       'nested.$': Object,
       'nested.$.doubleNested': {
         type: Object,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return {}
           }
@@ -880,7 +880,7 @@ describe('autoValue', function () {
       },
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return 5
           }
@@ -914,7 +914,7 @@ describe('autoValue', function () {
       'nested.$.doubleNested': Object,
       'nested.$.doubleNested.integer': {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return 5
           }
@@ -941,7 +941,7 @@ describe('autoValue', function () {
     const doubleNestedSchema = new SimpleSchema({
       integer: {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return 5
           }
@@ -991,7 +991,7 @@ describe('autoValue', function () {
     const doubleNestedSchema = new SimpleSchema({
       integer: {
         type: SimpleSchema.Integer,
-        autoValue () {
+        autoValue() {
           if (this.value == null) {
             return 5
           }

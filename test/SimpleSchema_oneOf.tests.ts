@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -12,25 +10,25 @@ describe('SimpleSchema', function () {
       })
 
       const test1 = { foo: 1 }
-      expect(function test1func () {
+      expect(function test1func() {
         schema.validate(test1)
       }).not.toThrow()
       expect(typeof test1.foo).toBe('number')
 
       const test2 = { foo: 'bar' }
-      expect(function test2func () {
+      expect(function test2func() {
         schema.validate(test2)
       }).not.toThrow()
       expect(typeof test2.foo).toBe('string')
 
       const test3 = { foo: new Date() }
-      expect(function test2func () {
+      expect(function test2func() {
         schema.validate(test3)
       }).not.toThrow()
       expect(test3.foo instanceof Date).toBe(true)
 
       const test4 = { foo: false }
-      expect(function test3func () {
+      expect(function test3func() {
         schema.validate(test4)
       }).toThrow()
       expect(typeof test4.foo).toBe('boolean')
@@ -206,8 +204,7 @@ describe('SimpleSchema', function () {
       expect(isValid).toBe(false)
       isValid = combinedSchema.namedContext().validate({
         item: {
-          item2: {
-          }
+          item2: {}
         }
       })
       expect(isValid).toBe(false)
@@ -408,25 +405,34 @@ describe('SimpleSchema', function () {
         field: SimpleSchema.oneOf(String, Number)
       })
 
-      let isValid = schema.namedContext().validate({
-        $set: {
-          field: 'test'
-        }
-      }, { modifier: true })
+      let isValid = schema.namedContext().validate(
+        {
+          $set: {
+            field: 'test'
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = schema.namedContext().validate({
-        $set: {
-          field: 3
-        }
-      }, { modifier: true })
+      isValid = schema.namedContext().validate(
+        {
+          $set: {
+            field: 3
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = schema.namedContext().validate({
-        $set: {
-          field: false
-        }
-      }, { modifier: true })
+      isValid = schema.namedContext().validate(
+        {
+          $set: {
+            field: false
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(false)
     })
 
@@ -450,74 +456,89 @@ describe('SimpleSchema', function () {
         item: Array,
         'item.$': SimpleSchema.oneOf(schemaOne, schemaTwo)
       })
-      let isValid = combinedSchema.namedContext().validate({
-        $push: {
-          item: {
-            itemRef: 'test',
-            partNo: 'test',
-            obj: {
-              inner: 'test'
+      let isValid = combinedSchema.namedContext().validate(
+        {
+          $push: {
+            item: {
+              itemRef: 'test',
+              partNo: 'test',
+              obj: {
+                inner: 'test'
+              }
             }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $push: {
-          item: {
-            anotherIdentifier: 'test',
-            partNo: 'test',
-            obj: {
-              inner: 3
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $push: {
+            item: {
+              anotherIdentifier: 'test',
+              partNo: 'test',
+              obj: {
+                inner: 3
+              }
             }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $push: {
-          item: {
-            anotherIdentifier: 'test',
-            partNo: 'test',
-            obj: {
-              inner: false
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $push: {
+            item: {
+              anotherIdentifier: 'test',
+              partNo: 'test',
+              obj: {
+                inner: false
+              }
             }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(false)
 
-      isValid = combinedSchema.namedContext().validate({
-        $push: {
-          item: {
-            $each: [
-              {
-                anotherIdentifier: 'test',
-                partNo: 'test',
-                obj: {
-                  inner: 3
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $push: {
+            item: {
+              $each: [
+                {
+                  anotherIdentifier: 'test',
+                  partNo: 'test',
+                  obj: {
+                    inner: 3
+                  }
+                },
+                {
+                  itemRef: 'test',
+                  partNo: 'test',
+                  obj: {
+                    inner: 'test'
+                  }
                 }
-              },
-              {
-                itemRef: 'test',
-                partNo: 'test',
-                obj: {
-                  inner: 'test'
-                }
-              }
-            ]
+              ]
+            }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.0.obj.inner': 'test'
-        }
-      }, { modifier: true })
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.0.obj.inner': 'test'
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
     })
 
@@ -540,91 +561,121 @@ describe('SimpleSchema', function () {
       const combinedSchema = new SimpleSchema({
         item: SimpleSchema.oneOf(schemaOne, schemaTwo)
       })
-      let isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.obj.inner': 'test'
-        }
-      }, { modifier: true })
+      let isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.obj.inner': 'test'
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.obj.inner': 3
-        }
-      }, { modifier: true })
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.obj.inner': 3
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.obj.inner': false
-        }
-      }, { modifier: true })
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.obj.inner': false
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(false)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.obj': { inner: 'test' }
-        }
-      }, { modifier: true })
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.obj': { inner: 'test' }
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.obj': { inner: 3 }
-        }
-      }, { modifier: true })
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.obj': { inner: 3 }
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          'item.obj': { inner: false }
-        }
-      }, { modifier: true })
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            'item.obj': { inner: false }
+          }
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(false)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          item: {
-            itemRef: 'test',
-            partNo: 'test',
-            obj: { inner: 'test' }
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            item: {
+              itemRef: 'test',
+              partNo: 'test',
+              obj: { inner: 'test' }
+            }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          item: {
-            anotherIdentifier: 'test',
-            partNo: 'test',
-            obj: { inner: 3 }
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            item: {
+              anotherIdentifier: 'test',
+              partNo: 'test',
+              obj: { inner: 3 }
+            }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(true)
 
-      isValid = combinedSchema.namedContext().validate({
-        $set: {
-          item: {
-            anotherIdentifier: 'test',
-            partNo: 'test',
-            obj: { inner: 'test' }
+      isValid = combinedSchema.namedContext().validate(
+        {
+          $set: {
+            item: {
+              anotherIdentifier: 'test',
+              partNo: 'test',
+              obj: { inner: 'test' }
+            }
           }
-        }
-      }, { modifier: true })
+        },
+        { modifier: true }
+      )
       expect(isValid).toBe(false)
     })
 
     it('is valid as long as one min value is met', function () {
       const schema = new SimpleSchema({
-        foo: SimpleSchema.oneOf({
-          type: SimpleSchema.Integer,
-          min: 5
-        }, {
-          type: SimpleSchema.Integer,
-          min: 10
-        })
+        foo: SimpleSchema.oneOf(
+          {
+            type: SimpleSchema.Integer,
+            min: 5
+          },
+          {
+            type: SimpleSchema.Integer,
+            min: 10
+          }
+        )
       })
 
       expect(function () {
@@ -713,13 +764,16 @@ describe('SimpleSchema', function () {
 
     it('is invalid if neither min value is met', function () {
       const schema = new SimpleSchema({
-        foo: SimpleSchema.oneOf({
-          type: SimpleSchema.Integer,
-          min: 5
-        }, {
-          type: SimpleSchema.Integer,
-          min: 10
-        })
+        foo: SimpleSchema.oneOf(
+          {
+            type: SimpleSchema.Integer,
+            min: 5
+          },
+          {
+            type: SimpleSchema.Integer,
+            min: 10
+          }
+        )
       })
 
       expect(function () {

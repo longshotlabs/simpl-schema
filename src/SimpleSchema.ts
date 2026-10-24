@@ -134,10 +134,7 @@ class SimpleSchema {
   private _validationContexts: Record<string, ValidationContext> = {}
   private _validators: ValidatorFunction[] = []
 
-  constructor (
-    schema: SchemaDefinitionWithShorthand = {},
-    options: SimpleSchemaOptions = {}
-  ) {
+  constructor(schema: SchemaDefinitionWithShorthand = {}, options: SimpleSchemaOptions = {}) {
     // Stash the options object
     this._constructorOptions = {
       ...SimpleSchema._constructorOptionDefaults,
@@ -174,17 +171,13 @@ class SimpleSchema {
   /**
   /* @returns The entire raw schema definition passed in the constructor
   */
-  get rawDefinition (): SchemaDefinitionWithShorthand | null {
+  get rawDefinition(): SchemaDefinitionWithShorthand | null {
     return this._rawDefinition
   }
 
-  forEachAncestorSimpleSchema (
+  forEachAncestorSimpleSchema(
     key: string,
-    func: (
-      ssInstance: SimpleSchema,
-      ancestor: string,
-      ancestorGenericKey: string
-    ) => void
+    func: (ssInstance: SimpleSchema, ancestor: string, ancestorGenericKey: string) => void
   ): void {
     const genericKey = MongoObject.makeKeyGeneric(key)
     if (genericKey == null) return
@@ -205,7 +198,7 @@ class SimpleSchema {
    * @param [obj] An object to test
    * @returns True if the given object appears to be a SimpleSchema instance
    */
-  static isSimpleSchema (obj: unknown): boolean {
+  static isSimpleSchema(obj: unknown): boolean {
     if (obj == null) return false
     return obj instanceof SimpleSchema || Object.prototype.hasOwnProperty.call(obj, '_schema')
   }
@@ -227,9 +220,7 @@ class SimpleSchema {
    *
    *   Always returns a tuple (array) but the values may be `null`.
    */
-  nearestSimpleSchemaInstance (
-    key: string | null
-  ): [SimpleSchema | null, string | null] {
+  nearestSimpleSchemaInstance(key: string | null): [SimpleSchema | null, string | null] {
     if (key == null) return [null, null]
 
     const genericKey = MongoObject.makeKeyGeneric(key)
@@ -240,19 +231,12 @@ class SimpleSchema {
     // If not defined in this schema, see if it's defined in a sub-schema
     let innerKey
     let nearestSimpleSchemaInstance: SimpleSchema | null = null
-    this.forEachAncestorSimpleSchema(
-      key,
-      (simpleSchema, ancestor, subSchemaKey) => {
-        if (
-          (nearestSimpleSchemaInstance == null) &&
-          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-          simpleSchema._schema[subSchemaKey]
-        ) {
-          nearestSimpleSchemaInstance = simpleSchema
-          innerKey = subSchemaKey
-        }
+    this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+      if (nearestSimpleSchemaInstance == null && simpleSchema._schema[subSchemaKey]) {
+        nearestSimpleSchemaInstance = simpleSchema
+        innerKey = subSchemaKey
       }
-    )
+    })
 
     return innerKey != null ? [nearestSimpleSchemaInstance, innerKey] : [null, null]
   }
@@ -265,9 +249,9 @@ class SimpleSchema {
    * if you want the evaluated definition, where any properties that are functions
    * have been run to produce a result.
    */
-  schema (): ResolvedSchemaDefinition
-  schema (key: string): StandardSchemaKeyDefinition | null
-  schema (key?: string): ResolvedSchemaDefinition | StandardSchemaKeyDefinition | null {
+  schema(): ResolvedSchemaDefinition
+  schema(key: string): StandardSchemaKeyDefinition | null
+  schema(key?: string): ResolvedSchemaDefinition | StandardSchemaKeyDefinition | null {
     if (key == null) return this._schema
 
     const genericKey = MongoObject.makeKeyGeneric(key)
@@ -276,13 +260,10 @@ class SimpleSchema {
     // If not defined in this schema, see if it's defined in a subschema
     if (keySchema == null) {
       let found = false
-      this.forEachAncestorSimpleSchema(
-        key,
-        (simpleSchema, ancestor, subSchemaKey) => {
-          if (!found) keySchema = simpleSchema.schema(subSchemaKey)
-          if (keySchema != null) found = true
-        }
-      )
+      this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+        if (!found) keySchema = simpleSchema.schema(subSchemaKey)
+        if (keySchema != null) found = true
+      })
     }
 
     return keySchema
@@ -296,7 +277,7 @@ class SimpleSchema {
    * if you want the evaluated definition, where any properties that are functions
    * have been run to produce a result.
    */
-  schemas (key: string): StandardSchemaKeyDefinition[] {
+  schemas(key: string): StandardSchemaKeyDefinition[] {
     const schemas: StandardSchemaKeyDefinition[] = []
 
     const genericKey = MongoObject.makeKeyGeneric(key)
@@ -304,13 +285,10 @@ class SimpleSchema {
     if (keySchema != null) schemas.push(keySchema)
 
     // See if it's defined in any subschema
-    this.forEachAncestorSimpleSchema(
-      key,
-      (simpleSchema, ancestor, subSchemaKey) => {
-        const keyDef = simpleSchema.schema(subSchemaKey)
-        if (keyDef != null) schemas.push(keyDef)
-      }
-    )
+    this.forEachAncestorSimpleSchema(key, (simpleSchema, ancestor, subSchemaKey) => {
+      const keyDef = simpleSchema.schema(subSchemaKey)
+      if (keyDef != null) schemas.push(keyDef)
+    })
 
     return schemas
   }
@@ -323,7 +301,7 @@ class SimpleSchema {
    * if you want the evaluated definition, where any properties that are functions
    * have been run to produce a result.
    */
-  mergedSchema (): SchemaDefinition {
+  mergedSchema(): SchemaDefinition {
     const mergedSchema: SchemaDefinition = {}
 
     this._schemaKeys.forEach((key) => {
@@ -350,7 +328,7 @@ class SimpleSchema {
    * @param [functionContext] The context to use when evaluating schema options that are functions
    * @returns The schema definition for the requested key
    */
-  getDefinition (
+  getDefinition(
     key: string,
     propList?: string[] | null,
     functionContext: Record<string, unknown> = {}
@@ -368,7 +346,7 @@ class SimpleSchema {
    * @param [functionContext] The context to use when evaluating schema options that are functions
    * @returns The schema definition for the requested key
    */
-  getDefinitions (
+  getDefinitions(
     key: string,
     propList?: string[] | null,
     functionContext: Record<string, unknown> = {}
@@ -388,7 +366,7 @@ class SimpleSchema {
    * @param [functionContext] The context to use when evaluating schema options that are functions
    * @returns The schema definition for the requested key
    */
-  resolveDefinitionForSchema (
+  resolveDefinitionForSchema(
     key: string,
     schemaKeyDefinition: StandardSchemaKeyDefinition,
     propList?: string[] | null,
@@ -399,20 +377,14 @@ class SimpleSchema {
         if (Array.isArray(propList) && !propList.includes(prop)) return
         const val = obj[prop]
         // For any options that support specifying a function, evaluate the functions
-        if (
-          propsThatCanBeFunction.includes(prop) &&
-          typeof val === 'function'
-        ) {
+        if (propsThatCanBeFunction.includes(prop) && typeof val === 'function') {
           newObj[prop] = val.call({
             key,
             ...functionContext
           })
           // Inflect label if undefined
           if (prop === 'label' && typeof newObj.label !== 'string') {
-            newObj.label = inflectedLabel(
-              key,
-              this._constructorOptions.humanizeAutoLabels
-            )
+            newObj.label = inflectedLabel(key, this._constructorOptions.humanizeAutoLabels)
           }
         } else {
           newObj[prop] = val
@@ -450,13 +422,13 @@ class SimpleSchema {
    *  string, number, boolean, date, object, stringArray, numberArray, booleanArray,
    *  dateArray, objectArray
    */
-  getQuickTypeForKey (key: string): string | undefined {
+  getQuickTypeForKey(key: string): string | undefined {
     let type
 
     const fieldSchema = this.schema(key)
     if (fieldSchema == null) return
 
-    const fieldType = (fieldSchema.type).singleType
+    const fieldType = fieldSchema.type.singleType
 
     if (fieldType === String) {
       type = 'string'
@@ -470,22 +442,16 @@ class SimpleSchema {
       const arrayItemFieldSchema = this.schema(`${key}.$`)
       if (arrayItemFieldSchema == null) return
 
-      const arrayItemFieldType = (arrayItemFieldSchema.type).singleType
+      const arrayItemFieldType = arrayItemFieldSchema.type.singleType
       if (arrayItemFieldType === String) {
         type = 'stringArray'
-      } else if (
-        arrayItemFieldType === Number ||
-        arrayItemFieldType === SimpleSchema.Integer
-      ) {
+      } else if (arrayItemFieldType === Number || arrayItemFieldType === SimpleSchema.Integer) {
         type = 'numberArray'
       } else if (arrayItemFieldType === Boolean) {
         type = 'booleanArray'
       } else if (arrayItemFieldType === Date) {
         type = 'dateArray'
-      } else if (
-        arrayItemFieldType === Object ||
-        SimpleSchema.isSimpleSchema(arrayItemFieldType)
-      ) {
+      } else if (arrayItemFieldType === Object || SimpleSchema.isSimpleSchema(arrayItemFieldType)) {
         type = 'objectArray'
       }
     } else if (fieldType === Object) {
@@ -500,7 +466,7 @@ class SimpleSchema {
    *
    * @param key Generic or specific schema key
    */
-  getObjectSchema (key: string): SimpleSchema {
+  getObjectSchema(key: string): SimpleSchema {
     const newSchemaDef: SchemaDefinition = {}
     const genericKey = MongoObject.makeKeyGeneric(key)
     if (genericKey == null) throw new Error(`Unable to make a generic key for ${key}`)
@@ -518,7 +484,7 @@ class SimpleSchema {
 
   // Returns an array of all the autovalue functions, including those in subschemas all the
   // way down the schema tree
-  autoValueFunctions (): AutoValueFunctionDetails[] {
+  autoValueFunctions(): AutoValueFunctionDetails[] {
     const result: AutoValueFunctionDetails[] = [...this._autoValues]
 
     this._schemaKeys.forEach((key) => {
@@ -531,9 +497,8 @@ class SimpleSchema {
               return {
                 func,
                 fieldName: `${key}.${fieldName}`,
-                closestSubschemaFieldName: closestSubschemaFieldName.length > 0
-                  ? `${key}.${closestSubschemaFieldName}`
-                  : key
+                closestSubschemaFieldName:
+                  closestSubschemaFieldName.length > 0 ? `${key}.${closestSubschemaFieldName}` : key
               }
             })
         )
@@ -544,13 +509,13 @@ class SimpleSchema {
   }
 
   // Returns an array of all the blackbox keys, including those in subschemas
-  blackboxKeys (): string[] {
+  blackboxKeys(): string[] {
     const blackboxKeys = new Set(this._blackboxKeys)
 
     this._schemaKeys.forEach((key) => {
       this._schema[key].type.definitions.forEach((typeDef) => {
-        if (!SimpleSchema.isSimpleSchema(typeDef.type)) return;
-        (typeDef.type as SimpleSchema).blackboxKeys().forEach((blackboxKey) => {
+        if (!SimpleSchema.isSimpleSchema(typeDef.type)) return
+        ;(typeDef.type as SimpleSchema).blackboxKeys().forEach((blackboxKey) => {
           blackboxKeys.add(`${key}.${blackboxKey}`)
         })
       })
@@ -564,34 +529,31 @@ class SimpleSchema {
    * @param key Key to check
    * @returns True if key is in a black box object
    */
-  keyIsInBlackBox (key: string): boolean {
+  keyIsInBlackBox(key: string): boolean {
     const genericKey = MongoObject.makeKeyGeneric(key)
     if (genericKey == null) return false
 
     let isInBlackBox = false
-    forEachKeyAncestor(
-      genericKey,
-      (ancestor, remainder) => {
-        if (this._blackboxKeys.has(ancestor)) {
-          isInBlackBox = true
-        } else {
-          const testKeySchema = this.schema(ancestor)
-          if (testKeySchema != null) {
-            testKeySchema.type.definitions.forEach((typeDef) => {
-              if (!SimpleSchema.isSimpleSchema(typeDef.type)) return
-              if ((typeDef.type as SimpleSchema).keyIsInBlackBox(remainder)) isInBlackBox = true
-            })
-          }
+    forEachKeyAncestor(genericKey, (ancestor, remainder) => {
+      if (this._blackboxKeys.has(ancestor)) {
+        isInBlackBox = true
+      } else {
+        const testKeySchema = this.schema(ancestor)
+        if (testKeySchema != null) {
+          testKeySchema.type.definitions.forEach((typeDef) => {
+            if (!SimpleSchema.isSimpleSchema(typeDef.type)) return
+            if ((typeDef.type as SimpleSchema).keyIsInBlackBox(remainder)) isInBlackBox = true
+          })
         }
       }
-    )
+    })
     return isInBlackBox
   }
 
   // Returns true if key is explicitly allowed by the schema or implied
   // by other explicitly allowed keys.
   // The key string should have $ in place of any numeric array positions.
-  allowsKey (key: string): boolean {
+  allowsKey(key: string): boolean {
     // Loop through all keys in the schema
     return this._schemaKeys.some((loopKey) => {
       // If the schema key is the test key, it's allowed.
@@ -631,7 +593,7 @@ class SimpleSchema {
    *   top-level Object-type keys
    * @returns Array of child keys for the given object key
    */
-  objectKeys (keyPrefix?: string): string[] {
+  objectKeys(keyPrefix?: string): string[] {
     if (keyPrefix == null) return this._firstLevelSchemaKeys
 
     const objectKeys: Record<string, string[]> = {}
@@ -668,7 +630,7 @@ class SimpleSchema {
    * @param schema
    * @returns The new SimpleSchema instance (chainable)
    */
-  _copyWithSchema (schema: SchemaDefinition): SimpleSchema {
+  _copyWithSchema(schema: SchemaDefinition): SimpleSchema {
     const cl = new SimpleSchema(schema, { ...this._constructorOptions })
     cl._cleanOptions = this._cleanOptions
     return cl
@@ -680,7 +642,7 @@ class SimpleSchema {
    *
    * @returns The new SimpleSchema instance (chainable)
    */
-  clone (): SimpleSchema {
+  clone(): SimpleSchema {
     return this._copyWithSchema(this._schema)
   }
 
@@ -690,7 +652,7 @@ class SimpleSchema {
    * @param schema The schema or schema definition to extend onto this one
    * @returns The SimpleSchema instance (chainable)
    */
-  extend (schema: SimpleSchema | PartialSchemaDefinitionWithShorthand = {}): SimpleSchema {
+  extend(schema: SimpleSchema | PartialSchemaDefinitionWithShorthand = {}): SimpleSchema {
     if (Array.isArray(schema)) {
       throw new Error(
         'You may not pass an array of schemas to the SimpleSchema constructor or to extend()'
@@ -724,14 +686,16 @@ class SimpleSchema {
           )
         }
 
-        const { type, ...definitionWithoutType } = definition // eslint-disable-line no-unused-vars
+        const { type: _type, ...definitionWithoutType } = definition
 
         this._schema[fieldName] = {
           ...this._schema[fieldName],
           ...definitionWithoutType
         }
 
-        if (definition.type != null) { this._schema[fieldName].type.extend(definition.type) }
+        if (definition.type != null) {
+          this._schema[fieldName].type.extend(definition.type)
+        }
       } else {
         this._schema[fieldName] = definition
       }
@@ -757,23 +721,20 @@ class SimpleSchema {
       // Make sure parent has a definition in the schema. No implied objects!
       if (fieldName.includes('.')) {
         const parentFieldName = fieldName.slice(0, fieldName.lastIndexOf('.'))
-        if (
-          !Object.prototype.hasOwnProperty.call(this._schema, parentFieldName)
-        ) {
-          throw new Error(
-            `"${fieldName}" is in the schema but "${parentFieldName}" is not`
-          )
+        if (!Object.prototype.hasOwnProperty.call(this._schema, parentFieldName)) {
+          throw new Error(`"${fieldName}" is in the schema but "${parentFieldName}" is not`)
         }
       }
 
       const definition = this._schema[fieldName]
 
       // Keep list of all top level keys
-      if (!fieldName.includes('.')) { this._firstLevelSchemaKeys.push(fieldName) }
+      if (!fieldName.includes('.')) {
+        this._firstLevelSchemaKeys.push(fieldName)
+      }
 
       // Keep list of all blackbox keys for passing to MongoObject constructor
       // XXX For now if any oneOf type is blackbox, then the whole field is.
-      /* eslint-disable no-restricted-syntax */
       for (const oneOfDef of definition.type.definitions) {
         // XXX If the type is SS.Any, also consider it a blackbox
         if (oneOfDef.blackbox === true || oneOfDef.type === SimpleSchema.Any) {
@@ -781,7 +742,6 @@ class SimpleSchema {
           break
         }
       }
-      /* eslint-enable no-restricted-syntax */
 
       // Keep list of autoValue functions
       if (typeof definition.autoValue === 'function') {
@@ -796,7 +756,7 @@ class SimpleSchema {
     return this
   }
 
-  getAllowedValuesForKey (key: string): any[] | null {
+  getAllowedValuesForKey(key: string): any[] | null {
     // For array fields, `allowedValues` is on the array item definition
     if (this.allowsKey(`${key}.$`)) {
       key = `${key}.$`
@@ -810,11 +770,11 @@ class SimpleSchema {
     return null
   }
 
-  newContext (): ValidationContext {
+  newContext(): ValidationContext {
     return new ValidationContext(this)
   }
 
-  namedContext (name?: string): ValidationContext {
+  namedContext(name?: string): ValidationContext {
     if (typeof name !== 'string') name = 'default'
     if (this._validationContexts[name] == null) {
       this._validationContexts[name] = new ValidationContext(this, name)
@@ -822,11 +782,11 @@ class SimpleSchema {
     return this._validationContexts[name]
   }
 
-  addValidator (func: ValidatorFunction): void {
+  addValidator(func: ValidatorFunction): void {
     this._validators.push(func)
   }
 
-  addDocValidator (func: DocValidatorFunction): void {
+  addDocValidator(func: DocValidatorFunction): void {
     this._docValidators.push(func)
   }
 
@@ -836,7 +796,7 @@ class SimpleSchema {
    *
    * Throws an Error with name `ClientError` and `details` property containing the errors.
    */
-  validate (obj: any, options: ValidationOptions = {}): void {
+  validate(obj: any, options: ValidationOptions = {}): void {
     // obj can be an array, in which case we validate each object in it and
     // throw as soon as one has an error
     const objects = Array.isArray(obj) ? obj : [obj]
@@ -878,7 +838,7 @@ class SimpleSchema {
    *
    * Returns a Promise that resolves with the errors
    */
-  async validateAndReturnErrorsPromise (
+  async validateAndReturnErrorsPromise(
     obj: any,
     options: ValidationOptions
   ): Promise<ValidationError[]> {
@@ -892,26 +852,29 @@ class SimpleSchema {
       return { ...errorDetail, message: this.messageForError(errorDetail) }
     })
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-  validator (options: ValidationOptions & { clean?: boolean, returnErrorsPromise?: boolean } = {}): (obj: Record<string, any>) => void | Promise<ValidationError[]> {
+  validator(
+    options: ValidationOptions & { clean?: boolean; returnErrorsPromise?: boolean } = {}
+  ): (obj: Record<string, any>) => void | Promise<ValidationError[]> {
     return (obj: Record<string, any>) => {
-      const { clean, returnErrorsPromise, ...validationOptions } = options
+      const { clean: shouldClean, returnErrorsPromise, ...validationOptions } = options
       // Do this here and pass into both functions for better performance
       const mongoObject = new MongoObject(obj, this.blackboxKeys())
-      if (clean === true) {
+      if (shouldClean === true) {
         this.clean(obj, { mongoObject })
       }
-      return returnErrorsPromise === true ? this.validateAndReturnErrorsPromise(obj, { ...validationOptions, mongoObject }) : this.validate(obj, { ...validationOptions, mongoObject })
+      return returnErrorsPromise === true
+        ? this.validateAndReturnErrorsPromise(obj, { ...validationOptions, mongoObject })
+        : this.validate(obj, { ...validationOptions, mongoObject })
     }
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-  getFormValidator (options = {}): (obj: Record<string, any>) => void | Promise<ValidationError[]> {
+  getFormValidator(options = {}): (obj: Record<string, any>) => void | Promise<ValidationError[]> {
     return this.validator({ ...options, returnErrorsPromise: true })
   }
 
-  clean (doc: Record<string | number | symbol, unknown>, options: CleanOptions = {}): Record<string | number | symbol, unknown> {
+  clean(
+    doc: Record<string | number | symbol, unknown>,
+    options: CleanOptions = {}
+  ): Record<string | number | symbol, unknown> {
     return clean(this, doc, options)
   }
 
@@ -920,7 +883,7 @@ class SimpleSchema {
    *
    * @param labels A dictionary of all the new label values, by schema key.
    */
-  labels (labels: Record<string, string | (() => string)>): void {
+  labels(labels: Record<string, string | (() => string)>): void {
     for (const [key, label] of Object.entries(labels)) {
       if (typeof label !== 'string' && typeof label !== 'function') continue
 
@@ -938,9 +901,9 @@ class SimpleSchema {
    *   Omit this argument to get a dictionary of all labels.
    * @returns The label
    */
-  label (): Record<string, string>
-  label (key: string): string | null
-  label (key?: string): Record<string, string> | string | null {
+  label(): Record<string, string>
+  label(key: string): string | null
+  label(key?: string): Record<string, string> | string | null {
     // Get all labels
     if (key === null || key === undefined) {
       const result: Record<string, string> = {}
@@ -963,7 +926,7 @@ class SimpleSchema {
    * @param functionContext The `this` context to use if prop is a function
    * @returns The property value
    */
-  get (
+  get(
     key: string,
     prop: keyof StandardSchemaKeyDefinitionWithSimpleTypes | keyof StandardSchemaKeyDefinition,
     functionContext?: Record<string, unknown>
@@ -983,7 +946,7 @@ class SimpleSchema {
   }
 
   // shorthand for getting defaultValue
-  defaultValue (key: string): unknown {
+  defaultValue(key: string): unknown {
     return this.get(key, 'defaultValue')
   }
 
@@ -991,7 +954,7 @@ class SimpleSchema {
   // Defers to a user-provided getErrorMessage function, which
   // can do custom messages and translations, or falls back to
   // built-in English defaults.
-  messageForError (errorInfo: ValidationError): string {
+  messageForError(errorInfo: ValidationError): string {
     const { name } = errorInfo
 
     const label = this.label(name)
@@ -1028,11 +991,13 @@ class SimpleSchema {
    * If you need to allow properties other than those listed above, call this from your app or package
    * @param options Additional allowed options
    */
-  static extendOptions (options: string[]): void {
+  static extendOptions(options: string[]): void {
     schemaDefinitionOptions.push(...options)
   }
 
-  static defineValidationErrorTransform (transform: (error: ClientError<ValidationError[]>) => Error): void {
+  static defineValidationErrorTransform(
+    transform: (error: ClientError<ValidationError[]>) => Error
+  ): void {
     if (typeof transform !== 'function') {
       throw new Error(
         'SimpleSchema.defineValidationErrorTransform must be passed a function that accepts an Error and returns an Error'
@@ -1041,7 +1006,11 @@ class SimpleSchema {
     SimpleSchema.validationErrorTransform = transform
   }
 
-  static validate (obj: any, schema: SimpleSchema | SchemaDefinitionWithShorthand, options?: ValidationOptions): void {
+  static validate(
+    obj: any,
+    schema: SimpleSchema | SchemaDefinitionWithShorthand,
+    options?: ValidationOptions
+  ): void {
     // Allow passing just the schema object
     if (!SimpleSchema.isSimpleSchema(schema)) {
       schema = new SimpleSchema(schema as SchemaDefinitionWithShorthand)
@@ -1050,24 +1019,26 @@ class SimpleSchema {
     return (schema as SimpleSchema).validate(obj, options)
   }
 
-  static oneOf (...definitions: Array<SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor>): SimpleSchemaGroup {
+  static oneOf(
+    ...definitions: Array<SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor>
+  ): SimpleSchemaGroup {
     return new SimpleSchemaGroup(...definitions)
   }
 
   static Any = '___Any___'
 
-  static addValidator (func: ValidatorFunction): void {
+  static addValidator(func: ValidatorFunction): void {
     SimpleSchema._validators.push(func)
   }
 
-  static addDocValidator (func: DocValidatorFunction): void {
+  static addDocValidator(func: DocValidatorFunction): void {
     SimpleSchema._docValidators.push(func)
   }
 
   /**
    * @summary Get/set default values for SimpleSchema constructor options
    */
-  static constructorOptionDefaults (options?: SimpleSchemaOptions): undefined | SimpleSchemaOptions {
+  static constructorOptionDefaults(options?: SimpleSchemaOptions): undefined | SimpleSchemaOptions {
     if (options == null) return SimpleSchema._constructorOptionDefaults
 
     SimpleSchema._constructorOptionDefaults = {
@@ -1111,7 +1082,7 @@ class SimpleSchema {
 
 // Throws an error if any fields are `type` SimpleSchema but then also
 // have subfields defined outside of that.
-function checkSchemaOverlap (schema: ResolvedSchemaDefinition): void {
+function checkSchemaOverlap(schema: ResolvedSchemaDefinition): void {
   Object.keys(schema).forEach((key) => {
     const val = schema[key]
     if (val.type == null) throw new Error(`${key} key is missing "type"`)
@@ -1136,17 +1107,17 @@ function checkSchemaOverlap (schema: ResolvedSchemaDefinition): void {
  * @param shouldHumanize Humanize it
  * @returns A label based on the key
  */
-function inflectedLabel (fieldName: string, shouldHumanize = false): string {
+function inflectedLabel(fieldName: string, shouldHumanize = false): string {
   const pieces = fieldName.split('.')
   let label
   do {
     label = pieces.pop()
-  } while (label === '$' && (pieces.length > 0))
-  return (label != null && shouldHumanize) ? humanize(label) : (label ?? '')
+  } while (label === '$' && pieces.length > 0)
+  return label != null && shouldHumanize ? humanize(label) : (label ?? '')
 }
 
-function getDefaultAutoValueFunction (defaultValue: any) {
-  return function defaultAutoValueFunction (this: AutoValueContext) {
+function getDefaultAutoValueFunction(defaultValue: any) {
+  return function defaultAutoValueFunction(this: AutoValueContext) {
     if (this.isSet) return
     if (this.operator === null) return defaultValue
 
@@ -1167,7 +1138,7 @@ function getDefaultAutoValueFunction (defaultValue: any) {
 }
 
 // Mutates def into standardized object with SimpleSchemaGroup type
-function standardizeDefinition (def: SchemaKeyDefinition): StandardSchemaKeyDefinition {
+function standardizeDefinition(def: SchemaKeyDefinition): StandardSchemaKeyDefinition {
   const standardizedDef: Partial<StandardSchemaKeyDefinition> = {}
   for (const prop of Object.keys(def)) {
     if (!oneOfProps.includes(prop)) {
@@ -1203,7 +1174,7 @@ function standardizeDefinition (def: SchemaKeyDefinition): StandardSchemaKeyDefi
  * @param options Options
  * @param allKeys Set of all field names / keys in entire schema
  */
-function checkAndScrubDefinition (
+function checkAndScrubDefinition(
   fieldName: string,
   definition: StandardSchemaKeyDefinition,
   options: SimpleSchemaOptions,
@@ -1224,9 +1195,7 @@ function checkAndScrubDefinition (
   let couldBeArray = false
   definition.type.definitions.forEach(({ type }) => {
     if (type == null) {
-      throw new Error(
-        `Invalid definition for ${fieldName} field: "type" option is required`
-      )
+      throw new Error(`Invalid definition for ${fieldName} field: "type" option is required`)
     }
 
     if (Array.isArray(type)) {
@@ -1275,13 +1244,9 @@ function checkAndScrubDefinition (
       )
     } else {
       if (fieldName.endsWith('.$')) {
-        throw new Error(
-          'An array item field (one that ends with ".$") cannot have defaultValue.'
-        )
+        throw new Error('An array item field (one that ends with ".$") cannot have defaultValue.')
       }
-      definition.autoValue = getDefaultAutoValueFunction(
-        definition.defaultValue
-      )
+      definition.autoValue = getDefaultAutoValueFunction(definition.defaultValue)
       definition.autoValue.isDefault = true
     }
   }
@@ -1295,7 +1260,7 @@ function checkAndScrubDefinition (
         // Save a reference to the `required` fn because
         // we are going to delete it from `definition` below
         const requiredFn = definition.required
-        definition.optional = function optional (...args) {
+        definition.optional = function optional(...args) {
           return !requiredFn.apply(this, args)
         }
       } else {
@@ -1320,8 +1285,8 @@ function checkAndScrubDefinition (
   }
 }
 
-function getPickOrOmit (type: SupportedTypes) {
-  return function pickOrOmit (this: SimpleSchema, ...args: string[]) {
+function getPickOrOmit(type: SupportedTypes) {
+  return function pickOrOmit(this: SimpleSchema, ...args: string[]) {
     // If they are picking/omitting an object or array field, we need to also include everything under it
     const newSchema: SchemaDefinition = {}
     // @ts-expect-error
@@ -1329,8 +1294,7 @@ function getPickOrOmit (type: SupportedTypes) {
       // Pick/omit it if it IS in the array of keys they want OR if it
       // STARTS WITH something that is in the array plus a period
       const includeIt = args.some(
-        (wantedField) =>
-          key === wantedField || key.indexOf(`${wantedField}.`) === 0
+        (wantedField) => key === wantedField || key.indexOf(`${wantedField}.`) === 0
       )
 
       if ((includeIt && type === 'pick') || (!includeIt && type === 'omit')) {

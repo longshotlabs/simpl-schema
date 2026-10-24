@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -52,10 +50,10 @@ describe('SimpleSchema - label', function () {
     const schema = new SimpleSchema({
       foo: {
         type: String,
-        label: 'Manager/supervisor\'s name'
+        label: "Manager/supervisor's name"
       }
     })
-    expect(schema.label('foo')).toBe('Manager/supervisor\'s name')
+    expect(schema.label('foo')).toBe("Manager/supervisor's name")
   })
 
   it('can set label of field in nested schema', function () {

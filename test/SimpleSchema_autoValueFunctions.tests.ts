@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -9,7 +7,7 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const schema = new SimpleSchema({
       a: {
         type: String,
-        autoValue () {}
+        autoValue() {}
       }
     })
 
@@ -24,18 +22,18 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const subschema = new SimpleSchema({
       z: {
         type: Object,
-        autoValue () {}
+        autoValue() {}
       }
     })
 
     const schema = new SimpleSchema({
       a: {
         type: Object,
-        autoValue () {}
+        autoValue() {}
       },
       'a.b': {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       c: {
         type: subschema
@@ -62,11 +60,11 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const subschema1 = new SimpleSchema({
       x: {
         type: Object,
-        autoValue () {}
+        autoValue() {}
       },
       'x.m': {
         type: Array,
-        autoValue () {}
+        autoValue() {}
       },
       'x.m.$': {
         type: String
@@ -76,7 +74,7 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const subschema2 = new SimpleSchema({
       z: {
         type: Object,
-        autoValue () {}
+        autoValue() {}
       },
       'z.y': {
         type: subschema1
@@ -86,11 +84,11 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const schema = new SimpleSchema({
       a: {
         type: Object,
-        autoValue () {}
+        autoValue() {}
       },
       'a.b': {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       c: {
         type: subschema2
@@ -125,14 +123,14 @@ describe('SimpleSchema - autoValueFunctions', function () {
     const subschema = new SimpleSchema({
       z: {
         type: String,
-        autoValue () {}
+        autoValue() {}
       }
     })
 
     const schema = new SimpleSchema({
       a: {
         type: Object,
-        autoValue () {}
+        autoValue() {}
       },
       'a.b': {
         type: Array

@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import convertToProperType from '../../src/clean/convertToProperType.js'

@@ -40,7 +40,7 @@ interface PositionInfo {
  * but also the positions that might exist due to their parent object existing or their
  * parent object being auto-created by a MongoDB modifier that implies it.
  */
-export default function getPositionsForAutoValue ({
+export default function getPositionsForAutoValue({
   fieldName,
   isModifier,
   isUpsert,
@@ -51,10 +51,7 @@ export default function getPositionsForAutoValue ({
 
   // If the field is an object and will be created by MongoDB,
   // we don't need (and can't have) a value for it
-  if (
-    isModifier === true &&
-    mongoObject.getPositionsThatCreateGenericKey(fieldName).length > 0
-  ) {
+  if (isModifier === true && mongoObject.getPositionsThatCreateGenericKey(fieldName).length > 0) {
     return positions
   }
 
@@ -95,15 +92,12 @@ export default function getPositionsForAutoValue ({
       const { operator, position } = info
       let wouldBePosition: string
       if (operator != null) {
-        const next = position.slice(
-          position.indexOf('[') + 1,
-          position.indexOf(']')
-        )
+        const next = position.slice(position.indexOf('[') + 1, position.indexOf(']'))
         const nextPieces = next.split('.')
 
         const newPieces = []
         let newKey = ''
-        while ((nextPieces.length > 0) && newKey !== parentPath) {
+        while (nextPieces.length > 0 && newKey !== parentPath) {
           newPieces.push(nextPieces.shift())
           newKey = newPieces.join('.')
         }
@@ -112,10 +106,7 @@ export default function getPositionsForAutoValue ({
       } else {
         const lastPart2 = getLastPartOfKey(fieldName, parentPath)
         const lastPartWithBraces2 = lastPart2.replace(/\./g, '][')
-        wouldBePosition = `${position.slice(
-          0,
-          position.lastIndexOf('[')
-        )}[${lastPartWithBraces2}]`
+        wouldBePosition = `${position.slice(0, position.lastIndexOf('['))}[${lastPartWithBraces2}]`
       }
       if (positions.find((item) => item.position === wouldBePosition) == null) {
         const key = MongoObject._positionToKey(wouldBePosition)

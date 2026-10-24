@@ -4,7 +4,7 @@
     https://github.com/jxson/string-capitalize
  */
 
-export function capitalize (text?: string): string {
+export function capitalize(text?: string): string {
   text = text ?? ''
   text = text.trim()
 
@@ -19,7 +19,7 @@ export function capitalize (text?: string): string {
   return text
 }
 
-export function underscore (text?: string): string {
+export function underscore(text?: string): string {
   text = text ?? ''
   text = text.toString() // might be a number
   text = text.trim()
@@ -29,14 +29,14 @@ export function underscore (text?: string): string {
   return text
 }
 
-export function extname (text: string): string {
+export function extname(text: string): string {
   const index = text.lastIndexOf('.')
   const ext = text.substring(index, text.length)
 
-  return (index === -1) ? '' : ext
+  return index === -1 ? '' : ext
 }
 
-export function humanize (text?: string | number | null): string {
+export function humanize(text?: string | number | null): string {
   text = text ?? ''
   text = text.toString() // might be a number
   text = text.trim()

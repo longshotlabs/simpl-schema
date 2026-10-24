@@ -22,7 +22,9 @@ const defaultMessages: Record<string, GetMessageFn> = {
   required: (_, label) => `${String(label)} is required`
 }
 
-export function getDefaultErrorMessage (errorInfo: ValidationError, label: string | null): string {
+export function getDefaultErrorMessage(errorInfo: ValidationError, label: string | null): string {
   const msgFn = defaultMessages[errorInfo.type]
-  return typeof msgFn === 'function' ? msgFn(errorInfo, label) : `${errorInfo.type} ${errorInfo.name}`
+  return typeof msgFn === 'function'
+    ? msgFn(errorInfo, label)
+    : `${errorInfo.type} ${errorInfo.name}`
 }

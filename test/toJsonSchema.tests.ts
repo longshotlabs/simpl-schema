@@ -35,22 +35,14 @@ it('converts a SimpleSchema instance to a JSONSchema Document', () => {
       },
       allowedStrings: {
         type: 'string',
-        enum: [
-          'tuna',
-          'fish',
-          'salad'
-        ]
+        enum: ['tuna', 'fish', 'salad']
       },
       allowedStringsArray: {
         additionalItems: false,
         items: [
           {
             type: 'string',
-            enum: [
-              'tuna',
-              'fish',
-              'salad'
-            ]
+            enum: ['tuna', 'fish', 'salad']
           }
         ],
         type: 'array'
@@ -60,11 +52,7 @@ it('converts a SimpleSchema instance to a JSONSchema Document', () => {
         items: [
           {
             type: 'string',
-            enum: [
-              'tuna',
-              'fish',
-              'salad'
-            ]
+            enum: ['tuna', 'fish', 'salad']
           }
         ],
         type: 'array'
@@ -269,10 +257,7 @@ it('converts oneOf to anyOf', () => {
                 type: 'string'
               }
             },
-            required: [
-              'itemRef',
-              'partNo'
-            ],
+            required: ['itemRef', 'partNo'],
             type: 'object'
           },
           {
@@ -285,17 +270,12 @@ it('converts oneOf to anyOf', () => {
                 type: 'string'
               }
             },
-            required: [
-              'anotherIdentifier',
-              'partNo'
-            ],
+            required: ['anotherIdentifier', 'partNo'],
             type: 'object'
           }
         ]
       }
     },
-    required: [
-      'item'
-    ]
+    required: ['item']
   })
 })

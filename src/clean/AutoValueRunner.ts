@@ -20,7 +20,7 @@ interface RunForPositionProps {
   value: any
 }
 
-function getFieldInfo <ValueType> (mongoObject: MongoObject, key: string): FieldInfo<ValueType> {
+function getFieldInfo<ValueType>(mongoObject: MongoObject, key: string): FieldInfo<ValueType> {
   const keyInfo = mongoObject.getInfoForKey(key) ?? {
     operator: null,
     value: undefined
@@ -35,16 +35,11 @@ export default class AutoValueRunner {
   doneKeys: string[] = []
   options: AutoValueRunnerOptions
 
-  constructor (options: AutoValueRunnerOptions) {
+  constructor(options: AutoValueRunnerOptions) {
     this.options = options
   }
 
-  runForPosition ({
-    key: affectedKey,
-    operator,
-    position,
-    value
-  }: RunForPositionProps): void {
+  runForPosition({ key: affectedKey, operator, position, value }: RunForPositionProps): void {
     const {
       closestSubschemaFieldName,
       extendedAutoValueContext,
@@ -58,10 +53,7 @@ export default class AutoValueRunner {
     if (this.doneKeys.includes(affectedKey)) return
 
     const fieldParentName = getParentOfKey(affectedKey, true)
-    const parentFieldInfo = getFieldInfo<any>(
-      mongoObject,
-      fieldParentName.slice(0, -1)
-    )
+    const parentFieldInfo = getFieldInfo<any>(mongoObject, fieldParentName.slice(0, -1))
 
     let doUnset = false
 
@@ -74,10 +66,9 @@ export default class AutoValueRunner {
     }
 
     const autoValueContext: AutoValueContext = {
-      closestSubschemaFieldName: closestSubschemaFieldName.length > 0
-        ? closestSubschemaFieldName
-        : null,
-      field (fName: string) {
+      closestSubschemaFieldName:
+        closestSubschemaFieldName.length > 0 ? closestSubschemaFieldName : null,
+      field(fName: string) {
         return getFieldInfo(mongoObject, closestSubschemaFieldName + fName)
       },
       isModifier,
@@ -85,13 +76,13 @@ export default class AutoValueRunner {
       isSet: value !== undefined,
       key: affectedKey,
       operator,
-      parentField () {
+      parentField() {
         return parentFieldInfo
       },
-      siblingField (fName: string) {
+      siblingField(fName: string) {
         return getFieldInfo(mongoObject, fieldParentName + fName)
       },
-      unset () {
+      unset() {
         doUnset = true
       },
       value,
@@ -113,9 +104,7 @@ export default class AutoValueRunner {
       let op
       let newValue
       if (autoValue != null && typeof autoValue === 'object') {
-        const avOperator = Object.keys(autoValue).find(
-          (avProp) => avProp.substring(0, 1) === '$'
-        )
+        const avOperator = Object.keys(autoValue).find((avProp) => avProp.substring(0, 1) === '$')
         if (avOperator !== undefined) {
           op = avOperator
           newValue = autoValue[avOperator]
@@ -133,10 +122,7 @@ export default class AutoValueRunner {
       if (op != null) {
         // Update/change value
         mongoObject.removeValueForPosition(position)
-        mongoObject.setValueForPosition(
-          `${op}[${affectedKey}]`,
-          clone(newValue)
-        )
+        mongoObject.setValueForPosition(`${op}[${affectedKey}]`, clone(newValue))
         return
       }
     }

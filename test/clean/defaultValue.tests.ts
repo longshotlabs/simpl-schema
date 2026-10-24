@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../../src/SimpleSchema.js'
@@ -277,14 +275,17 @@ describe('defaultValue', function () {
         }
       })
 
-      const result = schema.clean({
-        $set: {
-          'obj.a': {}
+      const result = schema.clean(
+        {
+          $set: {
+            'obj.a': {}
+          }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
         }
-      }, {
-        isModifier: true,
-        isUpsert: true
-      })
+      )
 
       expect(result).toEqual({
         $set: {
@@ -375,15 +376,18 @@ describe('defaultValue', function () {
         }
       })
 
-      const result = schema.clean({
-        $set: {
-          'obj.a': 100,
-          'obj.c': 2
+      const result = schema.clean(
+        {
+          $set: {
+            'obj.a': 100,
+            'obj.c': 2
+          }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
         }
-      }, {
-        isModifier: true,
-        isUpsert: true
-      })
+      )
 
       expect(result).toEqual({
         $set: {
@@ -427,14 +431,17 @@ describe('defaultValue', function () {
         }
       })
 
-      const result = schema.clean({
-        $set: {
-          'obj.a.one': 100
+      const result = schema.clean(
+        {
+          $set: {
+            'obj.a.one': 100
+          }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
         }
-      }, {
-        isModifier: true,
-        isUpsert: true
-      })
+      )
 
       expect(result).toEqual({
         $set: {
@@ -463,14 +470,17 @@ describe('defaultValue', function () {
         }
       })
 
-      const result = schema.clean({
-        $addToSet: {
-          names: 'new value'
+      const result = schema.clean(
+        {
+          $addToSet: {
+            names: 'new value'
+          }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
         }
-      }, {
-        isModifier: true,
-        isUpsert: true
-      })
+      )
 
       expect(result).toEqual({
         $addToSet: {
@@ -669,17 +679,22 @@ describe('defaultValue', function () {
       'settings.obj2.name': String
     })
 
-    expect(schema.clean({
-      $set: {
-        'settings.obj.bool': true
-      },
-      $unset: {
-        'settings.obj2.name': ''
-      }
-    }, {
-      isModifier: true,
-      isUpsert: true
-    })).toEqual({
+    expect(
+      schema.clean(
+        {
+          $set: {
+            'settings.obj.bool': true
+          },
+          $unset: {
+            'settings.obj2.name': ''
+          }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
+        }
+      )
+    ).toEqual({
       $set: {
         'settings.obj.bool': true
       },
@@ -735,17 +750,22 @@ describe('defaultValue', function () {
       'settings.obj2.name': String
     })
 
-    expect(schema.clean({
-      $set: {
-        'settings.obj.bool': true
-      },
-      $unset: {
-        'settings.obj2.name': ''
-      }
-    }, {
-      isModifier: true,
-      isUpsert: true
-    })).toEqual({
+    expect(
+      schema.clean(
+        {
+          $set: {
+            'settings.obj.bool': true
+          },
+          $unset: {
+            'settings.obj2.name': ''
+          }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
+        }
+      )
+    ).toEqual({
       $set: {
         'settings.obj.bool': true
       },
@@ -818,11 +838,16 @@ describe('defaultValue', function () {
       isOwner: { type: Boolean, defaultValue: true }
     })
 
-    expect(schema.clean({
-      $set: { name: 'Phil' }
-    }, {
-      isModifier: true
-    })).toEqual({
+    expect(
+      schema.clean(
+        {
+          $set: { name: 'Phil' }
+        },
+        {
+          isModifier: true
+        }
+      )
+    ).toEqual({
       $set: { name: 'Phil' }
     })
   })
@@ -833,12 +858,17 @@ describe('defaultValue', function () {
       isOwner: { type: Boolean, defaultValue: true }
     })
 
-    expect(schema.clean({
-      $set: { name: 'Phil' }
-    }, {
-      isModifier: true,
-      isUpsert: true
-    })).toEqual({
+    expect(
+      schema.clean(
+        {
+          $set: { name: 'Phil' }
+        },
+        {
+          isModifier: true,
+          isUpsert: true
+        }
+      )
+    ).toEqual({
       $set: { name: 'Phil' },
       $setOnInsert: { isOwner: true }
     })

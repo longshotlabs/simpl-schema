@@ -36,10 +36,6 @@ RUN mkdir -p ${NPM_GLOBAL} \
     && echo "if [ \"\$(stat -c '%U' ${NPM_GLOBAL})\" != \"${USERNAME}\" ]; then sudo chown -R ${USERNAME}:root ${NPM_GLOBAL} ${NVM_DIR}; fi" \
     | tee -a /etc/bash.bashrc >> /etc/zsh/zshrc
 
-# Install eslint
-RUN sudo -u ${USERNAME} npm install -g eslint \
-    && npm cache clean --force > /dev/null 2>&1
-
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>

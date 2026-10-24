@@ -2,9 +2,14 @@ import { SimpleSchema } from '../../SimpleSchema.js'
 import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 import { dateToDateString } from '../../utility/index.js'
 
-export default function checkDateValue (def: SchemaKeyDefinition, value: Date): ValidationErrorResult | undefined {
+export default function checkDateValue(
+  def: SchemaKeyDefinition,
+  value: Date
+): ValidationErrorResult | undefined {
   // Is it an invalid date?
-  if (isNaN(value.getTime())) { return { type: SimpleSchema.ErrorTypes.BAD_DATE } }
+  if (isNaN(value.getTime())) {
+    return { type: SimpleSchema.ErrorTypes.BAD_DATE }
+  }
 
   // Is it earlier than the minimum date?
   if (

@@ -1,11 +1,11 @@
 import type { Matchers } from 'expect'
 export type { Matchers } from 'expect'
 
-export interface Inverse<Matchers> {
+export interface Inverse<TMatchers> {
   /**
    * Inverse next matcher. If you know how to test something, `.not` lets you test its opposite.
    */
-  not: Matchers
+  not: TMatchers
 }
 
 export interface PromiseMatchers {

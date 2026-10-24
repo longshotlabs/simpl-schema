@@ -239,12 +239,16 @@ describe('SimpleSchema - Extend Schema', function () {
 
     expectErrorOfTypeLength(SimpleSchema.ErrorTypes.REQUIRED, schema, {
       name: 'foo',
-      items: [{
-        name: 'foo',
-        subitems: [{
-          name: 'foo'
-        }]
-      }]
+      items: [
+        {
+          name: 'foo',
+          subitems: [
+            {
+              name: 'foo'
+            }
+          ]
+        }
+      ]
     }).toBe(1)
   })
 
@@ -302,7 +306,7 @@ describe('SimpleSchema - Extend Schema', function () {
     // Top-level field extension
     schema.extend({
       method: {
-        allowedValues: [...schema.getAllowedValuesForKey('method') ?? [], 'all']
+        allowedValues: [...(schema.getAllowedValuesForKey('method') ?? []), 'all']
       }
     })
 
@@ -311,7 +315,7 @@ describe('SimpleSchema - Extend Schema', function () {
     // Subschema field extension
     ObjSchema.extend({
       loveType: {
-        allowedValues: [...ObjSchema.getAllowedValuesForKey('loveType') ?? [], 'romantic']
+        allowedValues: [...(ObjSchema.getAllowedValuesForKey('loveType') ?? []), 'romantic']
       }
     })
 
@@ -320,7 +324,7 @@ describe('SimpleSchema - Extend Schema', function () {
     // Subschema field in array field extension
     ListItemSchema.extend({
       name: {
-        allowedValues: [...ListItemSchema.getAllowedValuesForKey('name') ?? [], 'b', 'c']
+        allowedValues: [...(ListItemSchema.getAllowedValuesForKey('name') ?? []), 'b', 'c']
       }
     })
 

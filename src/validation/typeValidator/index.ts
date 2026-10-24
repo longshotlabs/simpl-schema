@@ -1,11 +1,15 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
-import { SchemaKeyDefinitionWithOneType, TypeValidatorContext, ValidationErrorResult } from '../../types.js'
+import {
+  SchemaKeyDefinitionWithOneType,
+  TypeValidatorContext,
+  ValidationErrorResult
+} from '../../types.js'
 import checkArrayValue from './checkArrayValue.js'
 import checkDateValue from './checkDateValue.js'
 import checkNumberValue from './checkNumberValue.js'
 import checkStringValue from './checkStringValue.js'
 
-export function checkValueType (info: TypeValidatorContext): ValidationErrorResult | undefined {
+export function checkValueType(info: TypeValidatorContext): ValidationErrorResult | undefined {
   const { definition: def, operator: op, value, valueShouldBeChecked } = info
 
   if (!valueShouldBeChecked) return
@@ -28,13 +32,15 @@ export function checkValueType (info: TypeValidatorContext): ValidationErrorResu
       value === Object(value) &&
       typeof value[Symbol.iterator] !== 'function' &&
       !(value instanceof Date)
-    ) { return }
+    ) {
+      return
+    }
     return { type: SimpleSchema.ErrorTypes.EXPECTED_TYPE, dataType: 'Object' }
   }
 
   if (expectedType === Array) return checkArrayValue(def, value)
 
-  if (expectedType instanceof Function) {
+  if (typeof expectedType === 'function') {
     // Generic constructor checks
     if (!(value instanceof expectedType)) {
       // https://docs.mongodb.com/manual/reference/operator/update/currentDate/
@@ -62,7 +68,11 @@ export function checkValueType (info: TypeValidatorContext): ValidationErrorResu
   }
 }
 
-export function isValueTypeValid (typeDefinitions: SchemaKeyDefinitionWithOneType[], value: any, operator: string | null): boolean {
+export function isValueTypeValid(
+  typeDefinitions: SchemaKeyDefinitionWithOneType[],
+  value: any,
+  operator: string | null
+): boolean {
   return typeDefinitions.some((definition) => {
     const typeValidationError = checkValueType({
       valueShouldBeChecked: true,
@@ -74,6 +84,8 @@ export function isValueTypeValid (typeDefinitions: SchemaKeyDefinitionWithOneTyp
   })
 }
 
-export default function typeValidator (this: TypeValidatorContext): ValidationErrorResult | undefined {
+function typeValidator(this: TypeValidatorContext): ValidationErrorResult | undefined {
   return checkValueType(this)
 }
+
+export default typeValidator

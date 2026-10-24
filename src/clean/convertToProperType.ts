@@ -8,7 +8,7 @@ import { SupportedTypes } from '../types.js'
  * @param type A type
  * @returns Value converted to type.
  */
-export default function convertToProperType (value: any, type: SupportedTypes): any {
+export default function convertToProperType(value: any, type: SupportedTypes): any {
   // Can't and shouldn't convert arrays or objects or null
   if (value === null) return value
   if (value === undefined) return value
@@ -17,7 +17,8 @@ export default function convertToProperType (value: any, type: SupportedTypes): 
     value !== undefined &&
     (typeof value === 'function' || typeof value === 'object') &&
     !(value instanceof Date)
-  ) return value
+  )
+    return value
 
   // Convert to String type
   if (type === String) return value.toString()

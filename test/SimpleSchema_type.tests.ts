@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -98,8 +96,7 @@ describe('SimpleSchema - type', function () {
 
   it('weird type', function () {
     expect(function () {
-      // eslint-disable-next-line no-new
-      new SimpleSchema({
+      void new SimpleSchema({
         // @ts-expect-error
         name: { type: Array[Object] }
       })
@@ -108,53 +105,29 @@ describe('SimpleSchema - type', function () {
 
   describe('string', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          string: 'test'
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        string: 'test'
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          string: true
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        string: true
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          string: 1
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        string: 1
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          string: { test: 'test' }
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        string: { test: 'test' }
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          string: ['test']
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        string: ['test']
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          string: new Date()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        string: new Date()
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {
@@ -444,61 +417,33 @@ describe('SimpleSchema - type', function () {
 
   describe('boolean', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: true
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: true
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: false
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: false
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: 'true'
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: 'true'
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: 0
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: 0
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: { test: true }
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: { test: true }
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: [false]
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: [false]
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          boolean: new Date()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        boolean: new Date()
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {
@@ -820,70 +765,38 @@ describe('SimpleSchema - type', function () {
 
   describe('number', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: 1
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: 1
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: 0
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: 0
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: 'test'
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: 'test'
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: false
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: false
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: { test: 1 }
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: { test: 1 }
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: [1]
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: [1]
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: new Date()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: new Date()
+      }).toEqual(1)
 
       // NaN does not count
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          number: NaN
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        number: NaN
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {
@@ -1255,53 +1168,29 @@ describe('SimpleSchema - type', function () {
 
   describe('date', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          date: new Date()
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        date: new Date()
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          date: 'test'
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        date: 'test'
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          date: false
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        date: false
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          date: { test: new Date() }
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        date: { test: new Date() }
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          date: [new Date()]
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        date: [new Date()]
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          date: 1
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        date: 1
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {
@@ -1618,69 +1507,37 @@ describe('SimpleSchema - type', function () {
 
   describe('array', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: []
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: []
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: [true]
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: [true]
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: [false]
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: [false]
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: 'test'
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: 'test'
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: false
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: false
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: { test: [] }
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: { test: [] }
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: ['test']
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: ['test']
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          booleanArray: 1
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        booleanArray: 1
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {
@@ -1900,61 +1757,33 @@ describe('SimpleSchema - type', function () {
 
   describe('object', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: {}
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: {}
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: { number: 1 }
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: { number: 1 }
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: []
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: []
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: new Set()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: new Set()
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: new Map()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: new Map()
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: new Date()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: new Date()
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          sub: NaN
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        sub: NaN
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {
@@ -2276,61 +2105,33 @@ describe('SimpleSchema - type', function () {
 
   describe('simple schema instance', function () {
     it('normal', function () {
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: {}
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: {}
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: { string: 'test', number: 1 }
-        }
-      ).toEqual(0)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: { string: 'test', number: 1 }
+      }).toEqual(0)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: []
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: []
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: new Set()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: new Set()
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: new Map()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: new Map()
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: new Date()
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: new Date()
+      }).toEqual(1)
 
-      expectErrorOfTypeLength(
-        SimpleSchema.ErrorTypes.EXPECTED_TYPE,
-        testSchema,
-        {
-          refObject: NaN
-        }
-      ).toEqual(1)
+      expectErrorOfTypeLength(SimpleSchema.ErrorTypes.EXPECTED_TYPE, testSchema, {
+        refObject: NaN
+      }).toEqual(1)
     })
 
     it('modifier with $setOnInsert', function () {

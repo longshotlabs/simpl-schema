@@ -6,8 +6,10 @@ import validateDocument from './validation/validateDocument.js'
 import validateField from './validation/validateField.js'
 import ValidationContext from './ValidationContext.js'
 
-function shouldCheck (operator: string): boolean {
-  if (operator === '$pushAll') { throw new Error('$pushAll is not supported; use $push + $each') }
+function shouldCheck(operator: string): boolean {
+  if (operator === '$pushAll') {
+    throw new Error('$pushAll is not supported; use $push + $each')
+  }
   return !['$pull', '$pullAll', '$pop', '$slice'].includes(operator)
 }
 
@@ -23,7 +25,7 @@ interface DoValidationProps {
   validationContext: ValidationContext
 }
 
-function doValidation ({
+function doValidation({
   extendedCustomContext,
   ignoreTypes,
   isModifier,

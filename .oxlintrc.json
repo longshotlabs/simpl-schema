@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": ["dist/**/*", "eslint.config.mjs"],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "promise", "node"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "off",
+    "perf": "off",
+    "style": "off"
+  },
+  "rules": {
+    "eslint/no-underscore-dangle": "off",
+    "eslint/curly": "off",
+    "unicorn/no-useless-fallback-in-spread": "off"
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  }
+}

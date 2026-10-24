@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -13,7 +11,7 @@ describe('SimpleSchema - Rules', function () {
       },
       bar: {
         type: Number,
-        max (this: FunctionPropContext & { obj: { foo: number } }) {
+        max(this: FunctionPropContext & { obj: { foo: number } }) {
           return this.obj.foo
         }
       }

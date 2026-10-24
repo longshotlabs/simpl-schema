@@ -9,7 +9,6 @@ export interface GlobalConfig {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var simpleSchemaGlobalConfig: GlobalConfig
 }
 
@@ -149,12 +148,27 @@ export interface StandardSchemaKeyDefinitionWithSimpleTypes extends SchemaKeyDef
 }
 
 export type SchemaKeyDefinition = StandardSchemaKeyDefinition | SchemaKeyDefinitionWithOneType
-export type SchemaKeyDefinitionWithShorthand = StandardSchemaKeyDefinition | SchemaKeyDefinitionWithOneType | SupportedTypes | RegExpConstructor | SimpleSchemaGroup | SupportedTypes[]
-export type PartialSchemaKeyDefinitionWithShorthand = StandardSchemaKeyDefinition | Partial<SchemaKeyDefinitionWithOneType> | SupportedTypes | RegExpConstructor | SimpleSchemaGroup | SupportedTypes[]
+export type SchemaKeyDefinitionWithShorthand =
+  | StandardSchemaKeyDefinition
+  | SchemaKeyDefinitionWithOneType
+  | SupportedTypes
+  | RegExpConstructor
+  | SimpleSchemaGroup
+  | SupportedTypes[]
+export type PartialSchemaKeyDefinitionWithShorthand =
+  | StandardSchemaKeyDefinition
+  | Partial<SchemaKeyDefinitionWithOneType>
+  | SupportedTypes
+  | RegExpConstructor
+  | SimpleSchemaGroup
+  | SupportedTypes[]
 
 export type SchemaDefinition = Record<string, SchemaKeyDefinition>
 export type SchemaDefinitionWithShorthand = Record<string, SchemaKeyDefinitionWithShorthand>
-export type PartialSchemaDefinitionWithShorthand = Record<string, PartialSchemaKeyDefinitionWithShorthand>
+export type PartialSchemaDefinitionWithShorthand = Record<
+  string,
+  PartialSchemaKeyDefinitionWithShorthand
+>
 export type ResolvedSchemaDefinition = Record<string, StandardSchemaKeyDefinition>
 
 export type AnyClass = new (...args: any[]) => any
@@ -250,10 +264,17 @@ export interface DocValidatorContext extends CustomValidatorContext {
   validationContext: ValidationContext
 }
 
-export type FunctionPropContext = Omit<ValidatorContext, 'addValidationErrors' | 'valueShouldBeChecked'>
+export type FunctionPropContext = Omit<
+  ValidatorContext,
+  'addValidationErrors' | 'valueShouldBeChecked'
+>
 
-export type DocValidatorFunction = (this: DocValidatorContext, obj: Record<string, unknown>) => ValidationError[]
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-export type ValidatorFunction = (this: ValidatorContext) => void | undefined | boolean | string | ValidationErrorResult
+export type DocValidatorFunction = (
+  this: DocValidatorContext,
+  obj: Record<string, unknown>
+) => ValidationError[]
+export type ValidatorFunction = (
+  this: ValidatorContext
+) => void | undefined | boolean | string | ValidationErrorResult
 
 export type ObjectToValidate = Record<string | number | symbol, unknown> | AnyClass

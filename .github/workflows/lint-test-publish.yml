@@ -17,8 +17,8 @@ jobs:
         uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: "22"
-          cache: "npm"
+          node-version: '22'
+          cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Update to latest NPM version
         run: npm i -g npm
@@ -37,8 +37,8 @@ jobs:
         uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: "22"
-          cache: "npm"
+          node-version: '22'
+          cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Update to latest NPM version
         run: npm i -g npm
@@ -64,8 +64,8 @@ jobs:
         uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: "22"
-          cache: "npm"
+          node-version: '22'
+          cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Update to latest NPM version
         run: npm i -g npm

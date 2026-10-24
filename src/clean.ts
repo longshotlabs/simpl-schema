@@ -10,7 +10,7 @@ import { isValueTypeValid } from './validation/typeValidator/index.js'
 
 const operatorsToIgnoreValue = ['$unset', '$currentDate']
 
-function log (message: string): void {
+function log(message: string): void {
   if (SimpleSchema.debug === true) {
     console.debug(message)
   }
@@ -26,7 +26,7 @@ function log (message: string): void {
  * @param options Clean options
  * @returns The modified doc.
  */
-function clean (
+function clean(
   ss: SimpleSchema,
   doc: Record<string | number | symbol, unknown>,
   options: CleanOptions = {}
@@ -49,8 +49,7 @@ function clean (
   // Clone so we do not mutate
   const cleanDoc = cleanOptions.mutate === true ? doc : clone(doc)
 
-  const mongoObject =
-    cleanOptions.mongoObject ?? new MongoObject(cleanDoc, ss.blackboxKeys())
+  const mongoObject = cleanOptions.mongoObject ?? new MongoObject(cleanDoc, ss.blackboxKeys())
 
   // Clean loop
   if (
@@ -62,7 +61,7 @@ function clean (
     const removedPositions: string[] = [] // For removing now-empty objects after
 
     mongoObject.forEachNode(
-      function eachNode (this: NodeContext) {
+      function eachNode(this: NodeContext) {
         // The value of a $unset is irrelevant, so no point in cleaning it.
         // Also we do not care if fields not in the schema are unset.
         // Other operators also have values that we wouldn't want to clean.
@@ -89,7 +88,9 @@ function clean (
             this.remove()
             removedPositions.push(this.position)
           }
-          log(`SimpleSchema.clean: filtered out value that would have affected key "${gKey}", which is not allowed by the schema`)
+          log(
+            `SimpleSchema.clean: filtered out value that would have affected key "${gKey}", which is not allowed by the schema`
+          )
           return // no reason to do more
         }
 
@@ -98,10 +99,17 @@ function clean (
         const def = defs?.[0]
 
         // Auto-convert values if requested and if possible
-        if (cleanOptions.autoConvert === true && defs !== undefined && def != null && !isValueTypeValid(defs, val, this.operator)) {
+        if (
+          cleanOptions.autoConvert === true &&
+          defs !== undefined &&
+          def != null &&
+          !isValueTypeValid(defs, val, this.operator)
+        ) {
           const newVal = convertToProperType(val, def.type)
           if (newVal !== undefined && newVal !== val) {
-            log(`SimpleSchema.clean: auto-converted value ${String(val)} from ${typeof val} to ${typeof newVal} for ${gKey}`)
+            log(
+              `SimpleSchema.clean: auto-converted value ${String(val)} from ${typeof val} to ${typeof newVal} for ${gKey}`
+            )
             val = newVal
             this.updateValue(newVal)
           }
@@ -112,10 +120,7 @@ function clean (
           // Trim strings if
           // 1. The trimStrings option is `true` AND
           // 2. The field is not in the schema OR is in the schema with `trim` !== `false`
-          if (
-            cleanOptions.trimStrings === true &&
-            def?.trim !== false
-          ) {
+          if (cleanOptions.trimStrings === true && def?.trim !== false) {
             val = val.trim()
             this.updateValue(val)
           }
@@ -152,7 +157,9 @@ function clean (
       if (lastBrace !== -1) {
         const removedPositionParent = removedPosition.slice(0, lastBrace)
         const value = mongoObject.getValueForPosition(removedPositionParent)
-        if (isEmptyObject(value)) { mongoObject.removeValueForPosition(removedPositionParent) }
+        if (isEmptyObject(value)) {
+          mongoObject.removeValueForPosition(removedPositionParent)
+        }
       }
     })
 
@@ -180,7 +187,6 @@ function clean (
         operatorValue !== null &&
         isEmptyObject(operatorValue as Record<string, unknown>)
       ) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete cleanDoc[op]
       }
     })

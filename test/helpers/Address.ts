@@ -7,31 +7,31 @@ class Address {
   public city: string
   public state: string
 
-  constructor (city: string, state: string) {
+  constructor(city: string, state: string) {
     this.city = city
     this.state = state
   }
 
-  toString (): string {
+  toString(): string {
     return `${this.city}, ${this.state}`
   }
 
-  clone (): Address {
+  clone(): Address {
     return new Address(this.city, this.state)
   }
 
-  equals (other: unknown): boolean {
+  equals(other: unknown): boolean {
     if (!(other instanceof Address)) {
       return false
     }
     return JSON.stringify(this) === JSON.stringify(other)
   }
 
-  typeName (): string { // eslint-disable-line class-methods-use-this
+  typeName(): string {
     return 'Address'
   }
 
-  toJSONValue (): AddressInfo {
+  toJSONValue(): AddressInfo {
     return {
       city: this.city,
       state: this.state

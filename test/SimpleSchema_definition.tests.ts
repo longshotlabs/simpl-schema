@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { schemaDefinitionOptions, SimpleSchema } from '../src/SimpleSchema.js'
@@ -7,8 +5,7 @@ import { schemaDefinitionOptions, SimpleSchema } from '../src/SimpleSchema.js'
 describe('SimpleSchema - Extend Schema Definition', function () {
   it('throws an error when the schema definition includes an unrecognized key', function () {
     expect(() => {
-      // eslint-disable-next-line no-new
-      new SimpleSchema({
+      void new SimpleSchema({
         name: {
           type: String,
           // @ts-expect-error
@@ -22,8 +19,7 @@ describe('SimpleSchema - Extend Schema Definition', function () {
     SimpleSchema.extendOptions(['unique'])
 
     expect(() => {
-      // eslint-disable-next-line no-new
-      new SimpleSchema({
+      void new SimpleSchema({
         name: {
           type: String,
           // @ts-expect-error

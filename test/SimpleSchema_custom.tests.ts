@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema, ValidationContext } from '../src/SimpleSchema.js'
@@ -12,7 +10,7 @@ const schema = new SimpleSchema({
   },
   confirmPassword: {
     type: String,
-    custom () {
+    custom() {
       if (this.value !== this.field('password').value) {
         return 'passwordMismatch'
       }
@@ -23,25 +21,25 @@ const schema = new SimpleSchema({
 const requiredCustomSchema = new SimpleSchema({
   a: {
     type: Array,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   },
   'a.$': {
     type: Object,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   },
   b: {
     type: Array,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   },
   'b.$': {
     type: Object,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   }
@@ -66,41 +64,59 @@ describe('SimpleSchema - Validation Against Another Key', function () {
 
   describe('modifier with $setOnInsert', function () {
     it('valid', function () {
-      expectErrorLength(schema, {
-        $setOnInsert: {
-          password: 'password',
-          confirmPassword: 'password'
-        }
-      }, { modifier: true, upsert: true }).toEqual(0)
+      expectErrorLength(
+        schema,
+        {
+          $setOnInsert: {
+            password: 'password',
+            confirmPassword: 'password'
+          }
+        },
+        { modifier: true, upsert: true }
+      ).toEqual(0)
     })
 
     it('invalid', function () {
-      expectErrorOfTypeLength('passwordMismatch', schema, {
-        $setOnInsert: {
-          password: 'password',
-          confirmPassword: 'password1'
-        }
-      }, { modifier: true, upsert: true }).toEqual(1)
+      expectErrorOfTypeLength(
+        'passwordMismatch',
+        schema,
+        {
+          $setOnInsert: {
+            password: 'password',
+            confirmPassword: 'password1'
+          }
+        },
+        { modifier: true, upsert: true }
+      ).toEqual(1)
     })
   })
 
   describe('modifier with $set', function () {
     it('valid', function () {
-      expectErrorLength(schema, {
-        $set: {
-          password: 'password',
-          confirmPassword: 'password'
-        }
-      }, { modifier: true }).toEqual(0)
+      expectErrorLength(
+        schema,
+        {
+          $set: {
+            password: 'password',
+            confirmPassword: 'password'
+          }
+        },
+        { modifier: true }
+      ).toEqual(0)
     })
 
     it('invalid', function () {
-      expectErrorOfTypeLength('passwordMismatch', schema, {
-        $set: {
-          password: 'password',
-          confirmPassword: 'password1'
-        }
-      }, { modifier: true }).toEqual(1)
+      expectErrorOfTypeLength(
+        'passwordMismatch',
+        schema,
+        {
+          $set: {
+            password: 'password',
+            confirmPassword: 'password1'
+          }
+        },
+        { modifier: true }
+      ).toEqual(1)
     })
   })
 })
@@ -113,7 +129,7 @@ describe('custom', function () {
       foo: {
         type: String,
         optional: true,
-        custom () {
+        custom() {
           if (this.validationContext instanceof ValidationContext) ok = true
         }
       }
@@ -148,11 +164,14 @@ describe('custom', function () {
     })
 
     const context = customSchema.namedContext()
-    context.validate({
-      $unset: {
-        foo: ''
-      }
-    }, { modifier: true })
+    context.validate(
+      {
+        $unset: {
+          foo: ''
+        }
+      },
+      { modifier: true }
+    )
     expect(context.validationErrors().length).toEqual(1)
     expect(context.validationErrors()[0]).toEqual({ name: 'foo', type: 'custom', value: '' })
   })
@@ -160,25 +179,40 @@ describe('custom', function () {
   it('we do not get required errors for a required field that has a `custom` function when we are $setting', function () {
     const context = requiredCustomSchema.namedContext()
 
-    expect(context.validate({
-      $set: {
-        a: [{}]
-      }
-    }, { modifier: true })).toEqual(true)
+    expect(
+      context.validate(
+        {
+          $set: {
+            a: [{}]
+          }
+        },
+        { modifier: true }
+      )
+    ).toEqual(true)
 
-    expect(context.validate({
-      $set: {
-        'a.0': {}
-      }
-    }, { modifier: true })).toEqual(true)
+    expect(
+      context.validate(
+        {
+          $set: {
+            'a.0': {}
+          }
+        },
+        { modifier: true }
+      )
+    ).toEqual(true)
   })
 
   it('we do not get required errors for a required field that has a `custom` function when we are $pushing', function () {
     const context = requiredCustomSchema.namedContext()
-    expect(context.validate({
-      $push: {
-        a: {}
-      }
-    }, { modifier: true })).toEqual(true)
+    expect(
+      context.validate(
+        {
+          $push: {
+            a: {}
+          }
+        },
+        { modifier: true }
+      )
+    ).toEqual(true)
   })
 })

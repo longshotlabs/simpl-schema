@@ -8,28 +8,28 @@ describe('setAutoValues', () => {
     const schema = new SimpleSchema({
       field1: {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       field2: {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       field3: {
         type: Number,
-        autoValue () {}
+        autoValue() {}
       },
       nested: Object,
       'nested.field1': {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       'nested.field2': {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       'nested.field3': {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       'nested.field4': {
         type: String,
@@ -37,19 +37,19 @@ describe('setAutoValues', () => {
       },
       field4: {
         type: Number,
-        autoValue () {}
+        autoValue() {}
       },
       field5: {
         type: Number,
-        autoValue () {}
+        autoValue() {}
       },
       field6: {
         type: String,
-        autoValue () {}
+        autoValue() {}
       },
       field7: {
         type: String,
-        autoValue () {}
+        autoValue() {}
       }
     })
 

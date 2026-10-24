@@ -3,25 +3,25 @@ import { SimpleSchema } from '../../src/SimpleSchema.js'
 const requiredCustomSchema = new SimpleSchema({
   a: {
     type: Array,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   },
   'a.$': {
     type: Object,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   },
   b: {
     type: Array,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   },
   'b.$': {
     type: Object,
-    custom () {
+    custom() {
       // Just adding custom to trigger extra validation
     }
   }

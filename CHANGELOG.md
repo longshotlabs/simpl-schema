@@ -2,7 +2,8 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+**Table of Contents** _generated with [DocToc](https://github.com/thlorenz/doctoc)_
 
 - [1.7.3 and higher](#173-and-higher)
 - [1.7.2](#172)
@@ -183,7 +184,7 @@ Passing an array of schemas to `new SimpleSchema()` or `extend()` now throws an 
 
 ## 1.0.0
 
-*BREAKING CHANGE:* autoValue and defaultValue handling has been rewritten to fix all known issues. As part of this rewrite, the behavior has changed to address a point of common confusion.
+_BREAKING CHANGE:_ autoValue and defaultValue handling has been rewritten to fix all known issues. As part of this rewrite, the behavior has changed to address a point of common confusion.
 
 Previously, when you cleaned an object to add autoValues, a `defaultValue` would be added (and an `autoValue` function would run) even if the parent object was not present. (It would be created.)
 

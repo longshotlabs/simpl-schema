@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -24,6 +22,12 @@ describe('SimpleSchema', function () {
     expect(Object.keys(newSchema.schema())).toEqual([])
 
     newSchema = schema.omit('blah')
-    expect(Object.keys(newSchema.schema())).toEqual(['foo', 'foo.bar', 'fooArray', 'fooArray.$', 'fooArray.$.bar'])
+    expect(Object.keys(newSchema.schema())).toEqual([
+      'foo',
+      'foo.bar',
+      'fooArray',
+      'fooArray.$',
+      'fooArray.$.bar'
+    ])
   })
 })

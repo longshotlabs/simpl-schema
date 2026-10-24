@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback, class-methods-use-this */
-
 import { expect } from 'expect'
 
 import { ClientError } from '../src/errors.js'
@@ -12,13 +10,49 @@ import testSchema from './helpers/testSchema.js'
 class CustomObject {
   public foo = 0
 
-  constructor (obj: Record<'foo', number>) {
+  constructor(obj: Record<'foo', number>) {
     this.foo = obj.foo
   }
 
-  bar (): number {
+  bar(): number {
     return 20
   }
+}
+
+const expectAllowsKey = (key: string, allowed: boolean): void => {
+  expect(testSchema.allowsKey(key)).toBe(allowed)
+}
+
+const verifyClientError = (error: ClientError<ValidationError[]>): void => {
+  expect(error.name).toBe('ClientError')
+  expect(error.errorType).toBe('ClientError')
+  expect(error.error).toBe('validation-error')
+  expect(error.details?.length).toBe(2)
+  expect(error.details?.[0].name).toBe('int')
+  expect(error.details?.[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
+  expect(error.details?.[0].message).toBe('Int must be of type Integer')
+  expect(error.details?.[1].name).toBe('string')
+  expect(error.details?.[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
+  expect(error.details?.[1].message).toBe('String is required')
+
+  // In order for the message at the top of the stack trace to be useful,
+  // we set it to the first validation error message.
+  expect(error.message).toBe('Int must be of type Integer')
+}
+
+const verifyArrayClientError = (error: ClientError<ValidationError[]>): void => {
+  expect(error.name).toBe('ClientError')
+  expect(error.errorType).toBe('ClientError')
+  expect(error.error).toBe('validation-error')
+  expect(error.details?.length).toBe(2)
+  expect(error.details?.[0].name).toBe('int')
+  expect(error.details?.[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
+  expect(error.details?.[1].name).toBe('string')
+  expect(error.details?.[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
+
+  // In order for the message at the top of the stack trace to be useful,
+  // we set it to the first validation error message.
+  expect(error.message).toBe('Int must be of type Integer')
 }
 
 describe('SimpleSchema', function () {
@@ -218,9 +252,7 @@ describe('SimpleSchema', function () {
       expect(function () {
         // Assume that default import of a file with no default export returns an empty object
         const Place = {}
-
-        // eslint-disable-next-line no-new
-        new SimpleSchema({
+        void new SimpleSchema({
           places: {
             type: Array,
             label: 'Places',
@@ -363,38 +395,34 @@ describe('SimpleSchema', function () {
   })
 
   it('allowsKey', function () {
-    function run (key: string, allowed: boolean): void {
-      expect(testSchema.allowsKey(key)).toBe(allowed)
-    }
-
-    run('minMaxString', true)
-    run('minMaxString.$', false)
-    run('minMaxString.$.foo', false)
-    run('minMaxString.$foo', false)
-    run('minMaxString.foo', false)
-    run('sub', true)
-    run('sub.number', true)
-    run('sub.number.$', false)
-    run('sub.number.$.foo', false)
-    run('sub.number.$foo', false)
-    run('sub.number.foo', false)
-    run('minMaxStringArray', true)
-    run('minMaxStringArray.$', true)
-    run('minMaxStringArray.$.foo', false)
-    run('minMaxStringArray.foo', false)
-    run('customObject', true)
-    run('customObject.$', false)
-    run('customObject.foo', true)
-    run('customObject.foo.$', true)
-    run('customObject.foo.$foo', true)
-    run('customObject.foo.$.$foo', true)
-    run('blackBoxObject', true)
-    run('blackBoxObject.$', false)
-    run('blackBoxObject.foo', true)
-    run('blackBoxObject.foo.$', true)
-    run('blackBoxObject.foo.$foo', true)
-    run('blackBoxObject.foo.$.$foo', true)
-    run('blackBoxObject.foo.bar.$.baz', true)
+    expectAllowsKey('minMaxString', true)
+    expectAllowsKey('minMaxString.$', false)
+    expectAllowsKey('minMaxString.$.foo', false)
+    expectAllowsKey('minMaxString.$foo', false)
+    expectAllowsKey('minMaxString.foo', false)
+    expectAllowsKey('sub', true)
+    expectAllowsKey('sub.number', true)
+    expectAllowsKey('sub.number.$', false)
+    expectAllowsKey('sub.number.$.foo', false)
+    expectAllowsKey('sub.number.$foo', false)
+    expectAllowsKey('sub.number.foo', false)
+    expectAllowsKey('minMaxStringArray', true)
+    expectAllowsKey('minMaxStringArray.$', true)
+    expectAllowsKey('minMaxStringArray.$.foo', false)
+    expectAllowsKey('minMaxStringArray.foo', false)
+    expectAllowsKey('customObject', true)
+    expectAllowsKey('customObject.$', false)
+    expectAllowsKey('customObject.foo', true)
+    expectAllowsKey('customObject.foo.$', true)
+    expectAllowsKey('customObject.foo.$foo', true)
+    expectAllowsKey('customObject.foo.$.$foo', true)
+    expectAllowsKey('blackBoxObject', true)
+    expectAllowsKey('blackBoxObject.$', false)
+    expectAllowsKey('blackBoxObject.foo', true)
+    expectAllowsKey('blackBoxObject.foo.$', true)
+    expectAllowsKey('blackBoxObject.foo.$foo', true)
+    expectAllowsKey('blackBoxObject.foo.$.$foo', true)
+    expectAllowsKey('blackBoxObject.foo.bar.$.baz', true)
   })
 
   it('allowsKey in subschema', function () {
@@ -440,7 +468,7 @@ describe('SimpleSchema', function () {
       items: Array,
       'items.$': {
         type: String,
-        label (this: FunctionOptionContext) {
+        label(this: FunctionOptionContext) {
           const { key } = this
           if (key == null) return 'Item'
           return `Item ${key.slice(key.lastIndexOf('.') + 1)}`
@@ -626,33 +654,16 @@ describe('SimpleSchema', function () {
       string: String
     })
 
-    function verify (error: ClientError<ValidationError[]>): void {
-      expect(error.name).toBe('ClientError')
-      expect(error.errorType).toBe('ClientError')
-      expect(error.error).toBe('validation-error')
-      expect(error.details?.length).toBe(2)
-      expect(error.details?.[0].name).toBe('int')
-      expect(error.details?.[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
-      expect(error.details?.[0].message).toBe('Int must be of type Integer')
-      expect(error.details?.[1].name).toBe('string')
-      expect(error.details?.[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
-      expect(error.details?.[1].message).toBe('String is required')
-
-      // In order for the message at the top of the stack trace to be useful,
-      // we set it to the first validation error message.
-      expect(error.message).toBe('Int must be of type Integer')
-    }
-
     try {
       schema.validate({ int: '5' })
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyClientError(error as ClientError<ValidationError[]>)
     }
 
     try {
       SimpleSchema.validate({ int: '5' }, schema)
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyClientError(error as ClientError<ValidationError[]>)
     }
 
     try {
@@ -664,13 +675,13 @@ describe('SimpleSchema', function () {
         }
       )
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyClientError(error as ClientError<ValidationError[]>)
     }
 
     try {
       schema.validator()({ int: '5' }) as undefined
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyClientError(error as ClientError<ValidationError[]>)
     }
 
     expect(function () {
@@ -685,30 +696,30 @@ describe('SimpleSchema', function () {
     })
 
     return await Promise.all([
-      (schema
-        .getFormValidator()({ int: '5' }) as Promise<ValidationError[]>)
-        .then((errors) => {
-          expect(errors).toEqual([
-            {
-              dataType: 'Integer',
-              message: 'Int must be of type Integer',
-              name: 'int',
-              type: 'expectedType',
-              value: '5'
-            },
-            {
-              message: 'String is required',
-              name: 'string',
-              type: 'required',
-              value: undefined
-            }
-          ])
-        }),
-      (schema
-        .getFormValidator({ clean: true })({ int: '5', string: 'test' }) as Promise<ValidationError[]>)
-        .then((errors) => {
-          expect(errors).toEqual([])
-        })
+      (schema.getFormValidator()({ int: '5' }) as Promise<ValidationError[]>).then((errors) => {
+        return expect(errors).toEqual([
+          {
+            dataType: 'Integer',
+            message: 'Int must be of type Integer',
+            name: 'int',
+            type: 'expectedType',
+            value: '5'
+          },
+          {
+            message: 'String is required',
+            name: 'string',
+            type: 'required',
+            value: undefined
+          }
+        ])
+      }),
+      (
+        schema.getFormValidator({ clean: true })({ int: '5', string: 'test' }) as Promise<
+          ValidationError[]
+        >
+      ).then((errors) => {
+        return expect(errors).toEqual([])
+      })
     ])
   })
 
@@ -718,31 +729,16 @@ describe('SimpleSchema', function () {
       string: String
     })
 
-    function verify (error: ClientError<ValidationError[]>): void {
-      expect(error.name).toBe('ClientError')
-      expect(error.errorType).toBe('ClientError')
-      expect(error.error).toBe('validation-error')
-      expect(error.details?.length).toBe(2)
-      expect(error.details?.[0].name).toBe('int')
-      expect(error.details?.[0].type).toBe(SimpleSchema.ErrorTypes.EXPECTED_TYPE)
-      expect(error.details?.[1].name).toBe('string')
-      expect(error.details?.[1].type).toBe(SimpleSchema.ErrorTypes.REQUIRED)
-
-      // In order for the message at the top of the stack trace to be useful,
-      // we set it to the first validation error message.
-      expect(error.message).toBe('Int must be of type Integer')
-    }
-
     try {
       schema.validate([{ int: 5, string: 'test' }, { int: '5' }])
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyArrayClientError(error as ClientError<ValidationError[]>)
     }
 
     try {
       SimpleSchema.validate([{ int: 5, string: 'test' }, { int: '5' }], schema)
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyArrayClientError(error as ClientError<ValidationError[]>)
     }
 
     try {
@@ -751,13 +747,13 @@ describe('SimpleSchema', function () {
         string: String
       })
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyArrayClientError(error as ClientError<ValidationError[]>)
     }
 
     try {
       schema.validator()([{ int: 5, string: 'test' }, { int: '5' }]) as undefined
     } catch (error) {
-      verify(error as ClientError<ValidationError[]>)
+      verifyArrayClientError(error as ClientError<ValidationError[]>)
     }
   })
 
@@ -1070,7 +1066,7 @@ describe('SimpleSchema', function () {
       const dataTypes: Array<[string, unknown]> = [
         ["String 'string'", 'string'],
         ['Number 42', 42],
-        ['Number 3.1415', 3.1415],
+        ['Number 1.2345', 1.2345],
         ['Array []', []],
         ["Array ['string']", ['string']],
         ['Object { }', {}],
@@ -1112,27 +1108,19 @@ describe('SimpleSchema', function () {
       shouldBeValidModifiers.forEach((mod) => {
         describe(mod, function () {
           it(`can be used for ${mod} modifiers`, function () {
-            expectValid(
-              schema,
-              { [mod]: { testAny: 3.1415 } },
-              { modifier: true }
-            )
+            expectValid(schema, { [mod]: { testAny: 1.2345 } }, { modifier: true })
           })
           it(`can be used for nested ${mod} modifiers`, function () {
             const parentSchema = new SimpleSchema({ parent: schema })
             expectValid(
               parentSchema,
-              { [mod]: { parent: { testAny: 3.1415 } } },
+              { [mod]: { parent: { testAny: 1.2345 } } },
               { modifier: true }
             )
           })
           it(`can be used for nested ${mod} modifiers with dot notation`, function () {
             const parentSchema = new SimpleSchema({ parent: schema })
-            expectValid(
-              parentSchema,
-              { [mod]: { 'parent.testAny': 3.1415 } },
-              { modifier: true }
-            )
+            expectValid(parentSchema, { [mod]: { 'parent.testAny': 1.2345 } }, { modifier: true })
           })
         })
       })
@@ -1168,19 +1156,11 @@ describe('SimpleSchema', function () {
       })
       describe('$addToSet', function () {
         it('can be used for $addToSet modifiers', function () {
-          expectValid(
-            schema,
-            { $addToSet: { testAny: 1 } },
-            { modifier: true }
-          )
+          expectValid(schema, { $addToSet: { testAny: 1 } }, { modifier: true })
         })
         it('can be used for nested $addToSet modifiers with dot notation', function () {
           const parentSchema = new SimpleSchema({ parent: schema })
-          expectValid(
-            parentSchema,
-            { $addToSet: { 'parent.testAny': 3.1415 } },
-            { modifier: true }
-          )
+          expectValid(parentSchema, { $addToSet: { 'parent.testAny': 1.2345 } }, { modifier: true })
         })
       })
       describe('$push', function () {
@@ -1189,11 +1169,7 @@ describe('SimpleSchema', function () {
         })
         it('can be used for nested $push modifiers with dot notation', function () {
           const parentSchema = new SimpleSchema({ parent: schema })
-          expectValid(
-            parentSchema,
-            { $push: { 'parent.testAny': 3.1415 } },
-            { modifier: true }
-          )
+          expectValid(parentSchema, { $push: { 'parent.testAny': 1.2345 } }, { modifier: true })
         })
       })
     })

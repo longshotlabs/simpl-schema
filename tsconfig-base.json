@@ -30,9 +30,7 @@
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
     /* Specify type package names to be included without being referenced in a source file. */
-    "types": [
-      "mocha"
-    ],
+    "types": ["mocha"],
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
     // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
     // "resolveJsonModule": true,                        /* Enable importing .json files. */
@@ -96,11 +94,6 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "compileOnSave": false,
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  "include": [
-    "src"
-  ]
+  "exclude": ["node_modules", "dist"],
+  "include": ["src"]
 }

@@ -5,7 +5,11 @@ import { ValidationOptions } from '../../src/types.js'
 import { ExpectReturnTypes } from './expectTypes.js'
 import validate from './validate.js'
 
-export default function expectRequiredErrorLength (ss: SimpleSchema, doc: Record<string | number | symbol, unknown>, options?: ValidationOptions): ExpectReturnTypes {
+export default function expectRequiredErrorLength(
+  ss: SimpleSchema,
+  doc: Record<string | number | symbol, unknown>,
+  options?: ValidationOptions
+): ExpectReturnTypes {
   const errors = validate(ss, doc, options).validationErrors()
 
   let requiredErrorCount = 0

@@ -1,7 +1,14 @@
 import { MongoObject } from 'mongo-object'
 
 import { SimpleSchema, ValidationContext } from '../SimpleSchema.js'
-import type { FieldInfo, FunctionPropContext, SchemaKeyDefinitionWithOneType, StandardSchemaKeyDefinitionWithSimpleTypes, ValidationError, ValidatorContext } from '../types.js'
+import type {
+  FieldInfo,
+  FunctionPropContext,
+  SchemaKeyDefinitionWithOneType,
+  StandardSchemaKeyDefinitionWithSimpleTypes,
+  ValidationError,
+  ValidatorContext
+} from '../types.js'
 import { appendAffectedKey, getParentOfKey, isObjectWeShouldTraverse } from '../utility/index.js'
 import allowedValuesValidator from './allowedValuesValidator.js'
 import requiredValidator from './requiredValidator.js'
@@ -33,7 +40,7 @@ interface ShouldCheckValueProps {
   val: any
 }
 
-function shouldValidateKey ({
+function shouldValidateKey({
   affectedKey,
   affectedKeyGeneric,
   keysToValidate
@@ -48,7 +55,7 @@ function shouldValidateKey ({
   )
 }
 
-function shouldCheckValue ({
+function shouldCheckValue({
   affectedKeyGeneric,
   isOptional,
   op,
@@ -57,14 +64,12 @@ function shouldCheckValue ({
   if (op === '$unset') return false
   if (op === '$rename') return false
   if (val === undefined || val === null) {
-    return affectedKeyGeneric?.slice(-2) === '.$' &&
-    val === null &&
-    isOptional !== true
+    return affectedKeyGeneric?.slice(-2) === '.$' && val === null && isOptional !== true
   }
   return true
 }
 
-function makeGenericKeyOrThrow (key: string): string {
+function makeGenericKeyOrThrow(key: string): string {
   const genericKey = MongoObject.makeKeyGeneric(key)
   if (genericKey == null) throw new Error(`Failed to get generic key for key "${key}"`)
   return genericKey
@@ -74,7 +79,7 @@ function makeGenericKeyOrThrow (key: string): string {
  * Validate a single field within an object being validated
  * @returns Array of all validation errors
  */
-export default function validateField (props: ValidateFieldProps): ValidationError[] {
+export default function validateField(props: ValidateFieldProps): ValidationError[] {
   const {
     affectedKey,
     extendedCustomContext,
@@ -93,7 +98,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
   const fieldValidationErrors: ValidationError[] = []
 
   let mongoObject: MongoObject
-  function getFieldInfo <ValueType> (key: string): FieldInfo<ValueType> {
+  function getFieldInfo<ValueType>(key: string): FieldInfo<ValueType> {
     // Create mongoObject if necessary, cache for speed
     if (mongoObject === undefined) mongoObject = new MongoObject(obj, schema.blackboxKeys())
 
@@ -119,7 +124,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
     const fieldParentName = fieldParentNameWithEndDot.slice(0, -1)
 
     const functionsContext: FunctionPropContext = {
-      field (fName: string) {
+      field(fName: string) {
         return getFieldInfo(fName)
       },
       genericKey: affectedKeyGeneric,
@@ -130,10 +135,10 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
       key: affectedKey,
       obj,
       operator: op,
-      parentField () {
+      parentField() {
         return getFieldInfo(fieldParentName)
       },
-      siblingField (fName: string) {
+      siblingField(fName: string) {
         return getFieldInfo(fieldParentNameWithEndDot + fName)
       },
       validationContext,
@@ -141,11 +146,13 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
       ...(extendedCustomContext ?? {})
     }
 
-    if (shouldValidateKey({
-      affectedKey,
-      affectedKeyGeneric: affectedKeyGeneric ?? undefined,
-      keysToValidate
-    })) {
+    if (
+      shouldValidateKey({
+        affectedKey,
+        affectedKeyGeneric: affectedKeyGeneric ?? undefined,
+        keysToValidate
+      })
+    ) {
       // Perform validation for this key
       for (const currentDef of schema.getDefinitions(affectedKey, null, functionsContext)) {
         def = currentDef
@@ -155,7 +162,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
 
         const validatorContext: Omit<ValidatorContext, 'definition'> = {
           ...functionsContext,
-          addValidationErrors (errors: ValidationError[]) {
+          addValidationErrors(errors: ValidationError[]) {
             errors.forEach((error) => fieldValidationErrors.push(error))
           },
           // Value checks are not necessary for null or undefined values, except
@@ -175,7 +182,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
           if (typeDef === SimpleSchema.Any) break
 
           const nonAnyTypeDefinition = typeDef as SchemaKeyDefinitionWithOneType
-          const { type, ...definitionWithoutType } = currentDef
+          const { type: _type, ...definitionWithoutType } = currentDef
 
           // @ts-expect-error
           const finalValidatorContext: ValidatorContext = {
@@ -236,7 +243,9 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
               validationContext
             })
             if (itemErrors.length > 0) {
-              fieldValidationErrorsForThisType.push(...itemErrors.map((error) => ({ ...error, name: `${affectedKey}.${error.name}` })))
+              fieldValidationErrorsForThisType.push(
+                ...itemErrors.map((error) => ({ ...error, name: `${affectedKey}.${error.name}` }))
+              )
             }
           }
 
@@ -262,10 +271,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
       // Mark invalid if not found in schema
       if (def == null) {
         // We don't need KEY_NOT_IN_SCHEMA error for $unset and we also don't need to continue
-        if (
-          op === '$unset' ||
-        (op === '$currentDate' && affectedKey.endsWith('.$type'))
-        ) {
+        if (op === '$unset' || (op === '$currentDate' && affectedKey.endsWith('.$type'))) {
           return []
         }
 
@@ -315,7 +321,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
   // descendent keys can be validated.
   if (
     (val === undefined || val === null) &&
-    ((def == null) || (def.optional !== true && childKeys.length > 0))
+    (def == null || (def.optional !== true && childKeys.length > 0))
   ) {
     val = {}
   }
@@ -324,7 +330,7 @@ export default function validateField (props: ValidateFieldProps): ValidationErr
   if (
     isObjectWeShouldTraverse(val) &&
     // @ts-expect-error
-    ((def == null) || !schema._blackboxKeys.has(affectedKey ?? ''))
+    (def == null || !schema._blackboxKeys.has(affectedKey ?? ''))
   ) {
     // Check all present keys plus all keys defined by the schema.
     // This allows us to detect extra keys not allowed by the schema plus

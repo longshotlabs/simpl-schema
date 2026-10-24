@@ -4,7 +4,7 @@ export class ClientError<DetailsType> extends Error {
   public errorType = 'ClientError'
   public name = 'ClientError'
 
-  constructor (message?: string, error?: string) {
+  constructor(message?: string, error?: string) {
     super(message)
     this.error = error
   }

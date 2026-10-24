@@ -1,7 +1,7 @@
 import { SimpleSchema } from '../../SimpleSchema.js'
 import { SchemaKeyDefinition, ValidationErrorResult } from '../../types.js'
 
-export default function checkNumberValue (
+export default function checkNumberValue(
   def: SchemaKeyDefinition,
   value: number,
   op: string | null,
@@ -19,14 +19,13 @@ export default function checkNumberValue (
   if (
     op !== '$inc' &&
     def.max !== null &&
-    (def.exclusiveMax === true
-      ? (def.max as number) <= value
-      : (def.max as number) < value)
+    (def.exclusiveMax === true ? (def.max as number) <= value : (def.max as number) < value)
   ) {
     return {
-      type: def.exclusiveMax === true
-        ? SimpleSchema.ErrorTypes.MAX_NUMBER_EXCLUSIVE
-        : SimpleSchema.ErrorTypes.MAX_NUMBER,
+      type:
+        def.exclusiveMax === true
+          ? SimpleSchema.ErrorTypes.MAX_NUMBER_EXCLUSIVE
+          : SimpleSchema.ErrorTypes.MAX_NUMBER,
       max: def.max
     }
   }
@@ -35,14 +34,13 @@ export default function checkNumberValue (
   if (
     op !== '$inc' &&
     def.min !== null &&
-    (def.exclusiveMin === true
-      ? (def.min as number) >= value
-      : (def.min as number) > value)
+    (def.exclusiveMin === true ? (def.min as number) >= value : (def.min as number) > value)
   ) {
     return {
-      type: def.exclusiveMin === true
-        ? SimpleSchema.ErrorTypes.MIN_NUMBER_EXCLUSIVE
-        : SimpleSchema.ErrorTypes.MIN_NUMBER,
+      type:
+        def.exclusiveMin === true
+          ? SimpleSchema.ErrorTypes.MIN_NUMBER_EXCLUSIVE
+          : SimpleSchema.ErrorTypes.MIN_NUMBER,
       min: def.min
     }
   }

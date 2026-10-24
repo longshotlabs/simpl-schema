@@ -5,7 +5,11 @@ import { StandardSchemaKeyDefinition } from './types.js'
 
 const jsonSchemaVersion = 'https://json-schema.org/draft/2020-12/schema'
 
-function toJSArray (ss: SimpleSchema, key: string, fieldDef: StandardSchemaKeyDefinition): JSONSchema7 | null {
+function toJSArray(
+  ss: SimpleSchema,
+  key: string,
+  fieldDef: StandardSchemaKeyDefinition
+): JSONSchema7 | null {
   const itemSchema = fieldDefToJsonSchema(ss, `${key}.$`)
   if (itemSchema == null) return null
 
@@ -26,7 +30,7 @@ function toJSArray (ss: SimpleSchema, key: string, fieldDef: StandardSchemaKeyDe
   return arrayDef
 }
 
-function toJsProperties (ss: SimpleSchema): {
+function toJsProperties(ss: SimpleSchema): {
   properties: Record<string, JSONSchema7>
   required: string[]
 } {
@@ -44,7 +48,10 @@ function toJsProperties (ss: SimpleSchema): {
   return { properties, required }
 }
 
-function toJSObj (simpleSchema: SimpleSchema, additionalProperties: boolean = false): JSONSchema7 | null {
+function toJSObj(
+  simpleSchema: SimpleSchema,
+  additionalProperties: boolean = false
+): JSONSchema7 | null {
   return {
     type: 'object',
     ...toJsProperties(simpleSchema),
@@ -52,7 +59,7 @@ function toJSObj (simpleSchema: SimpleSchema, additionalProperties: boolean = fa
   }
 }
 
-function fieldDefToJsonSchema (ss: SimpleSchema, key: string): JSONSchema7 | null {
+function fieldDefToJsonSchema(ss: SimpleSchema, key: string): JSONSchema7 | null {
   const fieldDef = ss.schema(key)
   if (fieldDef == null) return null
 
@@ -64,7 +71,10 @@ function fieldDefToJsonSchema (ss: SimpleSchema, key: string): JSONSchema7 | nul
     switch (fieldTypeDef.type) {
       case String:
         itemSchema = { type: 'string' }
-        if (fieldTypeDef.allowedValues !== undefined && typeof fieldTypeDef.allowedValues !== 'function') {
+        if (
+          fieldTypeDef.allowedValues !== undefined &&
+          typeof fieldTypeDef.allowedValues !== 'function'
+        ) {
           itemSchema.enum = [...fieldTypeDef.allowedValues]
         }
         if (fieldTypeDef.max !== undefined && typeof fieldTypeDef.max !== 'function') {
@@ -126,7 +136,7 @@ function fieldDefToJsonSchema (ss: SimpleSchema, key: string): JSONSchema7 | nul
           itemSchema = toJSObj(fieldTypeDef.type as SimpleSchema, fieldTypeDef.blackbox)
         } else if (
           // support custom objects
-          fieldTypeDef.type instanceof Function
+          typeof fieldTypeDef.type === 'function'
         ) {
           itemSchema = toJSObj(ss.getObjectSchema(key), fieldTypeDef.blackbox)
         }
@@ -161,7 +171,7 @@ function fieldDefToJsonSchema (ss: SimpleSchema, key: string): JSONSchema7 | nul
  * @param id Optional ID to use for the `$id` field
  * @returns JSONSchema Document
  */
-export function toJsonSchema (simpleSchema: SimpleSchema, id?: string): JSONSchema7 {
+export function toJsonSchema(simpleSchema: SimpleSchema, id?: string): JSONSchema7 {
   return {
     ...(id != null ? { $id: id } : {}),
     $schema: jsonSchemaVersion,

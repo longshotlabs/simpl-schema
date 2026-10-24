@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { SimpleSchema } from '../src/SimpleSchema.js'
 import expectErrorLength from './helpers/expectErrorLength.js'
 
@@ -27,34 +25,50 @@ describe('SimpleSchema - blackbox', function () {
   })
 
   it('allows any properties on $set object', function () {
-    expectErrorLength(schema, {
-      $set: {
-        blackBoxObject: {
-          foo: 'bar'
+    expectErrorLength(
+      schema,
+      {
+        $set: {
+          blackBoxObject: {
+            foo: 'bar'
+          }
         }
-      }
-    }, { modifier: true }).toEqual(0)
+      },
+      { modifier: true }
+    ).toEqual(0)
   })
 
   it('allows to $set any subobject', function () {
-    expectErrorLength(schema, {
-      $set: {
-        'blackBoxObject.foo': 'bar'
-      }
-    }, { modifier: true }).toEqual(0)
+    expectErrorLength(
+      schema,
+      {
+        $set: {
+          'blackBoxObject.foo': 'bar'
+        }
+      },
+      { modifier: true }
+    ).toEqual(0)
 
-    expectErrorLength(schema, {
-      $set: {
-        'blackBoxObject.1': 'bar'
-      }
-    }, { modifier: true }).toEqual(0)
+    expectErrorLength(
+      schema,
+      {
+        $set: {
+          'blackBoxObject.1': 'bar'
+        }
+      },
+      { modifier: true }
+    ).toEqual(0)
   })
 
   it('allows to $push into any subobject', function () {
-    expectErrorLength(schema, {
-      $push: {
-        'blackBoxObject.foo': 'bar'
-      }
-    }, { modifier: true }).toEqual(0)
+    expectErrorLength(
+      schema,
+      {
+        $push: {
+          'blackBoxObject.foo': 'bar'
+        }
+      },
+      { modifier: true }
+    ).toEqual(0)
   })
 })

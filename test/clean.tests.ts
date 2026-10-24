@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -94,10 +92,10 @@ const ss = new SimpleSchema({
   minMaxNumberCalculated: {
     type: SimpleSchema.Integer,
     optional: true,
-    min () {
+    min() {
       return 10
     },
-    max () {
+    max() {
       return 20
     }
   },
@@ -154,29 +152,28 @@ const ss = new SimpleSchema({
   minMaxDateCalculated: {
     type: Date,
     optional: true,
-    min () {
+    min() {
       return new Date(Date.UTC(2013, 0, 1))
     },
-    max () {
+    max() {
       return new Date(Date.UTC(2013, 11, 31))
     }
   },
   email: {
     type: String,
     optional: true,
-    custom () {
+    custom() {
       if (typeof this.value === 'string' && !this.value.includes('@')) return 'invalidEmail'
     }
   },
   url: {
     type: String,
     optional: true,
-    custom () {
+    custom() {
       if (typeof this.value === 'string') {
         try {
-          // eslint-disable-next-line no-new
-          new URL(this.value)
-        } catch (error) {
+          void new URL(this.value)
+        } catch {
           return 'invalidUrl'
         }
       }
@@ -199,7 +196,11 @@ const ss = new SimpleSchema({
   }
 })
 
-function getTest (given: Record<string | number | symbol, unknown>, expected: unknown, isModifier?: boolean): () => void {
+function getTest(
+  given: Record<string | number | symbol, unknown>,
+  expected: unknown,
+  isModifier?: boolean
+): () => void {
   return function () {
     ss.clean(given, { isModifier, mutate: true })
     expect(given).toEqual(expected)
@@ -210,19 +211,11 @@ describe('clean', function () {
   describe('normal doc', function () {
     it(
       'when you clean a good object it is still good',
-      getTest(
-        { string: 'This is a string' },
-        { string: 'This is a string' },
-        false
-      )
+      getTest({ string: 'This is a string' }, { string: 'This is a string' }, false)
     )
     it(
       'when you clean a bad object it is now good',
-      getTest(
-        { string: 'This is a string', admin: true },
-        { string: 'This is a string' },
-        false
-      )
+      getTest({ string: 'This is a string', admin: true }, { string: 'This is a string' }, false)
     )
     it('type conversion works', getTest({ string: 1 }, { string: '1' }, false))
     it('remove empty strings', getTest({ string: '' }, {}, false))
@@ -282,10 +275,7 @@ describe('clean', function () {
         true
       )
     )
-    it(
-      'type conversion works',
-      getTest({ $set: { string: 1 } }, { $set: { string: '1' } }, true)
-    )
+    it('type conversion works', getTest({ $set: { string: 1 } }, { $set: { string: '1' } }, true))
 
     // $set must be removed, too, because Mongo 2.6+ throws errors when operator object is empty
     it(
@@ -336,11 +326,7 @@ describe('clean', function () {
     )
     it(
       'type conversion works',
-      getTest(
-        { $setOnInsert: { string: 1 } },
-        { $setOnInsert: { string: '1' } },
-        true
-      )
+      getTest({ $setOnInsert: { string: 1 } }, { $setOnInsert: { string: '1' } }, true)
     )
   })
 
@@ -353,20 +339,13 @@ describe('clean', function () {
       'when you clean a bad object it is now good',
       getTest({ $inc: { number: 1, admin: 1 } }, { $inc: { number: 1 } }, true)
     )
-    it(
-      'type conversion works',
-      getTest({ $inc: { number: '1' } }, { $inc: { number: 1 } }, true)
-    )
+    it('type conversion works', getTest({ $inc: { number: '1' } }, { $inc: { number: 1 } }, true))
   })
 
   describe('$currentDate', function () {
     it(
       'should not convert a $currentDate modifier with true value',
-      getTest(
-        { $currentDate: { date: true } },
-        { $currentDate: { date: true } },
-        true
-      )
+      getTest({ $currentDate: { date: true } }, { $currentDate: { date: true } }, true)
     )
 
     it(
@@ -450,11 +429,7 @@ describe('clean', function () {
   describe('$push', function () {
     it(
       'when you clean a good object it is still good',
-      getTest(
-        { $push: { allowedNumbersArray: 1 } },
-        { $push: { allowedNumbersArray: 1 } },
-        true
-      )
+      getTest({ $push: { allowedNumbersArray: 1 } }, { $push: { allowedNumbersArray: 1 } }, true)
     )
     it(
       'when you clean a bad object it is now good',
@@ -466,11 +441,7 @@ describe('clean', function () {
     )
     it(
       'type conversion works',
-      getTest(
-        { $push: { allowedNumbersArray: '1' } },
-        { $push: { allowedNumbersArray: 1 } },
-        true
-      )
+      getTest({ $push: { allowedNumbersArray: '1' } }, { $push: { allowedNumbersArray: 1 } }, true)
     )
   })
 
@@ -509,11 +480,7 @@ describe('clean', function () {
   describe('$pull', function () {
     it(
       'when you clean a good object it is still good',
-      getTest(
-        { $pull: { allowedNumbersArray: 1 } },
-        { $pull: { allowedNumbersArray: 1 } },
-        true
-      )
+      getTest({ $pull: { allowedNumbersArray: 1 } }, { $pull: { allowedNumbersArray: 1 } }, true)
     )
     it(
       'when you clean a good object with defaultValue it is still good',
@@ -533,11 +500,7 @@ describe('clean', function () {
     )
     it(
       'type conversion works',
-      getTest(
-        { $pull: { allowedNumbersArray: '1' } },
-        { $pull: { allowedNumbersArray: 1 } },
-        true
-      )
+      getTest({ $pull: { allowedNumbersArray: '1' } }, { $pull: { allowedNumbersArray: 1 } }, true)
     )
   })
 
@@ -579,11 +542,7 @@ describe('clean', function () {
   describe('$pop', function () {
     it(
       'when you clean a good object it is still good',
-      getTest(
-        { $pop: { allowedNumbersArray: 1 } },
-        { $pop: { allowedNumbersArray: 1 } },
-        true
-      )
+      getTest({ $pop: { allowedNumbersArray: 1 } }, { $pop: { allowedNumbersArray: 1 } }, true)
     )
     it(
       'when you clean a bad object it is now good',
@@ -595,11 +554,7 @@ describe('clean', function () {
     )
     it(
       'type conversion works',
-      getTest(
-        { $pop: { allowedNumbersArray: '1' } },
-        { $pop: { allowedNumbersArray: 1 } },
-        true
-      )
+      getTest({ $pop: { allowedNumbersArray: '1' } }, { $pop: { allowedNumbersArray: 1 } }, true)
     )
   })
 
@@ -624,23 +579,11 @@ describe('clean', function () {
 
   describe('blackbox', function () {
     // Cleaning shouldn't remove anything within blackbox
-    it(
-      '1',
-      getTest({ blackBoxObject: { foo: 1 } }, { blackBoxObject: { foo: 1 } })
-    )
-    it(
-      '2',
-      getTest(
-        { blackBoxObject: { foo: [1] } },
-        { blackBoxObject: { foo: [1] } }
-      )
-    )
+    it('1', getTest({ blackBoxObject: { foo: 1 } }, { blackBoxObject: { foo: 1 } }))
+    it('2', getTest({ blackBoxObject: { foo: [1] } }, { blackBoxObject: { foo: [1] } }))
     it(
       '3',
-      getTest(
-        { blackBoxObject: { foo: [{ bar: 1 }] } },
-        { blackBoxObject: { foo: [{ bar: 1 }] } }
-      )
+      getTest({ blackBoxObject: { foo: [{ bar: 1 }] } }, { blackBoxObject: { foo: [{ bar: 1 }] } })
     )
     it(
       '4',
@@ -705,7 +648,11 @@ describe('clean', function () {
   })
 
   it('trim strings', function () {
-    function doTest (isModifier: boolean, given: Record<string | number | symbol, unknown>, expected: unknown): void {
+    function doTest(
+      isModifier: boolean,
+      given: Record<string | number | symbol, unknown>,
+      expected: unknown
+    ): void {
       const cleanObj = ss.clean(given, {
         mutate: true,
         filter: false,
@@ -719,11 +666,7 @@ describe('clean', function () {
     }
 
     // DOC
-    doTest(
-      false,
-      { string: '    This is a string    ' },
-      { string: 'This is a string' }
-    )
+    doTest(false, { string: '    This is a string    ' }, { string: 'This is a string' })
 
     // $SET
     doTest(
@@ -990,7 +933,7 @@ describe('clean', function () {
       'nested.field': SimpleSchema.oneOf(String, Number, Date)
     })
 
-    function doTest (given: Record<string | number | symbol, unknown>, expected: unknown): void {
+    function doTest(given: Record<string | number | symbol, unknown>, expected: unknown): void {
       const cleanObj = oneOfSchema.clean(given, { mutate: true })
       expect(cleanObj).toEqual(expected)
     }
@@ -1040,17 +983,11 @@ describe('clean', function () {
 
     describe('with modifiers', function () {
       it('should not convert a string', function () {
-        doTest(
-          { $set: { field: 'I am a string' } },
-          { $set: { field: 'I am a string' } }
-        )
+        doTest({ $set: { field: 'I am a string' } }, { $set: { field: 'I am a string' } })
       })
 
       it('should not convert a nested string', function () {
-        doTest(
-          { $set: { field: 'I am a string' } },
-          { $set: { field: 'I am a string' } }
-        )
+        doTest({ $set: { field: 'I am a string' } }, { $set: { field: 'I am a string' } })
       })
 
       it('should not convert a number', function () {
@@ -1058,10 +995,7 @@ describe('clean', function () {
       })
 
       it('should not convert a Date', function () {
-        doTest(
-          { $set: { field: new Date(12345) } },
-          { $set: { field: new Date(12345) } }
-        )
+        doTest({ $set: { field: new Date(12345) } }, { $set: { field: new Date(12345) } })
       })
 
       describe('nested operator', function () {
@@ -1078,10 +1012,7 @@ describe('clean', function () {
           )
         })
         it('should not convert a number', function () {
-          doTest(
-            { $set: { 'nested.field': 12345 } },
-            { $set: { 'nested.field': 12345 } }
-          )
+          doTest({ $set: { 'nested.field': 12345 } }, { $set: { 'nested.field': 12345 } })
         })
         it('should not convert a Date', function () {
           doTest(
@@ -1100,10 +1031,7 @@ describe('clean', function () {
         const date = new Date(12345)
         const dateString = date.toString()
 
-        const cleanObj = schemaNoDate.clean(
-          { $set: { field: date } },
-          { mutate: true }
-        )
+        const cleanObj = schemaNoDate.clean({ $set: { field: date } }, { mutate: true })
         expect(cleanObj).toEqual({ $set: { field: dateString } })
       })
 
@@ -1114,10 +1042,7 @@ describe('clean', function () {
           }
         })
 
-        const cleanObj = schemaNoDate.clean(
-          { $set: { field: '12345' } },
-          { mutate: true }
-        )
+        const cleanObj = schemaNoDate.clean({ $set: { field: '12345' } }, { mutate: true })
         expect(cleanObj).toEqual({ $set: { field: 12345 } })
       })
 
@@ -1128,10 +1053,7 @@ describe('clean', function () {
           }
         })
 
-        const cleanObj = schemaNoDate.clean(
-          { $set: { field: 12345 } },
-          { mutate: true }
-        )
+        const cleanObj = schemaNoDate.clean({ $set: { field: 12345 } }, { mutate: true })
         expect(cleanObj).toEqual({ $set: { field: '12345' } })
       })
     })

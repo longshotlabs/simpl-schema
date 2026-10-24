@@ -1,5 +1,3 @@
-/* eslint-disable func-names, prefer-arrow-callback */
-
 import { expect } from 'expect'
 
 import { SimpleSchema } from '../src/SimpleSchema.js'
@@ -53,32 +51,51 @@ describe('SimpleSchema', function () {
 
     expect(context.validate({})).toEqual(true)
 
-    expect(context.validate({
-      foo: {}
-    })).toEqual(true)
-
-    expect(context.validate({
-      foo: {
-        url: null
-      }
-    })).toEqual(true)
-
-    expect(context.validate({
-      $set: {
+    expect(
+      context.validate({
         foo: {}
-      }
-    }, { modifier: true })).toEqual(true)
+      })
+    ).toEqual(true)
 
-    expect(context.validate({
-      $set: {
-        'foo.url': null
-      }
-    }, { modifier: true })).toEqual(true)
+    expect(
+      context.validate({
+        foo: {
+          url: null
+        }
+      })
+    ).toEqual(true)
 
-    expect(context.validate({
-      $unset: {
-        'foo.url': ''
-      }
-    }, { modifier: true })).toEqual(true)
+    expect(
+      context.validate(
+        {
+          $set: {
+            foo: {}
+          }
+        },
+        { modifier: true }
+      )
+    ).toEqual(true)
+
+    expect(
+      context.validate(
+        {
+          $set: {
+            'foo.url': null
+          }
+        },
+        { modifier: true }
+      )
+    ).toEqual(true)
+
+    expect(
+      context.validate(
+        {
+          $unset: {
+            'foo.url': ''
+          }
+        },
+        { modifier: true }
+      )
+    ).toEqual(true)
   })
 })
